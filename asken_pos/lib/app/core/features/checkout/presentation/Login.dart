@@ -23,13 +23,20 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
-      body: SafeArea(
+     resizeToAvoidBottomInset: true,
+     backgroundColor: Colors.blue.shade50,
+     body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(50),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: EdgeInsets.only(
+              left: 50,
+              right: 50,
+              top: 50,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 50,
+            ),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(
+              constraints:  BoxConstraints(
                 maxWidth: 400,
               ),
               child: Form(

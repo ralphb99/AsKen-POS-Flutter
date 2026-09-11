@@ -9,5 +9,5 @@ class CartItem {
     this.quantity = 1,
   });
 
-  double get LineTotal => product.price * quantity;
+  int get LineTotalInCents => product.priceInCents * quantity;
 }

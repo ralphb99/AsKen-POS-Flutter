@@ -7,7 +7,7 @@ const sampleProducts = [
     ProductName: 'Ballpen',
     color: 'Black',
     unit: 'pc',
-    price: 6.00,
+    priceInCents: 600,
   ),
   ProductVariant(
     ID: 2,
@@ -15,7 +15,7 @@ const sampleProducts = [
     ProductName: 'Ballpen',
     color: 'Black',
     unit: 'doz',
-    price: 66.00,
+    priceInCents: 6600,
   ),
   ProductVariant(
     ID: 3,
@@ -23,14 +23,14 @@ const sampleProducts = [
     ProductName: 'Ballpen',
     color: 'Blue',
     unit: 'pc',
-    price: 6.00,
+    priceInCents: 600,
   ),
   ProductVariant(
     ID: 4,
     brand: 'Mongol',
     ProductName: '2 Pencil',
     unit: 'pc',
-    price: 10.00,
+    priceInCents: 1000,
   ),
   ProductVariant(
     ID: 5,
@@ -38,6 +38,13 @@ const sampleProducts = [
     ProductName: 'Bondpaper',
     size: 'Long',
     unit: 'ream',
-    price: 220.00,
+    priceInCents: 22000,
+  ),
+  ProductVariant(
+    ID: 6,
+    brand: 'Mongol',
+    ProductName: '3 Pencil',
+    unit: 'pc',
+    priceInCents: 1000,
   ),
 ];

@@ -1,104 +1,152 @@
 import 'package:flutter/material.dart';
+import 'package:asken_pos/app/core/features/checkout/data/SampleProducts.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Product.dart';
-import 'package:asken_pos/app/core/features/checkout/data/SampleProducts.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+
+String formatPeso(int cents) => '₱${(cents / 100).toStringAsFixed(2)}';
 
 class CheckoutPage extends StatefulWidget {
   final String CashierName;
-
-  const CheckoutPage({
-    super.key,
-    required this.CashierName,
-  });
-@override
+  const CheckoutPage({super.key, required this.CashierName});
+  @override
   State<CheckoutPage> createState() => _CheckoutPageState();
-
-}
-
-bool MatchesProduct(ProductVariant product, String query) {
-  return product.ProductDisplayName.toLowerCase().contains(query.trim().toLowerCase());
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
-  // String get CashierName => widget.CashierName;
   final List<CartItem> CartItems = [];
   String SearchQuery = '';
 
   List<ProductVariant> get filteredProducts {
     final query = SearchQuery.trim().toLowerCase();
-
-    if (query.isEmpty) {
-      return sampleProducts;
-    }
-
+    if (query.isEmpty) return [];
     return sampleProducts.where((product) {
-        return product.ProductDisplayName.toLowerCase().contains(query) ||
-            product.unit.toLowerCase().contains(query);
-      }).toList();
-    }
+      return product.ProductDisplayName.toLowerCase().contains(query) ||
+          product.unit.toLowerCase().contains(query);
+    }).toList();
+  }
 
-    double get CartTotal {
-      return CartItems.fold(
-        0, (sum, item) => sum + item.LineTotal,
+  int get CartTotalInCents => CartItems.fold(
+        0,
+        (sum, item) => sum + item.LineTotalInCents,
       );
-    }
 
-  void AddToCart(ProductVariant product) {
-      setState(() {
-        final ExistingIndex = CartItems.indexWhere(
-          (item) => item.product.ID == product.ID,
-        );
-
-        if (ExistingIndex >= 0) {
-          CartItems[ExistingIndex].quantity++;
-        } else {
-          CartItems.add(CartItem(product: product));
-        }
-    });
-  }
-
-  void IncreaseQuantity(int index) {
+  void addToCart(ProductVariant product) {
     setState(() {
-      CartItems[index].quantity++;
-    });
-  }
-
-  void DecreaseQuantity(int index) {
-    setState(() {
-      if (CartItems[index].quantity > 1) {
-        CartItems[index].quantity--;
+      final index = CartItems.indexWhere((item) => item.product.ID == product.ID);
+      if (index >= 0) {
+        CartItems[index].quantity++;
       } else {
-        CartItems.removeAt(index);
+        CartItems.add(CartItem(product: product));
       }
     });
   }
 
+  void changeQuantity(int index, int amount) {
+    setState(() {
+      CartItems[index].quantity += amount;
+      if (CartItems[index].quantity <= 0) CartItems.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
-        title: const Text('Current Transaction'),
+        title: Text('${DateFormat.yMMMEd().format(DateTime.now())}'),
+        elevation: 2,
+        centerTitle: true,
+        shadowColor: Colors.black,
+        backgroundColor: Colors.grey.shade50,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        top: 24,
+        // bottom: 80,
+      ),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Cashier: ${widget.CashierName}',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            SizedBox(height: 24),
-           
-                          Text('No items added yet.'),
-            
+            Text('Cashier: ${widget.CashierName}', style: Theme.of(context).textTheme.titleLarge),
 
-            Spacer(),
-            Text('Total: 0.00'),
+            const SizedBox(height: 24),
+
+            TextField(
+              onChanged: (value) => setState(() => SearchQuery = value),
+              decoration: const InputDecoration(
+                hintText: 'Search products',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+           Flexible(
+              flex: 1,
+              child: SearchQuery.trim().isEmpty
+                  ? const Center(child: Text('Search for products to add to list'))
+                  : ListView.builder(
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = filteredProducts[index];
+                        return ListTile(
+                          title: Text(product.ProductDisplayName),
+                          subtitle: Text('${product.unit} • ${formatPeso(product.priceInCents)}'),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () => addToCart(product),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+            Divider(
+              thickness: 2,
+              color: Colors.black,
+            ),
+            Align(
+              alignment: AlignmentGeometry.center,
+              child: Text(
+              'Current items', 
+              style: TextStyle(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              ),
+            ),
+            Flexible(
+              flex: 3,
+              child: CartItems.isEmpty
+                  ? Center(child: Text('No items added yet.'))
+                  : ListView.builder(
+                      itemCount: CartItems.length,
+                      itemBuilder: (context, index) {
+                        final item = CartItems[index];
+                        return ListTile(
+                          title: Text(item.product.ProductDisplayName),
+                          subtitle: Text('${item.product.unit} × ${item.quantity} • ${formatPeso(item.LineTotalInCents)}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(onPressed: () => changeQuantity(index, -1), icon: const Icon(Icons.remove)),
+                              Text('${item.quantity}'),
+                              IconButton(onPressed: () => changeQuantity(index, 1), icon: const Icon(Icons.add)),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Text('Total: ${formatPeso(CartTotalInCents)}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            ),
           ],
         ),
       ),
     );
-   }
+  }
 }

@@ -5,7 +5,7 @@ class ProductVariant {
   final String? color;
   final String? size;
   final String unit;
-  final double price;
+  final int priceInCents;
 
   const ProductVariant({
     required this.ID,
@@ -14,17 +14,17 @@ class ProductVariant {
     this.color,
     this.size,
     required this.unit,
-    required this.price,
+    required this.priceInCents,
   });
 
   String get ProductDisplayName {
-    final variations = [
+    final parts = [
       brand ?? '',
       ProductName,
-      color ?? '' ,
+      color ?? '',
       size ?? '',
     ];
 
-    return variations.join(' ');
+    return parts.join(' ');
   }
 }
