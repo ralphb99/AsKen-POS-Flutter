@@ -32,12 +32,12 @@ class _LoginPageState extends State<LoginPage> {
             padding: EdgeInsets.only(
               left: 50,
               right: 50,
-              top: 50,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 50,
+              top: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 80,
             ),
             child: ConstrainedBox(
               constraints:  BoxConstraints(
-                maxWidth: 400,
+                maxWidth: 450,
               ),
               child: Form(
                 key: _formKey,
@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
 
-                    const SizedBox(height: 60),
+                    const SizedBox(height: 100),
 
                     SizedBox(
                       height: 50,
@@ -114,11 +114,13 @@ class _LoginPageState extends State<LoginPage> {
                         style:ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.blue,
+                          shape: BeveledRectangleBorder(),
                           
                         ),
-                        child: const Text('START'),
+                        child: Text('START',
                       ),
                     ),
+                  ),
                   ],
                 ),
               ),

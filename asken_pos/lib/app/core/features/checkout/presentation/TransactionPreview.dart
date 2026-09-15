@@ -1,5 +1,6 @@
 import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TransactionPreviewArguments {
   final String CashierName;
@@ -32,26 +33,35 @@ class TransactionPreviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Transaction Preview'),
       ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(24),
           children: [
-            const Text(
-              'Receipt Preview',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+            Center(
+              child: Text(
+                        'AsKen General Supply Store',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
             ),
             const SizedBox(height: 16),
-            const Text('AsKen Store'),
-            const Text('Store address goes here'),
-            const Divider(),
-            Text('Cashier: $CashierName'),
-            Text('Date: ${DateTime.now()}'),
-            const Divider(),
+           
+            Text('Brgy 1, Tuburan, Cebu',  style: Theme.of(context).textTheme.bodyMedium),
+            const Divider(
+              color: Colors.black,
+              thickness: 2,
+            ),
+            Text('Cashier: $CashierName', style: Theme.of(context).textTheme.bodyMedium),
+            Text('Date: ${DateFormat.yMMMMEEEEd().add_jm().format(DateTime.now())}'),
+           const Divider(
+              color: Colors.black,
+              thickness: 2,
+            ),
             ...CartItems.map(
               (item) => ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -66,16 +76,25 @@ class TransactionPreviewPage extends StatelessWidget {
               ),
             ),
             const Divider(),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                'Total: ${formatPeso(CartTotalInCents)}',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+            Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Total',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      formatPeso(CartTotalInCents),
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: () {

@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
+import 'package:asken_pos/app/core/database/AppDatabase.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final database = AppDatabase();
+
+  await database.close();
+
   runApp(const AsKenPOS());
 }
 

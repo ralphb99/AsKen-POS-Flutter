@@ -4,7 +4,8 @@ import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Product.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
+import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
+import 'package:asken_pos/app/routes/AppRoutes.dart';
 
 String formatPeso(int cents) => '₱${(cents / 100).toStringAsFixed(2)}';
 
@@ -65,29 +66,29 @@ class _CheckoutPageState extends State<CheckoutPage> {
       ),
       body: Padding(
       padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 24,
-        // bottom: 80,
+        left: 35,
+        right: 35,
+        top: 20,
+        bottom: 90,
       ),
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Cashier: ${widget.CashierName}', style: Theme.of(context).textTheme.titleLarge),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             TextField(
               onChanged: (value) => setState(() => SearchQuery = value),
               decoration: const InputDecoration(
-                hintText: 'Search products',
+                hintText: 'Search for products',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
            Flexible(
-              flex: 1,
+              flex: 2,
               child: SearchQuery.trim().isEmpty
                   ? const Center(child: Text('Search for products to add to list'))
                   : ListView.builder(
@@ -114,11 +115,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
               child: Text(
               'Current items', 
               style: TextStyle(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
               ),
             ),
             Flexible(
-              flex: 3,
+              flex: 2,
               child: CartItems.isEmpty
                   ? Center(child: Text('No items added yet.'))
                   : ListView.builder(
@@ -143,6 +143,35 @@ class _CheckoutPageState extends State<CheckoutPage> {
             Align(
               alignment: Alignment.topCenter,
               child: Text('Total: ${formatPeso(CartTotalInCents)}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            ),
+
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                   if (CartItems.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Add at least one item first.'),
+                        ),
+                      );
+                      return;
+                    }else{
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.transactionpreview,
+                        arguments: TransactionPreviewArguments(
+                          CashierName: widget.CashierName,
+                          CartItems: List.unmodifiable(CartItems),
+                          CartTotalInCents: CartTotalInCents,
+                        ),
+                      );
+                    } 
+                },
+                child: Text('Preview Transaction'),
+              ),
             ),
           ],
         ),

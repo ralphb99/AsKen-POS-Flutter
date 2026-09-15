@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/Login.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/Checkout.dart';
+import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
 
 
 class AppRoutes {
@@ -9,6 +10,7 @@ class AppRoutes {
   static const String root = '/';
   static const String login = '/login';
   static const String checkout = '/checkout';
+  static const String transactionpreview = '/transaction-preview';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -26,6 +28,18 @@ class AppRoutes {
             CashierName: CashierName,
           ),
         );
+
+        case transactionpreview:
+          final arguments =
+              settings.arguments as TransactionPreviewArguments;
+
+          return MaterialPageRoute(
+            builder: (_) => TransactionPreviewPage(
+              CashierName: arguments.CashierName,
+              CartItems: arguments.CartItems,
+              CartTotalInCents: arguments.CartTotalInCents,
+            ),
+          );
 
       default:
         return MaterialPageRoute(
