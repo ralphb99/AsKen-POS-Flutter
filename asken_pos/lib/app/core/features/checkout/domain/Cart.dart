@@ -1,13 +1,13 @@
 import 'package:asken_pos/app/core/features/checkout/domain/Product.dart';
 
 class CartItem {
-  final ProductVariant product;
+  final ProductDisplayData CartProduct;
   int quantity;
 
   CartItem({
-    required this.product,
+    required this.CartProduct,
     this.quantity = 1,
   });
 
-  int get LineTotalInCents => product.priceInCents * quantity;
+  int get LineTotalInCents => CartProduct.Variant.PriceInCents * quantity;
 }

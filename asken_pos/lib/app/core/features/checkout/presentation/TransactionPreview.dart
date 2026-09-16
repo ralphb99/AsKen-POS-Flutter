@@ -65,10 +65,10 @@ class TransactionPreviewPage extends StatelessWidget {
             ...CartItems.map(
               (item) => ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text(item.product.ProductDisplayName),
+                title: Text(item.CartProduct.ProductDisplayName),
                 subtitle: Text(
-                  '${item.product.unit} × ${item.quantity} '
-                  '@ ${formatPeso(item.product.priceInCents)}',
+                  '${item.CartProduct.Variant.Unit} × ${item.quantity} '
+                  '@ ${formatPeso(item.CartProduct.Variant.PriceInCents)}',
                 ),
                 trailing: Text(
                   formatPeso(item.LineTotalInCents),

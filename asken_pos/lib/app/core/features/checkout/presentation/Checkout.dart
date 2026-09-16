@@ -1,46 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:asken_pos/app/core/features/checkout/data/SampleProducts.dart';
+import 'package:asken_pos/app/core/features/checkout/data/ProductsService.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Product.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
+import 'package:asken_pos/app/core/database/AppDatabase.dart';
+
 
 String formatPeso(int cents) => '₱${(cents / 100).toStringAsFixed(2)}';
 
 class CheckoutPage extends StatefulWidget {
   final String CashierName;
-  const CheckoutPage({super.key, required this.CashierName});
+  final ProductsService ProdService;
+
+  const CheckoutPage({
+    super.key,
+    required this.CashierName,
+    required this.ProdService,
+  });
+
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
   final List<CartItem> CartItems = [];
+  final List<ProductDisplayData> ProductData = [];
+
+  bool IsLoadingProducts = true;
+  String? ProductLoadError;
   String SearchQuery = '';
 
-  List<ProductVariant> get filteredProducts {
-    final query = SearchQuery.trim().toLowerCase();
-    if (query.isEmpty) return [];
-    return sampleProducts.where((product) {
-      return product.ProductDisplayName.toLowerCase().contains(query) ||
-          product.unit.toLowerCase().contains(query);
-    }).toList();
-  }
 
   int get CartTotalInCents => CartItems.fold(
         0,
         (sum, item) => sum + item.LineTotalInCents,
       );
 
-  void addToCart(ProductVariant product) {
+  void addToCart(ProductDisplayData product) {
     setState(() {
-      final index = CartItems.indexWhere((item) => item.product.ID == product.ID);
+      final index = CartItems.indexWhere((item) => item.CartProduct.Variant.ID == product.Variant.ID);
       if (index >= 0) {
         CartItems[index].quantity++;
       } else {
-        CartItems.add(CartItem(product: product));
+        CartItems.add(CartItem(CartProduct: product));
       }
     });
   }
@@ -51,6 +56,57 @@ class _CheckoutPageState extends State<CheckoutPage> {
       if (CartItems[index].quantity <= 0) CartItems.removeAt(index);
     });
   }
+
+  Future<void> LoadProductData() async {
+  try {
+    final Products = await widget.ProdService.GetProductData();
+
+    if (!mounted) return;
+
+    setState(() {
+      ProductData
+        ..clear()
+        ..addAll(Products);
+
+      IsLoadingProducts = false;
+      ProductLoadError = null;
+    });
+  } catch (error) {
+    if (!mounted) return;
+
+    setState(() {
+      IsLoadingProducts = false;
+      ProductLoadError = error.toString();
+    });
+  }
+}
+
+List<ProductDisplayData> get filteredProducts {
+  final query = SearchQuery.trim().toLowerCase();
+
+  if (query.isEmpty) {
+    return [];
+  }
+
+  return ProductData.where((Product) {
+    final SearchableText = [
+      Product.ProductDisplayName,
+      Product.StoreProduct.ProductName,
+      Product.StoreProduct.Brand,
+      Product.Variant.Color,
+      Product.Variant.Size,
+      Product.Variant.Unit,
+    ].join(' ').toLowerCase();
+
+    return SearchableText.contains(query);
+  }).toList(growable: false);
+}
+
+@override
+void initState() {
+  super.initState();
+  LoadProductData();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +153,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         final product = filteredProducts[index];
                         return ListTile(
                           title: Text(product.ProductDisplayName),
-                          subtitle: Text('${product.unit} • ${formatPeso(product.priceInCents)}'),
+                          subtitle: Text('${product.Variant.Unit} • ${formatPeso(product.Variant.PriceInCents)}'),
                           trailing: IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: () => addToCart(product),
@@ -126,8 +182,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       itemBuilder: (context, index) {
                         final item = CartItems[index];
                         return ListTile(
-                          title: Text(item.product.ProductDisplayName),
-                          subtitle: Text('${item.product.unit} × ${item.quantity} • ${formatPeso(item.LineTotalInCents)}'),
+                          title: Text(item.CartProduct.ProductDisplayName),
+                          subtitle: Text('${item.CartProduct.Variant.Unit} × ${item.quantity} • ${formatPeso(item.LineTotalInCents)}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

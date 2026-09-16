@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
 
 class Products extends Table {
   IntColumn get ID => integer().autoIncrement()();
@@ -77,3 +76,4 @@ class StoreSettings extends Table {
 
   TextColumn get ReceiptFooter => text().nullable()();
 }
+

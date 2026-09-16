@@ -1,19 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
 import 'package:asken_pos/app/core/database/AppDatabase.dart';
+import 'package:asken_pos/app/core/features/checkout/data/ProductsService.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final database = AppDatabase();
+  final Database = AppDatabase();
 
-  await database.close();
+  await Database.SeedProducts();
 
-  runApp(const AsKenPOS());
+  final ProdService = ProductsService(
+    Database: Database,
+  );
+
+  runApp(
+    AsKenPOS(
+      ProdService: ProdService,
+    ),
+  );
 }
 
 class AsKenPOS extends StatelessWidget {
-  const AsKenPOS({super.key});
+  final ProductsService ProdService;
+
+  const AsKenPOS({
+    super.key,
+    required this.ProdService,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +35,12 @@ class AsKenPOS extends StatelessWidget {
       title: 'AsKen POS',
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.login,
-      onGenerateRoute: AppRoutes.generateRoute,
+      onGenerateRoute: (settings) {
+        return AppRoutes.generateRoute(
+          settings,
+          ProdService,
+        );
+      },
     );
   }
 }

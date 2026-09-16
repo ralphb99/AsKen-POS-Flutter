@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/Login.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/Checkout.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
-
+import 'package:asken_pos/app/core/features/checkout/data/ProductsService.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -12,7 +12,10 @@ class AppRoutes {
   static const String checkout = '/checkout';
   static const String transactionpreview = '/transaction-preview';
 
-  static Route<dynamic> generateRoute(RouteSettings settings) {
+ static Route<dynamic> generateRoute(
+  RouteSettings settings,
+  ProductsService ProductService,
+  ) {
     switch (settings.name) {
       case root:
       case login:
@@ -26,6 +29,7 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => CheckoutPage(
             CashierName: CashierName,
+            ProdService: ProductService,
           ),
         );
 
