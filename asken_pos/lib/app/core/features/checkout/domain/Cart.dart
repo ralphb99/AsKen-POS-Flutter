@@ -9,5 +9,5 @@ class CartItem {
     this.quantity = 1,
   });
 
-  int get LineTotalInCents => CartProduct.Variant.PriceInCents * quantity;
+  int get LineTotalInCents => CartProduct.PriceInCents * quantity;
 }

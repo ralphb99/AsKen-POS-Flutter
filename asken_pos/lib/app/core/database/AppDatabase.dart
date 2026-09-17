@@ -1,11 +1,17 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:asken_pos/app/core/database/DatabaseTables.dart';
-import 'package:asken_pos/app/core/features/checkout/domain/Product.dart'
-    as CheckoutData;
 part 'AppDatabase.g.dart';
 
+class ProductDataRow {
+  final Product StoreProduct;
+  final ProductVariant Variant;
 
+  const ProductDataRow({
+    required this.StoreProduct,
+    required this.Variant,
+  });
+}
 
  @DriftDatabase(
   tables: [
@@ -18,6 +24,7 @@ part 'AppDatabase.g.dart';
 
 
 )
+
 
 class AppDatabase extends _$AppDatabase {
  
@@ -36,6 +43,7 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
+  
   
   Future<int> AddProduct({
   required String ProductName,
@@ -114,7 +122,7 @@ Future<void> SeedProducts() async {
   );
 }
 
-Future<List<CheckoutData.ProductDisplayData>> GetProductData() {
+Future<List<ProductDataRow>> GetProductData() {
   final ProductQuery = select(productVariants).join([
     innerJoin(
       products,
@@ -134,7 +142,7 @@ Future<List<CheckoutData.ProductDisplayData>> GetProductData() {
     final DatabaseProduct = row.readTable(products);
     final DatabaseVariant = row.readTable(productVariants);
 
-    return CheckoutData.ProductDisplayData(
+    return ProductDataRow(
       StoreProduct: Product(
         ID: DatabaseProduct.ID,
         ProductName: DatabaseProduct.ProductName,

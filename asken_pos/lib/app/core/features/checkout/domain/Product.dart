@@ -28,26 +28,35 @@
 
 // }
 
-
-import 'package:asken_pos/app/core/database/AppDatabase.dart';
 class ProductDisplayData {
-  final Product StoreProduct;
-  final ProductVariant Variant;
+  final int ProductID;
+  final int ProductVariantID;
+  final String ProductName;
+  final String? Brand;
+  final String? Color;
+  final String? Size;
+  final String Unit;
+  final int PriceInCents;
 
-  const ProductDisplayData ({
-    required this.StoreProduct,
-    required this.Variant,
+  const ProductDisplayData({
+    required this.ProductID,
+    required this.ProductVariantID,
+    required this.ProductName,
+    this.Brand,
+    this.Color,
+    this.Size,
+    required this.Unit,
+    required this.PriceInCents,
   });
 
   String get ProductDisplayName {
     final ProductParts = [
-      StoreProduct.Brand ?? '' ,
-      StoreProduct.ProductName,
-      Variant.Color ?? '' ,
-      Variant.Size ?? '' ,
-      Variant.Unit ,
-    ].where((ProductParts) => ProductParts.isNotEmpty);
-    return ProductParts.join('');
-  }
+      Brand ?? '',
+      ProductName,
+      Color ?? '',
+      Size ?? '',
+    ].where((Part) => Part.isNotEmpty);
 
+    return ProductParts.join('--');
+  }
 }

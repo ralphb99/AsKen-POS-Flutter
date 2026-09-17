@@ -41,7 +41,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   void addToCart(ProductDisplayData product) {
     setState(() {
-      final index = CartItems.indexWhere((item) => item.CartProduct.Variant.ID == product.Variant.ID);
+      final index = CartItems.indexWhere((item) => item.CartProduct.ProductID == product.ProductID);
       if (index >= 0) {
         CartItems[index].quantity++;
       } else {
@@ -91,11 +91,11 @@ List<ProductDisplayData> get filteredProducts {
   return ProductData.where((Product) {
     final SearchableText = [
       Product.ProductDisplayName,
-      Product.StoreProduct.ProductName,
-      Product.StoreProduct.Brand,
-      Product.Variant.Color,
-      Product.Variant.Size,
-      Product.Variant.Unit,
+      Product.ProductName,
+      Product.Brand,
+      Product.Color,
+      Product.Size,
+      Product.Unit,
     ].join(' ').toLowerCase();
 
     return SearchableText.contains(query);
@@ -153,7 +153,7 @@ void initState() {
                         final product = filteredProducts[index];
                         return ListTile(
                           title: Text(product.ProductDisplayName),
-                          subtitle: Text('${product.Variant.Unit} • ${formatPeso(product.Variant.PriceInCents)}'),
+                          subtitle: Text('${product.Unit} • ${formatPeso(product.PriceInCents)}'),
                           trailing: IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: () => addToCart(product),
@@ -183,7 +183,7 @@ void initState() {
                         final item = CartItems[index];
                         return ListTile(
                           title: Text(item.CartProduct.ProductDisplayName),
-                          subtitle: Text('${item.CartProduct.Variant.Unit} × ${item.quantity} • ${formatPeso(item.LineTotalInCents)}'),
+                          subtitle: Text('${item.CartProduct.Unit} × ${item.quantity} • ${formatPeso(item.LineTotalInCents)}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

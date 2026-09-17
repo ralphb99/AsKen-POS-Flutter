@@ -67,8 +67,8 @@ class TransactionPreviewPage extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 title: Text(item.CartProduct.ProductDisplayName),
                 subtitle: Text(
-                  '${item.CartProduct.Variant.Unit} × ${item.quantity} '
-                  '@ ${formatPeso(item.CartProduct.Variant.PriceInCents)}',
+                  '${item.CartProduct.Unit} × ${item.quantity} '
+                  '@ ${formatPeso(item.CartProduct.PriceInCents)}',
                 ),
                 trailing: Text(
                   formatPeso(item.LineTotalInCents),
