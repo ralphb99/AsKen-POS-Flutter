@@ -140,6 +140,32 @@ class ProductManagementService {
     );
   }
 
+  Future<void> UpdateSellableItem({
+    required int ProductID,
+    required int ProductVariantID,
+    required String ProductName,
+    String? Brand,
+    String? Color,
+    String? Size,
+    required String Unit,
+    required int PriceInCents,
+  }) async {
+    await Database.transaction(() async {
+      await UpdateProduct(
+        ProductID: ProductID,
+        ProductName: ProductName,
+        Brand: Brand,
+      );
+      await UpdateProductVariant(
+        ProductVariantID: ProductVariantID,
+        Color: Color,
+        Size: Size,
+        Unit: Unit,
+        PriceInCents: PriceInCents,
+      );
+    });
+  }
+
   Future<void> SetProductActive({
     required int ProductID,
     required bool IsActive,

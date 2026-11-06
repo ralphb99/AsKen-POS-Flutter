@@ -45,6 +45,13 @@ final ProductManagementServiceProvider = Provider<ProductManagementService>((
   return ProductManagementService(Database: ref.watch(AppDatabaseProvider));
 });
 
+final ManagedProductsProvider =
+    FutureProvider.autoDispose<List<ProductDataRow>>((ref) {
+      return ref
+          .read(ProductManagementServiceProvider)
+          .SearchProducts(IncludeInactive: true);
+    });
+
 final OwnerPinServiceProvider = Provider<OwnerPinService>((ref) {
   return const OwnerPinService();
 });

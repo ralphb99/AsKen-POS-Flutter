@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
 import 'package:asken_pos/app/core/features/owner/application/OwnerAccess.dart';
 import 'package:asken_pos/app/core/features/owner/presentation/OwnerSettings.dart';
+import 'package:asken_pos/app/core/features/owner/presentation/ProductManagement.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
 
 class OwnerDashboardPage extends ConsumerWidget {
@@ -18,6 +19,7 @@ class OwnerDashboardPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle:true,
         title: const Text('Owner Dashboard'),
         actions: [
           IconButton(
@@ -38,15 +40,15 @@ class OwnerDashboardPage extends ConsumerWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 560),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Icon(Icons.admin_panel_settings_outlined, size: 56),
                 const SizedBox(height: 16),
                 Text(
-                  'Owner mode active',
+                  'Owner Mode Active',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
@@ -65,11 +67,10 @@ class OwnerDashboardPage extends ConsumerWidget {
                 const SizedBox(height: 24),
                 OutlinedButton.icon(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Product management is the next checkpoint.',
-                        ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ProductManagementPage(),
                       ),
                     );
                   },
