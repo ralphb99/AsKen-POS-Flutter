@@ -3,6 +3,8 @@ import 'package:asken_pos/app/core/features/checkout/presentation/Login.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/Checkout.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
 import 'package:asken_pos/app/core/features/checkout/data/ProductsService.dart';
+import 'package:asken_pos/app/core/features/checkout/data/session/CheckoutSessionService.dart';
+
 
 class AppRoutes {
   AppRoutes._();
@@ -15,6 +17,7 @@ class AppRoutes {
  static Route<dynamic> generateRoute(
   RouteSettings settings,
   ProductsService ProductService,
+ CheckoutSessionService SessionService,
   ) {
     switch (settings.name) {
       case root:
@@ -30,6 +33,7 @@ class AppRoutes {
           builder: (_) => CheckoutPage(
             CashierName: CashierName,
             ProdService: ProductService,
+            SessionService: SessionService,
           ),
         );
 

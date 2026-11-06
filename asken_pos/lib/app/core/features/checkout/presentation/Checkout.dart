@@ -6,19 +6,21 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
-import 'package:asken_pos/app/core/database/AppDatabase.dart';
-
+import 'dart:async';
+import 'package:asken_pos/app/core/features/checkout/data/session/CheckoutSessionService.dart';
 
 String formatPeso(int cents) => '₱${(cents / 100).toStringAsFixed(2)}';
 
 class CheckoutPage extends StatefulWidget {
   final String CashierName;
   final ProductsService ProdService;
+  final CheckoutSessionService SessionService;
 
   const CheckoutPage({
     super.key,
     required this.CashierName,
     required this.ProdService,
+    required this.SessionService,
   });
 
   @override
@@ -28,7 +30,8 @@ class CheckoutPage extends StatefulWidget {
 class _CheckoutPageState extends State<CheckoutPage> {
   final List<CartItem> CartItems = [];
   final List<ProductDisplayData> ProductData = [];
-
+  Timer? SessionSaveTimer;
+  bool IsRestoringSession = true;
   bool IsLoadingProducts = true;
   String? ProductLoadError;
   String SearchQuery = '';
@@ -39,23 +42,182 @@ class _CheckoutPageState extends State<CheckoutPage> {
         (sum, item) => sum + item.LineTotalInCents,
       );
 
-  void addToCart(ProductDisplayData product) {
-    setState(() {
-      final index = CartItems.indexWhere((item) => item.CartProduct.ProductID == product.ProductID);
-      if (index >= 0) {
-        CartItems[index].quantity++;
-      } else {
-        CartItems.add(CartItem(CartProduct: product));
+
+  Future<void> PersistSession() async {
+    try {
+      final CurrentCart = List<CartItem>.unmodifiable(CartItems);
+
+      if (CurrentCart.isEmpty) {
+        await widget.SessionService.ClearSession();
+        return;
       }
-    });
+
+    await widget.SessionService.SaveSession(
+      CashierName: widget.CashierName,
+      CartItems: CurrentCart,
+    );
+  } catch (error) {
+    debugPrint('Unable to save checkout session: $error');
+  }
+}
+
+
+  void ScheduleSessionSave() {
+      SessionSaveTimer?.cancel();
+
+      SessionSaveTimer = Timer(
+        const Duration(milliseconds: 400),
+        () {
+          unawaited(PersistSession());
+        },
+      );
   }
 
-  void changeQuantity(int index, int amount) {
-    setState(() {
-      CartItems[index].quantity += amount;
-      if (CartItems[index].quantity <= 0) CartItems.removeAt(index);
-    });
+
+  //parsers for decoding Session from shared preferences
+  int? ReadInt(dynamic Value) {
+  if (Value is int) {
+    return Value;
   }
+
+  if (Value is num) {
+    return Value.toInt();
+  }
+
+  return int.tryParse(Value?.toString() ?? '');
+}
+
+String? ReadRequiredString(dynamic Value) {
+  if (Value is String && Value.trim().isNotEmpty) {
+    return Value;
+  }
+
+  return null;
+}
+
+String? ReadOptionalString(dynamic Value) {
+  if (Value is String && Value.trim().isNotEmpty) {
+    return Value;
+  }
+
+  return null;
+}
+
+Future<void> RestoreSession() async {
+  try {
+    final Session = await widget.SessionService.LoadSession();
+
+    if (!mounted) return;
+
+    if (Session == null) {
+      setState(() {
+        IsRestoringSession = false;
+      });
+      return;
+    }
+
+    final RawItems = Session['items'];
+
+    if (RawItems is! List) {
+      setState(() {
+        IsRestoringSession = false;
+      });
+      return;
+    }
+
+    final RestoredItems = <CartItem>[];
+
+    for (final RawItem in RawItems) {
+      if (RawItem is! Map) {
+        continue;
+      }
+
+      final ProductID = ReadInt(RawItem['productId']);
+      final ProductVariantID = ReadInt(RawItem['productVariantId']);
+      final ProductName = ReadRequiredString(RawItem['productName']);
+      final Unit = ReadRequiredString(RawItem['unit']);
+      final PriceInCents = ReadInt(RawItem['priceInCents']);
+      final Quantity = ReadInt(RawItem['quantity']);
+
+      if (ProductID == null ||
+          ProductVariantID == null ||
+          ProductName == null ||
+          Unit == null ||
+          PriceInCents == null ||
+          Quantity == null ||
+          Quantity <= 0) {
+        continue;
+      }
+
+      final Product = ProductDisplayData(
+        ProductID: ProductID,
+        ProductVariantID: ProductVariantID,
+        ProductName: ProductName,
+        Brand: ReadOptionalString(RawItem['brand']),
+        Color: ReadOptionalString(RawItem['color']),
+        Size: ReadOptionalString(RawItem['size']),
+        Unit: Unit,
+        PriceInCents: PriceInCents,
+      );
+
+      RestoredItems.add(
+        CartItem(
+          CartProduct: Product,
+          quantity: Quantity,
+        ),
+      );
+    }
+
+    setState(() {
+      CartItems
+        ..clear()
+        ..addAll(RestoredItems);
+
+      IsRestoringSession = false;
+    });
+  } catch (error) {
+    if (!mounted) return;
+
+    setState(() {
+      IsRestoringSession = false;
+    });
+
+    debugPrint('Unable to restore checkout session: $error');
+  }
+}
+  void addToCart(ProductDisplayData product) {
+  setState(() {
+    final index = CartItems.indexWhere(
+      (item) =>
+          item.CartProduct.ProductVariantID ==
+          product.ProductVariantID,
+    );
+
+    if (index >= 0) {
+      CartItems[index].quantity++;
+    } else {
+      CartItems.add(
+        CartItem(
+          CartProduct: product,
+        ),
+      );
+    }
+  });
+
+  ScheduleSessionSave();
+}
+
+  void changeQuantity(int index, int amount) {
+  setState(() {
+    CartItems[index].quantity += amount;
+
+    if (CartItems[index].quantity <= 0) {
+      CartItems.removeAt(index);
+    }
+  });
+
+  ScheduleSessionSave();
+}
 
   Future<void> LoadProductData() async {
   try {
@@ -105,7 +267,15 @@ List<ProductDisplayData> get filteredProducts {
 @override
 void initState() {
   super.initState();
+
   LoadProductData();
+  RestoreSession();
+}
+
+@override
+void dispose() {
+  SessionSaveTimer?.cancel();
+  super.dispose();
 }
 
   @override
@@ -175,26 +345,45 @@ void initState() {
             ),
             Flexible(
               flex: 2,
-              child: CartItems.isEmpty
-                  ? Center(child: Text('No items added yet.'))
-                  : ListView.builder(
-                      itemCount: CartItems.length,
-                      itemBuilder: (context, index) {
-                        final item = CartItems[index];
-                        return ListTile(
-                          title: Text(item.CartProduct.ProductDisplayName),
-                          subtitle: Text('${item.CartProduct.Unit} × ${item.quantity} • ${formatPeso(item.LineTotalInCents)}'),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(onPressed: () => changeQuantity(index, -1), icon: const Icon(Icons.remove)),
-                              Text('${item.quantity}'),
-                              IconButton(onPressed: () => changeQuantity(index, 1), icon: const Icon(Icons.add)),
-                            ],
-                          ),
-                        );
-                      },
+              child: IsRestoringSession
+    ? const Center(
+        child: CircularProgressIndicator(),
+      )
+    : CartItems.isEmpty
+        ? const Center(
+            child: Text('No items added yet.'),
+          )
+        : ListView.builder(
+            itemCount: CartItems.length,
+            itemBuilder: (context, index) {
+              final item = CartItems[index];
+
+              return ListTile(
+                title: Text(
+                  item.CartProduct.ProductDisplayName,
+                ),
+                subtitle: Text(
+                  '${item.CartProduct.Unit} × '
+                  '${item.quantity} • '
+                  '${formatPeso(item.LineTotalInCents)}',
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () => changeQuantity(index, -1),
+                      icon: const Icon(Icons.remove),
                     ),
+                    Text('${item.quantity}'),
+                    IconButton(
+                      onPressed: () => changeQuantity(index, 1),
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
             ),
             Align(
               alignment: Alignment.topCenter,
