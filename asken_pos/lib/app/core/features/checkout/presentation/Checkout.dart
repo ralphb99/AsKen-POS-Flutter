@@ -1,425 +1,422 @@
 import 'package:flutter/material.dart';
-import 'package:asken_pos/app/core/features/checkout/data/ProductsService.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:asken_pos/app/core/features/checkout/application/CheckoutController.dart';
+import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Product.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
-import 'dart:async';
-import 'package:asken_pos/app/core/features/checkout/data/session/CheckoutSessionService.dart';
 
-String formatPeso(int cents) => '₱${(cents / 100).toStringAsFixed(2)}';
+String formatPeso(int Cents) => '\u20B1${(Cents / 100).toStringAsFixed(2)}';
 
-class CheckoutPage extends StatefulWidget {
+class CheckoutPage extends ConsumerWidget {
   final String CashierName;
-  final ProductsService ProdService;
-  final CheckoutSessionService SessionService;
 
-  const CheckoutPage({
-    super.key,
-    required this.CashierName,
-    required this.ProdService,
-    required this.SessionService,
-  });
+  const CheckoutPage({super.key, required this.CashierName});
 
   @override
-  State<CheckoutPage> createState() => _CheckoutPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Checkout = ref.watch(CheckoutControllerProvider(CashierName));
+    return Checkout.when(
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (Error, StackTrace) => Scaffold(
+        body: Center(child: Text('Unable to load checkout data: $Error')),
+      ),
+      data: (State) => _CheckoutContent(
+        State: State,
+        OnLogout: () async {
+          await ref
+              .read(CheckoutControllerProvider(CashierName).notifier)
+              .ClearCheckoutSession();
+          await ref.read(CashierSessionServiceProvider).ClearCashierName();
+          ref.invalidate(ActiveCashierProvider);
 
-class _CheckoutPageState extends State<CheckoutPage> {
-  final List<CartItem> CartItems = [];
-  final List<ProductDisplayData> ProductData = [];
-  Timer? SessionSaveTimer;
-  bool IsRestoringSession = true;
-  bool IsLoadingProducts = true;
-  String? ProductLoadError;
-  String SearchQuery = '';
+          if (!context.mounted) {
+            return;
+          }
 
-
-  int get CartTotalInCents => CartItems.fold(
-        0,
-        (sum, item) => sum + item.LineTotalInCents,
-      );
-
-
-  Future<void> PersistSession() async {
-    try {
-      final CurrentCart = List<CartItem>.unmodifiable(CartItems);
-
-      if (CurrentCart.isEmpty) {
-        await widget.SessionService.ClearSession();
-        return;
-      }
-
-    await widget.SessionService.SaveSession(
-      CashierName: widget.CashierName,
-      CartItems: CurrentCart,
-    );
-  } catch (error) {
-    debugPrint('Unable to save checkout session: $error');
-  }
-}
-
-
-  void ScheduleSessionSave() {
-      SessionSaveTimer?.cancel();
-
-      SessionSaveTimer = Timer(
-        const Duration(milliseconds: 400),
-        () {
-          unawaited(PersistSession());
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.login,
+            (Route<dynamic> Route) => false,
+          );
         },
-      );
-  }
-
-
-  //parsers for decoding Session from shared preferences
-  int? ReadInt(dynamic Value) {
-  if (Value is int) {
-    return Value;
-  }
-
-  if (Value is num) {
-    return Value.toInt();
-  }
-
-  return int.tryParse(Value?.toString() ?? '');
-}
-
-String? ReadRequiredString(dynamic Value) {
-  if (Value is String && Value.trim().isNotEmpty) {
-    return Value;
-  }
-
-  return null;
-}
-
-String? ReadOptionalString(dynamic Value) {
-  if (Value is String && Value.trim().isNotEmpty) {
-    return Value;
-  }
-
-  return null;
-}
-
-Future<void> RestoreSession() async {
-  try {
-    final Session = await widget.SessionService.LoadSession();
-
-    if (!mounted) return;
-
-    if (Session == null) {
-      setState(() {
-        IsRestoringSession = false;
-      });
-      return;
-    }
-
-    final RawItems = Session['items'];
-
-    if (RawItems is! List) {
-      setState(() {
-        IsRestoringSession = false;
-      });
-      return;
-    }
-
-    final RestoredItems = <CartItem>[];
-
-    for (final RawItem in RawItems) {
-      if (RawItem is! Map) {
-        continue;
-      }
-
-      final ProductID = ReadInt(RawItem['productId']);
-      final ProductVariantID = ReadInt(RawItem['productVariantId']);
-      final ProductName = ReadRequiredString(RawItem['productName']);
-      final Unit = ReadRequiredString(RawItem['unit']);
-      final PriceInCents = ReadInt(RawItem['priceInCents']);
-      final Quantity = ReadInt(RawItem['quantity']);
-
-      if (ProductID == null ||
-          ProductVariantID == null ||
-          ProductName == null ||
-          Unit == null ||
-          PriceInCents == null ||
-          Quantity == null ||
-          Quantity <= 0) {
-        continue;
-      }
-
-      final Product = ProductDisplayData(
-        ProductID: ProductID,
-        ProductVariantID: ProductVariantID,
-        ProductName: ProductName,
-        Brand: ReadOptionalString(RawItem['brand']),
-        Color: ReadOptionalString(RawItem['color']),
-        Size: ReadOptionalString(RawItem['size']),
-        Unit: Unit,
-        PriceInCents: PriceInCents,
-      );
-
-      RestoredItems.add(
-        CartItem(
-          CartProduct: Product,
-          quantity: Quantity,
-        ),
-      );
-    }
-
-    setState(() {
-      CartItems
-        ..clear()
-        ..addAll(RestoredItems);
-
-      IsRestoringSession = false;
-    });
-  } catch (error) {
-    if (!mounted) return;
-
-    setState(() {
-      IsRestoringSession = false;
-    });
-
-    debugPrint('Unable to restore checkout session: $error');
-  }
-}
-  void addToCart(ProductDisplayData product) {
-  setState(() {
-    final index = CartItems.indexWhere(
-      (item) =>
-          item.CartProduct.ProductVariantID ==
-          product.ProductVariantID,
+        OnSearchChanged: (Query) => ref
+            .read(CheckoutControllerProvider(CashierName).notifier)
+            .SetSearchQuery(Query),
+        OnAddProduct: (Product) => ref
+            .read(CheckoutControllerProvider(CashierName).notifier)
+            .AddToCart(Product),
+        OnChangeQuantity: (Index, Amount) => ref
+            .read(CheckoutControllerProvider(CashierName).notifier)
+            .ChangeQuantity(Index, Amount),
+      ),
     );
-
-    if (index >= 0) {
-      CartItems[index].quantity++;
-    } else {
-      CartItems.add(
-        CartItem(
-          CartProduct: product,
-        ),
-      );
-    }
-  });
-
-  ScheduleSessionSave();
-}
-
-  void changeQuantity(int index, int amount) {
-  setState(() {
-    CartItems[index].quantity += amount;
-
-    if (CartItems[index].quantity <= 0) {
-      CartItems.removeAt(index);
-    }
-  });
-
-  ScheduleSessionSave();
-}
-
-  Future<void> LoadProductData() async {
-  try {
-    final Products = await widget.ProdService.GetProductData();
-
-    if (!mounted) return;
-
-    setState(() {
-      ProductData
-        ..clear()
-        ..addAll(Products);
-
-      IsLoadingProducts = false;
-      ProductLoadError = null;
-    });
-  } catch (error) {
-    if (!mounted) return;
-
-    setState(() {
-      IsLoadingProducts = false;
-      ProductLoadError = error.toString();
-    });
   }
 }
 
-List<ProductDisplayData> get filteredProducts {
-  final query = SearchQuery.trim().toLowerCase();
+class _CheckoutContent extends StatelessWidget {
+  final CheckoutState State;
+  final Future<void> Function() OnLogout;
+  final ValueChanged<String> OnSearchChanged;
+  final ValueChanged<ProductDisplayData> OnAddProduct;
+  final void Function(int Index, int Amount) OnChangeQuantity;
 
-  if (query.isEmpty) {
-    return [];
-  }
-
-  return ProductData.where((Product) {
-    final SearchableText = [
-      Product.ProductDisplayName,
-      Product.ProductName,
-      Product.Brand,
-      Product.Color,
-      Product.Size,
-      Product.Unit,
-    ].join(' ').toLowerCase();
-
-    return SearchableText.contains(query);
-  }).toList(growable: false);
-}
-
-@override
-void initState() {
-  super.initState();
-
-  LoadProductData();
-  RestoreSession();
-}
-
-@override
-void dispose() {
-  SessionSaveTimer?.cancel();
-  super.dispose();
-}
+  const _CheckoutContent({
+    required this.State,
+    required this.OnLogout,
+    required this.OnSearchChanged,
+    required this.OnAddProduct,
+    required this.OnChangeQuantity,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text('${DateFormat.yMMMEd().format(DateTime.now())}'),
-        elevation: 2,
+        title: const Text('Checkout'),
         centerTitle: true,
-        shadowColor: Colors.black,
-        backgroundColor: Colors.grey.shade50,
+        actions: [
+          IconButton(
+            tooltip: 'Logout',
+            onPressed: OnLogout,
+            icon: const Icon(Icons.logout),
+          ),
+          const SizedBox(width: 20),
+        ],
       ),
-      body: Padding(
-      padding: EdgeInsets.only(
-        left: 35,
-        right: 35,
-        top: 20,
-        bottom: 90,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, Constraints) {
+            final IsWideLayout = Constraints.maxWidth >= 760;
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1120),
+                  child: IsWideLayout
+                      ? _BuildWideLayout(context)
+                      : _BuildMobileLayout(context),
+                ),
+              ),
+            );
+          },
+        ),
       ),
-      child: Column(
+    );
+  }
+
+  Widget _BuildMobileLayout(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _CashierHeader(),
+        const SizedBox(height: 20),
+        _SearchSection(),
+        const SizedBox(height: 20),
+        _ProductResults(),
+        const SizedBox(height: 20),
+        _CartSection(context),
+      ],
+    );
+  }
+
+  Widget _BuildWideLayout(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _CashierHeader(),
+        const SizedBox(height: 24),
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Cashier: ${widget.CashierName}', style: Theme.of(context).textTheme.titleLarge),
-
-            const SizedBox(height: 20),
-
-            TextField(
-              onChanged: (value) => setState(() => SearchQuery = value),
-              decoration: const InputDecoration(
-                hintText: 'Search for products',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+            Expanded(
+              flex: 6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _SearchSection(),
+                  const SizedBox(height: 20),
+                  _ProductResults(),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-           Flexible(
-              flex: 2,
-              child: SearchQuery.trim().isEmpty
-                  ? const Center(child: Text('Search for products to add to list'))
-                  : ListView.builder(
-                      itemCount: filteredProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = filteredProducts[index];
-                        return ListTile(
-                          title: Text(product.ProductDisplayName),
-                          subtitle: Text('${product.Unit} • ${formatPeso(product.PriceInCents)}'),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.add),
-                            onPressed: () => addToCart(product),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-            Divider(
-              thickness: 2,
-              color: Colors.black,
-            ),
-            Align(
-              alignment: AlignmentGeometry.center,
-              child: Text(
-              'Current items', 
-              style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Flexible(
-              flex: 2,
-              child: IsRestoringSession
-    ? const Center(
-        child: CircularProgressIndicator(),
-      )
-    : CartItems.isEmpty
-        ? const Center(
-            child: Text('No items added yet.'),
-          )
-        : ListView.builder(
-            itemCount: CartItems.length,
-            itemBuilder: (context, index) {
-              final item = CartItems[index];
+            const SizedBox(width: 24),
+            Expanded(flex: 5, child: _CartSection(context)),
+          ],
+        ),
+      ],
+    );
+  }
 
-              return ListTile(
-                title: Text(
-                  item.CartProduct.ProductDisplayName,
-                ),
-                subtitle: Text(
-                  '${item.CartProduct.Unit} × '
-                  '${item.quantity} • '
-                  '${formatPeso(item.LineTotalInCents)}',
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () => changeQuantity(index, -1),
-                      icon: const Icon(Icons.remove),
-                    ),
-                    Text('${item.quantity}'),
-                    IconButton(
-                      onPressed: () => changeQuantity(index, 1),
-                      icon: const Icon(Icons.add),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+  Widget _CashierHeader() {
+    return Card(
+      elevation: 0,
+      color: Colors.blue.shade700,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.white.withValues(alpha: 0.18),
+              child: const Icon(Icons.person_outline, color: Colors.white),
             ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Text('Total: ${formatPeso(CartTotalInCents)}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            ),
-
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: () {
-                   if (CartItems.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Add at least one item first.'),
-                        ),
-                      );
-                      return;
-                    }else{
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.transactionpreview,
-                        arguments: TransactionPreviewArguments(
-                          CashierName: widget.CashierName,
-                          CartItems: List.unmodifiable(CartItems),
-                          CartTotalInCents: CartTotalInCents,
-                        ),
-                      );
-                    } 
-                },
-                child: Text('Preview Transaction'),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Current Cashier',
+                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    State.CashierName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _SearchSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        TextField(
+          key: ValueKey<bool>(State.SearchQuery.isNotEmpty),
+          onChanged: OnSearchChanged,
+          textInputAction: TextInputAction.search,
+          decoration: InputDecoration(
+            hintText: 'Search product, color...',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: State.SearchQuery.isEmpty
+                ? null
+                : IconButton(
+                    tooltip: 'Clear Search',
+                    onPressed: () => OnSearchChanged(''),
+                    icon: const Icon(Icons.clear),
+                  ),
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: BorderSide(color: Colors.black),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _ProductResults() {
+    if (State.SearchQuery.trim().isEmpty) {
+      return _EmptyPanel(
+        IconData: Icons.search_outlined,
+        Message: 'Search for a product to add it to the transaction.',
+      );
+    }
+
+    if (State.FilteredProducts.isEmpty) {
+      return _EmptyPanel(
+        IconData: Icons.inventory_2_outlined,
+        Message: 'No matching products found.',
+      );
+    }
+
+    return Card(
+      shadowColor: Colors.black,
+      elevation: 3,
+      color: Colors.grey.shade100,
+      child: Column(
+        children: [
+          for (final Product in State.FilteredProducts)
+            ListTile(
+              contentPadding: const EdgeInsetsGeometry.fromLTRB(14, 4, 14, 4),
+              title: Text(
+                Product.ProductDisplayName,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                '${Product.Unit} • ${formatPeso(Product.PriceInCents)}',
+              ),
+              trailing: IconButton.filledTonal(
+                tooltip: 'Add product',
+                onPressed: () => OnAddProduct(Product),
+                icon: const Icon(Icons.add),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _CartSection(BuildContext context) {
+    return Card(
+      surfaceTintColor: Colors.white.withAlpha(300),
+      shadowColor: Colors.black,
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Current Order',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
+                ),
+                Text(
+                  '${State.CartItems.length} line item${State.CartItems.length == 1 ? '' : 's'}',
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (State.CartItems.isEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 42),
+                child: _EmptyPanel(
+                  IconData: Icons.shopping_cart_outlined,
+                  Message: 'Your order is empty.',
+                ),
+              )
+            else
+              ...State.CartItems.asMap().entries.map(
+                (Entry) => _CartLine(
+                  Item: Entry.value,
+                  OnDecrease: () => OnChangeQuantity(Entry.key, -1),
+                  OnIncrease: () => OnChangeQuantity(Entry.key, 1),
+                ),
+              ),
+            const Divider(height: 28),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  formatPeso(State.CartTotalInCents),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: State.CartItems.isEmpty
+                  ? null
+                  : () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.transactionpreview,
+                        arguments: TransactionPreviewArguments(
+                          CashierName: State.CashierName,
+                          CartItems: List.unmodifiable(State.CartItems),
+                          CartTotalInCents: State.CartTotalInCents,
+                        ),
+                      );
+                    },
+              label: const Text('Review Transaction'),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _EmptyPanel({required IconData IconData, required String Message}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(IconData, size: 34, color: Colors.grey.shade500),
+        const SizedBox(height: 8),
+        Text(
+          Message,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.grey.shade600),
+        ),
+      ],
+    );
+  }
+}
+
+class _CartLine extends StatelessWidget {
+  final CartItem Item;
+  final VoidCallback OnDecrease;
+  final VoidCallback OnIncrease;
+
+  const _CartLine({
+    required this.Item,
+    required this.OnDecrease,
+    required this.OnIncrease,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  Item.CartProduct.ProductDisplayName,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  '${Item.CartProduct.Unit} • ${formatPeso(Item.LineTotalInCents)}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            onPressed: OnDecrease,
+            icon: const Icon(Icons.remove_circle_outline),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text('${Item.quantity}'),
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            onPressed: OnIncrease,
+            icon: const Icon(Icons.add_circle_outline),
+          ),
+        ],
       ),
     );
   }
