@@ -41,6 +41,24 @@ class Transactions extends Table {
   TextColumn get Status =>
       text().withDefault(const Constant('completed'))();
 
+  TextColumn get PaymentMethod =>
+      text().withDefault(const Constant('cash'))();
+
+  /// pending, uploading, synced, or failed.
+  TextColumn get SyncStatus =>
+      text().withDefault(const Constant('pending'))();
+
+  IntColumn get SyncAttemptCount =>
+      integer().withDefault(const Constant(0))();
+
+  DateTimeColumn get LastSyncAttemptAt => dateTime().nullable()();
+
+  DateTimeColumn get SyncedAt => dateTime().nullable()();
+
+  TextColumn get LastSyncError => text().nullable()();
+
+  TextColumn get SyncBatchID => text().nullable()();
+
   DateTimeColumn get CreatedAt =>
       dateTime().withDefault(currentDateAndTime)();
 }

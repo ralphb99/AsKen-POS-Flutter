@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:drift/drift.dart';
 import 'package:asken_pos/app/core/database/AppDatabase.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
 
@@ -24,6 +25,7 @@ class TransactionService {
           ReceiptNumber: ReceiptNumber,
           CashierName: CashierName,
           TotalInCents: CartTotalInCents,
+          PaymentMethod: const Value('cash'),
         ),
       );
 

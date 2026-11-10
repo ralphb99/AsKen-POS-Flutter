@@ -8,6 +8,7 @@ import 'package:asken_pos/app/core/features/checkout/data/session/CheckoutSessio
 import 'package:asken_pos/app/core/features/checkout/data/session/CashierSessionService.dart';
 import 'package:asken_pos/app/core/features/owner/data/ProductManagementService.dart';
 import 'package:asken_pos/app/core/features/owner/data/OwnerPinService.dart';
+import 'package:asken_pos/app/core/features/owner/data/TransactionRecordsService.dart';
 
 final AppDatabaseProvider = Provider<AppDatabase>((ref) {
   final Database = AppDatabase();
@@ -38,6 +39,23 @@ final ActiveCashierProvider = FutureProvider<String?>((ref) async {
 final TransactionServiceProvider = Provider<TransactionService>((ref) {
   return TransactionService(Database: ref.watch(AppDatabaseProvider));
 });
+
+final TransactionRecordsServiceProvider = Provider<TransactionRecordsService>((
+  ref,
+) {
+  return TransactionRecordsService(Database: ref.watch(AppDatabaseProvider));
+});
+
+final TransactionExportServiceProvider = Provider<TransactionExportService>(
+  (ref) => const TransactionExportService(),
+);
+
+final OwnerTransactionRecordsProvider = FutureProvider.autoDispose
+    .family<List<TransactionRecord>, TransactionRecordsDateRange>((ref, Range) {
+      return ref
+          .read(TransactionRecordsServiceProvider)
+          .GetTransactions(From: Range.From, To: Range.To);
+    });
 
 final ProductManagementServiceProvider = Provider<ProductManagementService>((
   ref,

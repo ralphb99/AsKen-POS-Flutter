@@ -41,7 +41,31 @@ class AppDatabase extends _$AppDatabase {
         );
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (Migrator Migrator) async {
+          await Migrator.createAll();
+        },
+        onUpgrade: (Migrator Migrator, int From, int To) async {
+          if (From < 2) {
+            await Migrator.addColumn(transactions, transactions.PaymentMethod);
+            await Migrator.addColumn(transactions, transactions.SyncStatus);
+            await Migrator.addColumn(
+              transactions,
+              transactions.SyncAttemptCount,
+            );
+            await Migrator.addColumn(
+              transactions,
+              transactions.LastSyncAttemptAt,
+            );
+            await Migrator.addColumn(transactions, transactions.SyncedAt);
+            await Migrator.addColumn(transactions, transactions.LastSyncError);
+            await Migrator.addColumn(transactions, transactions.SyncBatchID);
+          }
+        },
+      );
 
   
   

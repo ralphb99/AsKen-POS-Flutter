@@ -4,6 +4,7 @@ import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
 import 'package:asken_pos/app/core/features/owner/application/OwnerAccess.dart';
 import 'package:asken_pos/app/core/features/owner/presentation/OwnerSettings.dart';
 import 'package:asken_pos/app/core/features/owner/presentation/ProductManagement.dart';
+import 'package:asken_pos/app/core/features/owner/presentation/TransactionRecords.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
 
 class OwnerDashboardPage extends ConsumerWidget {
@@ -19,7 +20,7 @@ class OwnerDashboardPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle:true,
+        centerTitle: true,
         title: const Text('Owner Dashboard'),
         actions: [
           IconButton(
@@ -76,6 +77,19 @@ class OwnerDashboardPage extends ConsumerWidget {
                   },
                   icon: const Icon(Icons.inventory_2_outlined),
                   label: const Text('Manage Products'),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const TransactionRecordsPage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.receipt_long_outlined),
+                  label: const Text('Transaction Records'),
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(

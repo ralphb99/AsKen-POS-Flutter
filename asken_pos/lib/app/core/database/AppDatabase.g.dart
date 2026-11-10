@@ -870,6 +870,87 @@ class $TransactionsTable extends Transactions
     requiredDuringInsert: false,
     defaultValue: const Constant('completed'),
   );
+  static const VerificationMeta _PaymentMethodMeta = const VerificationMeta(
+    'PaymentMethod',
+  );
+  @override
+  late final GeneratedColumn<String> PaymentMethod = GeneratedColumn<String>(
+    'payment_method',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('cash'),
+  );
+  static const VerificationMeta _SyncStatusMeta = const VerificationMeta(
+    'SyncStatus',
+  );
+  @override
+  late final GeneratedColumn<String> SyncStatus = GeneratedColumn<String>(
+    'sync_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _SyncAttemptCountMeta = const VerificationMeta(
+    'SyncAttemptCount',
+  );
+  @override
+  late final GeneratedColumn<int> SyncAttemptCount = GeneratedColumn<int>(
+    'sync_attempt_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _LastSyncAttemptAtMeta = const VerificationMeta(
+    'LastSyncAttemptAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> LastSyncAttemptAt =
+      GeneratedColumn<DateTime>(
+        'last_sync_attempt_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _SyncedAtMeta = const VerificationMeta(
+    'SyncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> SyncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _LastSyncErrorMeta = const VerificationMeta(
+    'LastSyncError',
+  );
+  @override
+  late final GeneratedColumn<String> LastSyncError = GeneratedColumn<String>(
+    'last_sync_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _SyncBatchIDMeta = const VerificationMeta(
+    'SyncBatchID',
+  );
+  @override
+  late final GeneratedColumn<String> SyncBatchID = GeneratedColumn<String>(
+    'sync_batch_i_d',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _CreatedAtMeta = const VerificationMeta(
     'CreatedAt',
   );
@@ -889,6 +970,13 @@ class $TransactionsTable extends Transactions
     CashierName,
     TotalInCents,
     Status,
+    PaymentMethod,
+    SyncStatus,
+    SyncAttemptCount,
+    LastSyncAttemptAt,
+    SyncedAt,
+    LastSyncError,
+    SyncBatchID,
     CreatedAt,
   ];
   @override
@@ -945,6 +1033,63 @@ class $TransactionsTable extends Transactions
         Status.isAcceptableOrUnknown(data['status']!, _StatusMeta),
       );
     }
+    if (data.containsKey('payment_method')) {
+      context.handle(
+        _PaymentMethodMeta,
+        PaymentMethod.isAcceptableOrUnknown(
+          data['payment_method']!,
+          _PaymentMethodMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sync_status')) {
+      context.handle(
+        _SyncStatusMeta,
+        SyncStatus.isAcceptableOrUnknown(data['sync_status']!, _SyncStatusMeta),
+      );
+    }
+    if (data.containsKey('sync_attempt_count')) {
+      context.handle(
+        _SyncAttemptCountMeta,
+        SyncAttemptCount.isAcceptableOrUnknown(
+          data['sync_attempt_count']!,
+          _SyncAttemptCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_sync_attempt_at')) {
+      context.handle(
+        _LastSyncAttemptAtMeta,
+        LastSyncAttemptAt.isAcceptableOrUnknown(
+          data['last_sync_attempt_at']!,
+          _LastSyncAttemptAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _SyncedAtMeta,
+        SyncedAt.isAcceptableOrUnknown(data['synced_at']!, _SyncedAtMeta),
+      );
+    }
+    if (data.containsKey('last_sync_error')) {
+      context.handle(
+        _LastSyncErrorMeta,
+        LastSyncError.isAcceptableOrUnknown(
+          data['last_sync_error']!,
+          _LastSyncErrorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sync_batch_i_d')) {
+      context.handle(
+        _SyncBatchIDMeta,
+        SyncBatchID.isAcceptableOrUnknown(
+          data['sync_batch_i_d']!,
+          _SyncBatchIDMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _CreatedAtMeta,
@@ -980,6 +1125,34 @@ class $TransactionsTable extends Transactions
         DriftSqlType.string,
         data['${effectivePrefix}status'],
       )!,
+      PaymentMethod: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payment_method'],
+      )!,
+      SyncStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_status'],
+      )!,
+      SyncAttemptCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sync_attempt_count'],
+      )!,
+      LastSyncAttemptAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_sync_attempt_at'],
+      ),
+      SyncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
+      LastSyncError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_sync_error'],
+      ),
+      SyncBatchID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_batch_i_d'],
+      ),
       CreatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -999,6 +1172,15 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final String CashierName;
   final int TotalInCents;
   final String Status;
+  final String PaymentMethod;
+
+  /// pending, uploading, synced, or failed.
+  final String SyncStatus;
+  final int SyncAttemptCount;
+  final DateTime? LastSyncAttemptAt;
+  final DateTime? SyncedAt;
+  final String? LastSyncError;
+  final String? SyncBatchID;
   final DateTime CreatedAt;
   const Transaction({
     required this.ID,
@@ -1006,6 +1188,13 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     required this.CashierName,
     required this.TotalInCents,
     required this.Status,
+    required this.PaymentMethod,
+    required this.SyncStatus,
+    required this.SyncAttemptCount,
+    this.LastSyncAttemptAt,
+    this.SyncedAt,
+    this.LastSyncError,
+    this.SyncBatchID,
     required this.CreatedAt,
   });
   @override
@@ -1016,6 +1205,21 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     map['cashier_name'] = Variable<String>(CashierName);
     map['total_in_cents'] = Variable<int>(TotalInCents);
     map['status'] = Variable<String>(Status);
+    map['payment_method'] = Variable<String>(PaymentMethod);
+    map['sync_status'] = Variable<String>(SyncStatus);
+    map['sync_attempt_count'] = Variable<int>(SyncAttemptCount);
+    if (!nullToAbsent || LastSyncAttemptAt != null) {
+      map['last_sync_attempt_at'] = Variable<DateTime>(LastSyncAttemptAt);
+    }
+    if (!nullToAbsent || SyncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(SyncedAt);
+    }
+    if (!nullToAbsent || LastSyncError != null) {
+      map['last_sync_error'] = Variable<String>(LastSyncError);
+    }
+    if (!nullToAbsent || SyncBatchID != null) {
+      map['sync_batch_i_d'] = Variable<String>(SyncBatchID);
+    }
     map['created_at'] = Variable<DateTime>(CreatedAt);
     return map;
   }
@@ -1027,6 +1231,21 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       CashierName: Value(CashierName),
       TotalInCents: Value(TotalInCents),
       Status: Value(Status),
+      PaymentMethod: Value(PaymentMethod),
+      SyncStatus: Value(SyncStatus),
+      SyncAttemptCount: Value(SyncAttemptCount),
+      LastSyncAttemptAt: LastSyncAttemptAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(LastSyncAttemptAt),
+      SyncedAt: SyncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(SyncedAt),
+      LastSyncError: LastSyncError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(LastSyncError),
+      SyncBatchID: SyncBatchID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(SyncBatchID),
       CreatedAt: Value(CreatedAt),
     );
   }
@@ -1042,6 +1261,15 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       CashierName: serializer.fromJson<String>(json['CashierName']),
       TotalInCents: serializer.fromJson<int>(json['TotalInCents']),
       Status: serializer.fromJson<String>(json['Status']),
+      PaymentMethod: serializer.fromJson<String>(json['PaymentMethod']),
+      SyncStatus: serializer.fromJson<String>(json['SyncStatus']),
+      SyncAttemptCount: serializer.fromJson<int>(json['SyncAttemptCount']),
+      LastSyncAttemptAt: serializer.fromJson<DateTime?>(
+        json['LastSyncAttemptAt'],
+      ),
+      SyncedAt: serializer.fromJson<DateTime?>(json['SyncedAt']),
+      LastSyncError: serializer.fromJson<String?>(json['LastSyncError']),
+      SyncBatchID: serializer.fromJson<String?>(json['SyncBatchID']),
       CreatedAt: serializer.fromJson<DateTime>(json['CreatedAt']),
     );
   }
@@ -1054,6 +1282,13 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'CashierName': serializer.toJson<String>(CashierName),
       'TotalInCents': serializer.toJson<int>(TotalInCents),
       'Status': serializer.toJson<String>(Status),
+      'PaymentMethod': serializer.toJson<String>(PaymentMethod),
+      'SyncStatus': serializer.toJson<String>(SyncStatus),
+      'SyncAttemptCount': serializer.toJson<int>(SyncAttemptCount),
+      'LastSyncAttemptAt': serializer.toJson<DateTime?>(LastSyncAttemptAt),
+      'SyncedAt': serializer.toJson<DateTime?>(SyncedAt),
+      'LastSyncError': serializer.toJson<String?>(LastSyncError),
+      'SyncBatchID': serializer.toJson<String?>(SyncBatchID),
       'CreatedAt': serializer.toJson<DateTime>(CreatedAt),
     };
   }
@@ -1064,6 +1299,13 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     String? CashierName,
     int? TotalInCents,
     String? Status,
+    String? PaymentMethod,
+    String? SyncStatus,
+    int? SyncAttemptCount,
+    Value<DateTime?> LastSyncAttemptAt = const Value.absent(),
+    Value<DateTime?> SyncedAt = const Value.absent(),
+    Value<String?> LastSyncError = const Value.absent(),
+    Value<String?> SyncBatchID = const Value.absent(),
     DateTime? CreatedAt,
   }) => Transaction(
     ID: ID ?? this.ID,
@@ -1071,6 +1313,17 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     CashierName: CashierName ?? this.CashierName,
     TotalInCents: TotalInCents ?? this.TotalInCents,
     Status: Status ?? this.Status,
+    PaymentMethod: PaymentMethod ?? this.PaymentMethod,
+    SyncStatus: SyncStatus ?? this.SyncStatus,
+    SyncAttemptCount: SyncAttemptCount ?? this.SyncAttemptCount,
+    LastSyncAttemptAt: LastSyncAttemptAt.present
+        ? LastSyncAttemptAt.value
+        : this.LastSyncAttemptAt,
+    SyncedAt: SyncedAt.present ? SyncedAt.value : this.SyncedAt,
+    LastSyncError: LastSyncError.present
+        ? LastSyncError.value
+        : this.LastSyncError,
+    SyncBatchID: SyncBatchID.present ? SyncBatchID.value : this.SyncBatchID,
     CreatedAt: CreatedAt ?? this.CreatedAt,
   );
   Transaction copyWithCompanion(TransactionsCompanion data) {
@@ -1086,6 +1339,25 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ? data.TotalInCents.value
           : this.TotalInCents,
       Status: data.Status.present ? data.Status.value : this.Status,
+      PaymentMethod: data.PaymentMethod.present
+          ? data.PaymentMethod.value
+          : this.PaymentMethod,
+      SyncStatus: data.SyncStatus.present
+          ? data.SyncStatus.value
+          : this.SyncStatus,
+      SyncAttemptCount: data.SyncAttemptCount.present
+          ? data.SyncAttemptCount.value
+          : this.SyncAttemptCount,
+      LastSyncAttemptAt: data.LastSyncAttemptAt.present
+          ? data.LastSyncAttemptAt.value
+          : this.LastSyncAttemptAt,
+      SyncedAt: data.SyncedAt.present ? data.SyncedAt.value : this.SyncedAt,
+      LastSyncError: data.LastSyncError.present
+          ? data.LastSyncError.value
+          : this.LastSyncError,
+      SyncBatchID: data.SyncBatchID.present
+          ? data.SyncBatchID.value
+          : this.SyncBatchID,
       CreatedAt: data.CreatedAt.present ? data.CreatedAt.value : this.CreatedAt,
     );
   }
@@ -1098,6 +1370,13 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('CashierName: $CashierName, ')
           ..write('TotalInCents: $TotalInCents, ')
           ..write('Status: $Status, ')
+          ..write('PaymentMethod: $PaymentMethod, ')
+          ..write('SyncStatus: $SyncStatus, ')
+          ..write('SyncAttemptCount: $SyncAttemptCount, ')
+          ..write('LastSyncAttemptAt: $LastSyncAttemptAt, ')
+          ..write('SyncedAt: $SyncedAt, ')
+          ..write('LastSyncError: $LastSyncError, ')
+          ..write('SyncBatchID: $SyncBatchID, ')
           ..write('CreatedAt: $CreatedAt')
           ..write(')'))
         .toString();
@@ -1110,6 +1389,13 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     CashierName,
     TotalInCents,
     Status,
+    PaymentMethod,
+    SyncStatus,
+    SyncAttemptCount,
+    LastSyncAttemptAt,
+    SyncedAt,
+    LastSyncError,
+    SyncBatchID,
     CreatedAt,
   );
   @override
@@ -1121,6 +1407,13 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.CashierName == this.CashierName &&
           other.TotalInCents == this.TotalInCents &&
           other.Status == this.Status &&
+          other.PaymentMethod == this.PaymentMethod &&
+          other.SyncStatus == this.SyncStatus &&
+          other.SyncAttemptCount == this.SyncAttemptCount &&
+          other.LastSyncAttemptAt == this.LastSyncAttemptAt &&
+          other.SyncedAt == this.SyncedAt &&
+          other.LastSyncError == this.LastSyncError &&
+          other.SyncBatchID == this.SyncBatchID &&
           other.CreatedAt == this.CreatedAt);
 }
 
@@ -1130,6 +1423,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<String> CashierName;
   final Value<int> TotalInCents;
   final Value<String> Status;
+  final Value<String> PaymentMethod;
+  final Value<String> SyncStatus;
+  final Value<int> SyncAttemptCount;
+  final Value<DateTime?> LastSyncAttemptAt;
+  final Value<DateTime?> SyncedAt;
+  final Value<String?> LastSyncError;
+  final Value<String?> SyncBatchID;
   final Value<DateTime> CreatedAt;
   const TransactionsCompanion({
     this.ID = const Value.absent(),
@@ -1137,6 +1437,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.CashierName = const Value.absent(),
     this.TotalInCents = const Value.absent(),
     this.Status = const Value.absent(),
+    this.PaymentMethod = const Value.absent(),
+    this.SyncStatus = const Value.absent(),
+    this.SyncAttemptCount = const Value.absent(),
+    this.LastSyncAttemptAt = const Value.absent(),
+    this.SyncedAt = const Value.absent(),
+    this.LastSyncError = const Value.absent(),
+    this.SyncBatchID = const Value.absent(),
     this.CreatedAt = const Value.absent(),
   });
   TransactionsCompanion.insert({
@@ -1145,6 +1452,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     required String CashierName,
     required int TotalInCents,
     this.Status = const Value.absent(),
+    this.PaymentMethod = const Value.absent(),
+    this.SyncStatus = const Value.absent(),
+    this.SyncAttemptCount = const Value.absent(),
+    this.LastSyncAttemptAt = const Value.absent(),
+    this.SyncedAt = const Value.absent(),
+    this.LastSyncError = const Value.absent(),
+    this.SyncBatchID = const Value.absent(),
     this.CreatedAt = const Value.absent(),
   }) : ReceiptNumber = Value(ReceiptNumber),
        CashierName = Value(CashierName),
@@ -1155,6 +1469,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Expression<String>? CashierName,
     Expression<int>? TotalInCents,
     Expression<String>? Status,
+    Expression<String>? PaymentMethod,
+    Expression<String>? SyncStatus,
+    Expression<int>? SyncAttemptCount,
+    Expression<DateTime>? LastSyncAttemptAt,
+    Expression<DateTime>? SyncedAt,
+    Expression<String>? LastSyncError,
+    Expression<String>? SyncBatchID,
     Expression<DateTime>? CreatedAt,
   }) {
     return RawValuesInsertable({
@@ -1163,6 +1484,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (CashierName != null) 'cashier_name': CashierName,
       if (TotalInCents != null) 'total_in_cents': TotalInCents,
       if (Status != null) 'status': Status,
+      if (PaymentMethod != null) 'payment_method': PaymentMethod,
+      if (SyncStatus != null) 'sync_status': SyncStatus,
+      if (SyncAttemptCount != null) 'sync_attempt_count': SyncAttemptCount,
+      if (LastSyncAttemptAt != null) 'last_sync_attempt_at': LastSyncAttemptAt,
+      if (SyncedAt != null) 'synced_at': SyncedAt,
+      if (LastSyncError != null) 'last_sync_error': LastSyncError,
+      if (SyncBatchID != null) 'sync_batch_i_d': SyncBatchID,
       if (CreatedAt != null) 'created_at': CreatedAt,
     });
   }
@@ -1173,6 +1501,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Value<String>? CashierName,
     Value<int>? TotalInCents,
     Value<String>? Status,
+    Value<String>? PaymentMethod,
+    Value<String>? SyncStatus,
+    Value<int>? SyncAttemptCount,
+    Value<DateTime?>? LastSyncAttemptAt,
+    Value<DateTime?>? SyncedAt,
+    Value<String?>? LastSyncError,
+    Value<String?>? SyncBatchID,
     Value<DateTime>? CreatedAt,
   }) {
     return TransactionsCompanion(
@@ -1181,6 +1516,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       CashierName: CashierName ?? this.CashierName,
       TotalInCents: TotalInCents ?? this.TotalInCents,
       Status: Status ?? this.Status,
+      PaymentMethod: PaymentMethod ?? this.PaymentMethod,
+      SyncStatus: SyncStatus ?? this.SyncStatus,
+      SyncAttemptCount: SyncAttemptCount ?? this.SyncAttemptCount,
+      LastSyncAttemptAt: LastSyncAttemptAt ?? this.LastSyncAttemptAt,
+      SyncedAt: SyncedAt ?? this.SyncedAt,
+      LastSyncError: LastSyncError ?? this.LastSyncError,
+      SyncBatchID: SyncBatchID ?? this.SyncBatchID,
       CreatedAt: CreatedAt ?? this.CreatedAt,
     );
   }
@@ -1203,6 +1545,27 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     if (Status.present) {
       map['status'] = Variable<String>(Status.value);
     }
+    if (PaymentMethod.present) {
+      map['payment_method'] = Variable<String>(PaymentMethod.value);
+    }
+    if (SyncStatus.present) {
+      map['sync_status'] = Variable<String>(SyncStatus.value);
+    }
+    if (SyncAttemptCount.present) {
+      map['sync_attempt_count'] = Variable<int>(SyncAttemptCount.value);
+    }
+    if (LastSyncAttemptAt.present) {
+      map['last_sync_attempt_at'] = Variable<DateTime>(LastSyncAttemptAt.value);
+    }
+    if (SyncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(SyncedAt.value);
+    }
+    if (LastSyncError.present) {
+      map['last_sync_error'] = Variable<String>(LastSyncError.value);
+    }
+    if (SyncBatchID.present) {
+      map['sync_batch_i_d'] = Variable<String>(SyncBatchID.value);
+    }
     if (CreatedAt.present) {
       map['created_at'] = Variable<DateTime>(CreatedAt.value);
     }
@@ -1217,6 +1580,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('CashierName: $CashierName, ')
           ..write('TotalInCents: $TotalInCents, ')
           ..write('Status: $Status, ')
+          ..write('PaymentMethod: $PaymentMethod, ')
+          ..write('SyncStatus: $SyncStatus, ')
+          ..write('SyncAttemptCount: $SyncAttemptCount, ')
+          ..write('LastSyncAttemptAt: $LastSyncAttemptAt, ')
+          ..write('SyncedAt: $SyncedAt, ')
+          ..write('LastSyncError: $LastSyncError, ')
+          ..write('SyncBatchID: $SyncBatchID, ')
           ..write('CreatedAt: $CreatedAt')
           ..write(')'))
         .toString();
@@ -2922,6 +3292,13 @@ typedef $$TransactionsTableCreateCompanionBuilder =
       required String CashierName,
       required int TotalInCents,
       Value<String> Status,
+      Value<String> PaymentMethod,
+      Value<String> SyncStatus,
+      Value<int> SyncAttemptCount,
+      Value<DateTime?> LastSyncAttemptAt,
+      Value<DateTime?> SyncedAt,
+      Value<String?> LastSyncError,
+      Value<String?> SyncBatchID,
       Value<DateTime> CreatedAt,
     });
 typedef $$TransactionsTableUpdateCompanionBuilder =
@@ -2931,6 +3308,13 @@ typedef $$TransactionsTableUpdateCompanionBuilder =
       Value<String> CashierName,
       Value<int> TotalInCents,
       Value<String> Status,
+      Value<String> PaymentMethod,
+      Value<String> SyncStatus,
+      Value<int> SyncAttemptCount,
+      Value<DateTime?> LastSyncAttemptAt,
+      Value<DateTime?> SyncedAt,
+      Value<String?> LastSyncError,
+      Value<String?> SyncBatchID,
       Value<DateTime> CreatedAt,
     });
 
@@ -2990,6 +3374,41 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<String> get Status => $composableBuilder(
     column: $table.Status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get PaymentMethod => $composableBuilder(
+    column: $table.PaymentMethod,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get SyncStatus => $composableBuilder(
+    column: $table.SyncStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get SyncAttemptCount => $composableBuilder(
+    column: $table.SyncAttemptCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get LastSyncAttemptAt => $composableBuilder(
+    column: $table.LastSyncAttemptAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get SyncedAt => $composableBuilder(
+    column: $table.SyncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get LastSyncError => $composableBuilder(
+    column: $table.LastSyncError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get SyncBatchID => $composableBuilder(
+    column: $table.SyncBatchID,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3058,6 +3477,41 @@ class $$TransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get PaymentMethod => $composableBuilder(
+    column: $table.PaymentMethod,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get SyncStatus => $composableBuilder(
+    column: $table.SyncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get SyncAttemptCount => $composableBuilder(
+    column: $table.SyncAttemptCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get LastSyncAttemptAt => $composableBuilder(
+    column: $table.LastSyncAttemptAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get SyncedAt => $composableBuilder(
+    column: $table.SyncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get LastSyncError => $composableBuilder(
+    column: $table.LastSyncError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get SyncBatchID => $composableBuilder(
+    column: $table.SyncBatchID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get CreatedAt => $composableBuilder(
     column: $table.CreatedAt,
     builder: (column) => ColumnOrderings(column),
@@ -3093,6 +3547,39 @@ class $$TransactionsTableAnnotationComposer
 
   GeneratedColumn<String> get Status =>
       $composableBuilder(column: $table.Status, builder: (column) => column);
+
+  GeneratedColumn<String> get PaymentMethod => $composableBuilder(
+    column: $table.PaymentMethod,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get SyncStatus => $composableBuilder(
+    column: $table.SyncStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get SyncAttemptCount => $composableBuilder(
+    column: $table.SyncAttemptCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get LastSyncAttemptAt => $composableBuilder(
+    column: $table.LastSyncAttemptAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get SyncedAt =>
+      $composableBuilder(column: $table.SyncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get LastSyncError => $composableBuilder(
+    column: $table.LastSyncError,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get SyncBatchID => $composableBuilder(
+    column: $table.SyncBatchID,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get CreatedAt =>
       $composableBuilder(column: $table.CreatedAt, builder: (column) => column);
@@ -3156,6 +3643,13 @@ class $$TransactionsTableTableManager
                 Value<String> CashierName = const Value.absent(),
                 Value<int> TotalInCents = const Value.absent(),
                 Value<String> Status = const Value.absent(),
+                Value<String> PaymentMethod = const Value.absent(),
+                Value<String> SyncStatus = const Value.absent(),
+                Value<int> SyncAttemptCount = const Value.absent(),
+                Value<DateTime?> LastSyncAttemptAt = const Value.absent(),
+                Value<DateTime?> SyncedAt = const Value.absent(),
+                Value<String?> LastSyncError = const Value.absent(),
+                Value<String?> SyncBatchID = const Value.absent(),
                 Value<DateTime> CreatedAt = const Value.absent(),
               }) => TransactionsCompanion(
                 ID: ID,
@@ -3163,6 +3657,13 @@ class $$TransactionsTableTableManager
                 CashierName: CashierName,
                 TotalInCents: TotalInCents,
                 Status: Status,
+                PaymentMethod: PaymentMethod,
+                SyncStatus: SyncStatus,
+                SyncAttemptCount: SyncAttemptCount,
+                LastSyncAttemptAt: LastSyncAttemptAt,
+                SyncedAt: SyncedAt,
+                LastSyncError: LastSyncError,
+                SyncBatchID: SyncBatchID,
                 CreatedAt: CreatedAt,
               ),
           createCompanionCallback:
@@ -3172,6 +3673,13 @@ class $$TransactionsTableTableManager
                 required String CashierName,
                 required int TotalInCents,
                 Value<String> Status = const Value.absent(),
+                Value<String> PaymentMethod = const Value.absent(),
+                Value<String> SyncStatus = const Value.absent(),
+                Value<int> SyncAttemptCount = const Value.absent(),
+                Value<DateTime?> LastSyncAttemptAt = const Value.absent(),
+                Value<DateTime?> SyncedAt = const Value.absent(),
+                Value<String?> LastSyncError = const Value.absent(),
+                Value<String?> SyncBatchID = const Value.absent(),
                 Value<DateTime> CreatedAt = const Value.absent(),
               }) => TransactionsCompanion.insert(
                 ID: ID,
@@ -3179,6 +3687,13 @@ class $$TransactionsTableTableManager
                 CashierName: CashierName,
                 TotalInCents: TotalInCents,
                 Status: Status,
+                PaymentMethod: PaymentMethod,
+                SyncStatus: SyncStatus,
+                SyncAttemptCount: SyncAttemptCount,
+                LastSyncAttemptAt: LastSyncAttemptAt,
+                SyncedAt: SyncedAt,
+                LastSyncError: LastSyncError,
+                SyncBatchID: SyncBatchID,
                 CreatedAt: CreatedAt,
               ),
           withReferenceMapper: (p0) => p0
