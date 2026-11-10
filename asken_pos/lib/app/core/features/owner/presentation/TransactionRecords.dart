@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionRecordsService.dart';
 
@@ -86,15 +89,17 @@ class _TransactionRecordsPageState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+           
             ListTile(
-              leading: const Icon(Icons.table_view_outlined),
-              title: const Text('Copy CSV data'),
-              onTap: () => Navigator.pop(Context, 'csv'),
+              leading: const Icon(Icons.document_scanner),
+              title: const Text('Save and open CSV file'),
+              onTap: () => Navigator.pop(Context, 'csv_open'),
             ),
+
             ListTile(
-              leading: const Icon(Icons.description_outlined),
-              title: const Text('Copy readable text'),
-              onTap: () => Navigator.pop(Context, 'text'),
+              leading: const Icon(Icons.file_copy),
+              title: const Text('Save and open TXT file'),
+              onTap: () => Navigator.pop(Context, 'text_open'),
             ),
           ],
         ),
@@ -102,13 +107,45 @@ class _TransactionRecordsPageState
     );
 
     if (ExportType == null || !mounted) return;
-    final Content = ExportType == 'csv'
-        ? ExportService.ToCsv(Records)
-        : ExportService.ToText(Records);
-    await Clipboard.setData(ClipboardData(text: Content));
+    final DateLabel = DateFormat('yyyyMMdd').format(SelectedRange.From);
+    final IsCsv = ExportType.startsWith('csv');
+    final ShouldOpen = ExportType.endsWith('open');
+    late final File ExportedFile;
+    try {
+      ExportedFile = IsCsv
+          ? await ExportService.SaveCsv(
+              Records: Records,
+              FileName: 'asken_pos_transactions_$DateLabel.csv',
+            )
+          : await ExportService.SaveText(
+              Records: Records,
+              FileName: 'asken_pos_transactions_$DateLabel.txt',
+            );
+    } catch (Error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to save file: $Error')),
+      );
+      return;
+    }
+
+    var Message = 'File saved: ${ExportedFile.path}';
+    if (ShouldOpen) {
+      try {
+        await OpenFilex.open(ExportedFile.path);
+        Message = 'File saved. Opening now...';
+      } on MissingPluginException {
+        Message =
+            'File saved, but opening is unavailable until the app is fully restarted.';
+      } on PlatformException {
+        Message = 'File saved, but no compatible app could open the file.';
+      } catch (_) {
+        Message = 'File saved, but the file could not be opened.';
+      }
+    }
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${ExportType.toUpperCase()} data copied.')),
+      SnackBar(content: Text(Message)),
     );
   }
 
@@ -124,10 +161,12 @@ class _TransactionRecordsPageState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Transaction Records'),
+        title: const Text('Records'),
         actions: [
+          Text('Filter Options'),
           PopupMenuButton<String>(
             tooltip: 'Date range',
+            elevation: 4,
             onSelected: (Value) async {
               if (Value == 'today') {
                 setState(() => SelectedRange = _Today());
@@ -141,9 +180,9 @@ class _TransactionRecordsPageState
             },
             itemBuilder: (_) => const [
               PopupMenuItem(value: 'today', child: Text('Today')),
-              PopupMenuItem(value: 'month', child: Text('This month')),
-              PopupMenuItem(value: 'previous', child: Text('Previous month')),
-              PopupMenuItem(value: 'custom', child: Text('Custom range')),
+              PopupMenuItem(value: 'month', child: Text('This Month')),
+              PopupMenuItem(value: 'previous', child: Text('Previous Month')),
+              PopupMenuItem(value: 'custom', child: Text('Custom Range')),
             ],
           ),
         ],
@@ -178,7 +217,7 @@ class _TransactionRecordsPageState
                         onChanged: (Value) =>
                             setState(() => SearchQuery = Value),
                         decoration: const InputDecoration(
-                          labelText: 'Search selected dates',
+                          labelText: 'Search...',
                           prefixIcon: Icon(Icons.search),
                           border: OutlineInputBorder(),
                         ),
@@ -190,7 +229,7 @@ class _TransactionRecordsPageState
                       onPressed: FilteredRows.isEmpty
                           ? null
                           : () => _ShowExportOptions(FilteredRows),
-                      icon: const Icon(Icons.ios_share_outlined),
+                      icon: const Icon(Icons.save),
                     ),
                   ],
                 ),
@@ -200,6 +239,7 @@ class _TransactionRecordsPageState
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
+                    'Current Range: '
                     '${DateFormat('MMM d, yyyy').format(SelectedRange.From)} - '
                     '${DateFormat('MMM d, yyyy').format(SelectedRange.To.subtract(const Duration(days: 1)))}',
                     style: Theme.of(context).textTheme.bodySmall,
@@ -218,7 +258,9 @@ class _TransactionRecordsPageState
                           final Record = FilteredRows[Index];
                           final TransactionData = Record.TransactionData;
                           return Card(
+                            elevation: 7,
                             child: ListTile(
+                              contentPadding: EdgeInsetsGeometry.fromLTRB(16, 10, 16, 10),
                               onTap: () => Navigator.push(
                                 Context,
                                 MaterialPageRoute(
@@ -228,18 +270,31 @@ class _TransactionRecordsPageState
                                 ),
                               ),
                               title: Text(TransactionData.ReceiptNumber),
-                              subtitle: Text(
-                                '${TransactionData.CashierName} • '
-                                '${DateFormat('MMM d, yyyy h:mm a').format(TransactionData.CreatedAt)}\n'
-                                '${TransactionData.SyncStatus.toUpperCase()}',
+                              titleTextStyle: TextStyle(
+                                height: 2,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                                color: Colors.black,
                               ),
+                              subtitle: Text(
+                                'Cashier: ${TransactionData.CashierName}'
+                                '\nDate: ${DateFormat('MMM d, yyyy h:mm a').format(TransactionData.CreatedAt)}\n'
+                                'Sync Status: ${TransactionData.SyncStatus.toUpperCase()}',
+                              ),
+                              subtitleTextStyle: TextStyle(
+                                  height: 2,
+                                  fontWeight: FontWeight.w500,
+                                   color: Colors.black,
+                                ),
                               isThreeLine: true,
                               trailing: Text(
                                 _FormatPeso(TransactionData.TotalInCents),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                ),
                               ),
+                              leadingAndTrailingTextStyle: TextStyle(
+                                  height: 2,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
+                                ),
                             ),
                           );
                         },

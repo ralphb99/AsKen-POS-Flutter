@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:asken_pos/app/core/database/AppDatabase.dart';
 
 class TransactionRecord {
@@ -109,6 +112,35 @@ class TransactionRecordsService {
 class TransactionExportService {
   const TransactionExportService();
 
+  Future<File> SaveCsv({
+    required List<TransactionRecord> Records,
+    required String FileName,
+  }) {
+    return _SaveFile(FileName: FileName, Content: ToCsv(Records));
+  }
+
+  Future<File> SaveText({
+    required List<TransactionRecord> Records,
+    required String FileName,
+  }) {
+    return _SaveFile(FileName: FileName, Content: ToText(Records));
+  }
+
+  Future<File> _SaveFile({
+    required String FileName,
+    required String Content,
+  }) async {
+    final DocumentsDirectory = await getApplicationDocumentsDirectory();
+    final ExportDirectory = Directory(
+      '${DocumentsDirectory.path}${Platform.pathSeparator}transaction_exports',
+    );
+    await ExportDirectory.create(recursive: true);
+
+    final FilePath =
+        '${ExportDirectory.path}${Platform.pathSeparator}$FileName';
+    return File(FilePath).writeAsString(Content);
+  }
+
   String ToCsv(List<TransactionRecord> Records) {
     final Lines = <String>[
       'ReceiptNumber,CreatedAt,CashierName,PaymentMethod,Product,Unit,Quantity,UnitPrice,LineTotal,TransactionTotal,SyncStatus',
@@ -117,21 +149,19 @@ class TransactionExportService {
     for (final Record in Records) {
       final TransactionData = Record.TransactionData;
       for (final Item in Record.Items) {
-        Lines.add(
-          [
-            _Escape(TransactionData.ReceiptNumber),
-            _Escape(TransactionData.CreatedAt.toIso8601String()),
-            _Escape(TransactionData.CashierName),
-            _Escape(TransactionData.PaymentMethod),
-            _Escape(Item.ProductNameSnapshot),
-            _Escape(Item.UnitSnapshot),
-            Item.Quantity,
-            _FormatAmount(Item.UnitPriceInCents),
-            _FormatAmount(Item.LineTotalInCents),
-            _FormatAmount(TransactionData.TotalInCents),
-            _Escape(TransactionData.SyncStatus),
-          ].join(','),
-        );
+        Lines.add([
+          _Escape(TransactionData.ReceiptNumber),
+          _Escape(TransactionData.CreatedAt.toIso8601String()),
+          _Escape(TransactionData.CashierName),
+          _Escape(TransactionData.PaymentMethod),
+          _Escape(Item.ProductNameSnapshot),
+          _Escape(Item.UnitSnapshot),
+          Item.Quantity,
+          _FormatAmount(Item.UnitPriceInCents),
+          _FormatAmount(Item.LineTotalInCents),
+          _FormatAmount(TransactionData.TotalInCents),
+          _Escape(TransactionData.SyncStatus),
+        ].join(','));
       }
     }
 

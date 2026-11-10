@@ -248,7 +248,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.blue,
-                          shape: BeveledRectangleBorder(),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
                         child: Text('START'),
                       ),
