@@ -2136,6 +2136,1013 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   }
 }
 
+class $TransactionSyncBatchesTable extends TransactionSyncBatches
+    with TableInfo<$TransactionSyncBatchesTable, TransactionSyncBatche> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TransactionSyncBatchesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _IDMeta = const VerificationMeta('ID');
+  @override
+  late final GeneratedColumn<int> ID = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _BusinessDateMeta = const VerificationMeta(
+    'BusinessDate',
+  );
+  @override
+  late final GeneratedColumn<String> BusinessDate = GeneratedColumn<String>(
+    'business_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _FileNameMeta = const VerificationMeta(
+    'FileName',
+  );
+  @override
+  late final GeneratedColumn<String> FileName = GeneratedColumn<String>(
+    'file_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _TextFileNameMeta = const VerificationMeta(
+    'TextFileName',
+  );
+  @override
+  late final GeneratedColumn<String> TextFileName = GeneratedColumn<String>(
+    'text_file_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _LocalFilePathMeta = const VerificationMeta(
+    'LocalFilePath',
+  );
+  @override
+  late final GeneratedColumn<String> LocalFilePath = GeneratedColumn<String>(
+    'local_file_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _TextLocalFilePathMeta = const VerificationMeta(
+    'TextLocalFilePath',
+  );
+  @override
+  late final GeneratedColumn<String> TextLocalFilePath =
+      GeneratedColumn<String>(
+        'text_local_file_path',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _RemoteFileIDMeta = const VerificationMeta(
+    'RemoteFileID',
+  );
+  @override
+  late final GeneratedColumn<String> RemoteFileID = GeneratedColumn<String>(
+    'remote_file_i_d',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _RemoteTextFileIDMeta = const VerificationMeta(
+    'RemoteTextFileID',
+  );
+  @override
+  late final GeneratedColumn<String> RemoteTextFileID = GeneratedColumn<String>(
+    'remote_text_file_i_d',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ChecksumMeta = const VerificationMeta(
+    'Checksum',
+  );
+  @override
+  late final GeneratedColumn<String> Checksum = GeneratedColumn<String>(
+    'checksum',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _TextChecksumMeta = const VerificationMeta(
+    'TextChecksum',
+  );
+  @override
+  late final GeneratedColumn<String> TextChecksum = GeneratedColumn<String>(
+    'text_checksum',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _RecordCountMeta = const VerificationMeta(
+    'RecordCount',
+  );
+  @override
+  late final GeneratedColumn<int> RecordCount = GeneratedColumn<int>(
+    'record_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _StatusMeta = const VerificationMeta('Status');
+  @override
+  late final GeneratedColumn<String> Status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _AttemptCountMeta = const VerificationMeta(
+    'AttemptCount',
+  );
+  @override
+  late final GeneratedColumn<int> AttemptCount = GeneratedColumn<int>(
+    'attempt_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _LastAttemptAtMeta = const VerificationMeta(
+    'LastAttemptAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> LastAttemptAt =
+      GeneratedColumn<DateTime>(
+        'last_attempt_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _LastErrorMeta = const VerificationMeta(
+    'LastError',
+  );
+  @override
+  late final GeneratedColumn<String> LastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _UploadedAtMeta = const VerificationMeta(
+    'UploadedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> UploadedAt = GeneratedColumn<DateTime>(
+    'uploaded_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _CreatedAtMeta = const VerificationMeta(
+    'CreatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> CreatedAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    ID,
+    BusinessDate,
+    FileName,
+    TextFileName,
+    LocalFilePath,
+    TextLocalFilePath,
+    RemoteFileID,
+    RemoteTextFileID,
+    Checksum,
+    TextChecksum,
+    RecordCount,
+    Status,
+    AttemptCount,
+    LastAttemptAt,
+    LastError,
+    UploadedAt,
+    CreatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'transaction_sync_batches';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TransactionSyncBatche> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_IDMeta, ID.isAcceptableOrUnknown(data['id']!, _IDMeta));
+    }
+    if (data.containsKey('business_date')) {
+      context.handle(
+        _BusinessDateMeta,
+        BusinessDate.isAcceptableOrUnknown(
+          data['business_date']!,
+          _BusinessDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_BusinessDateMeta);
+    }
+    if (data.containsKey('file_name')) {
+      context.handle(
+        _FileNameMeta,
+        FileName.isAcceptableOrUnknown(data['file_name']!, _FileNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_FileNameMeta);
+    }
+    if (data.containsKey('text_file_name')) {
+      context.handle(
+        _TextFileNameMeta,
+        TextFileName.isAcceptableOrUnknown(
+          data['text_file_name']!,
+          _TextFileNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('local_file_path')) {
+      context.handle(
+        _LocalFilePathMeta,
+        LocalFilePath.isAcceptableOrUnknown(
+          data['local_file_path']!,
+          _LocalFilePathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('text_local_file_path')) {
+      context.handle(
+        _TextLocalFilePathMeta,
+        TextLocalFilePath.isAcceptableOrUnknown(
+          data['text_local_file_path']!,
+          _TextLocalFilePathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('remote_file_i_d')) {
+      context.handle(
+        _RemoteFileIDMeta,
+        RemoteFileID.isAcceptableOrUnknown(
+          data['remote_file_i_d']!,
+          _RemoteFileIDMeta,
+        ),
+      );
+    }
+    if (data.containsKey('remote_text_file_i_d')) {
+      context.handle(
+        _RemoteTextFileIDMeta,
+        RemoteTextFileID.isAcceptableOrUnknown(
+          data['remote_text_file_i_d']!,
+          _RemoteTextFileIDMeta,
+        ),
+      );
+    }
+    if (data.containsKey('checksum')) {
+      context.handle(
+        _ChecksumMeta,
+        Checksum.isAcceptableOrUnknown(data['checksum']!, _ChecksumMeta),
+      );
+    }
+    if (data.containsKey('text_checksum')) {
+      context.handle(
+        _TextChecksumMeta,
+        TextChecksum.isAcceptableOrUnknown(
+          data['text_checksum']!,
+          _TextChecksumMeta,
+        ),
+      );
+    }
+    if (data.containsKey('record_count')) {
+      context.handle(
+        _RecordCountMeta,
+        RecordCount.isAcceptableOrUnknown(
+          data['record_count']!,
+          _RecordCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _StatusMeta,
+        Status.isAcceptableOrUnknown(data['status']!, _StatusMeta),
+      );
+    }
+    if (data.containsKey('attempt_count')) {
+      context.handle(
+        _AttemptCountMeta,
+        AttemptCount.isAcceptableOrUnknown(
+          data['attempt_count']!,
+          _AttemptCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_attempt_at')) {
+      context.handle(
+        _LastAttemptAtMeta,
+        LastAttemptAt.isAcceptableOrUnknown(
+          data['last_attempt_at']!,
+          _LastAttemptAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _LastErrorMeta,
+        LastError.isAcceptableOrUnknown(data['last_error']!, _LastErrorMeta),
+      );
+    }
+    if (data.containsKey('uploaded_at')) {
+      context.handle(
+        _UploadedAtMeta,
+        UploadedAt.isAcceptableOrUnknown(data['uploaded_at']!, _UploadedAtMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _CreatedAtMeta,
+        CreatedAt.isAcceptableOrUnknown(data['created_at']!, _CreatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {ID};
+  @override
+  TransactionSyncBatche map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TransactionSyncBatche(
+      ID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      BusinessDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}business_date'],
+      )!,
+      FileName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_name'],
+      )!,
+      TextFileName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_file_name'],
+      ),
+      LocalFilePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_file_path'],
+      ),
+      TextLocalFilePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_local_file_path'],
+      ),
+      RemoteFileID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_file_i_d'],
+      ),
+      RemoteTextFileID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_text_file_i_d'],
+      ),
+      Checksum: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}checksum'],
+      ),
+      TextChecksum: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_checksum'],
+      ),
+      RecordCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}record_count'],
+      )!,
+      Status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      AttemptCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempt_count'],
+      )!,
+      LastAttemptAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_attempt_at'],
+      ),
+      LastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      UploadedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}uploaded_at'],
+      ),
+      CreatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $TransactionSyncBatchesTable createAlias(String alias) {
+    return $TransactionSyncBatchesTable(attachedDatabase, alias);
+  }
+}
+
+class TransactionSyncBatche extends DataClass
+    implements Insertable<TransactionSyncBatche> {
+  final int ID;
+
+  /// One stable key per local business date, formatted as YYYY-MM-DD.
+  final String BusinessDate;
+  final String FileName;
+  final String? TextFileName;
+  final String? LocalFilePath;
+  final String? TextLocalFilePath;
+  final String? RemoteFileID;
+  final String? RemoteTextFileID;
+  final String? Checksum;
+  final String? TextChecksum;
+  final int RecordCount;
+
+  /// pending, uploading, synced, or failed.
+  final String Status;
+  final int AttemptCount;
+  final DateTime? LastAttemptAt;
+  final String? LastError;
+  final DateTime? UploadedAt;
+  final DateTime CreatedAt;
+  const TransactionSyncBatche({
+    required this.ID,
+    required this.BusinessDate,
+    required this.FileName,
+    this.TextFileName,
+    this.LocalFilePath,
+    this.TextLocalFilePath,
+    this.RemoteFileID,
+    this.RemoteTextFileID,
+    this.Checksum,
+    this.TextChecksum,
+    required this.RecordCount,
+    required this.Status,
+    required this.AttemptCount,
+    this.LastAttemptAt,
+    this.LastError,
+    this.UploadedAt,
+    required this.CreatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(ID);
+    map['business_date'] = Variable<String>(BusinessDate);
+    map['file_name'] = Variable<String>(FileName);
+    if (!nullToAbsent || TextFileName != null) {
+      map['text_file_name'] = Variable<String>(TextFileName);
+    }
+    if (!nullToAbsent || LocalFilePath != null) {
+      map['local_file_path'] = Variable<String>(LocalFilePath);
+    }
+    if (!nullToAbsent || TextLocalFilePath != null) {
+      map['text_local_file_path'] = Variable<String>(TextLocalFilePath);
+    }
+    if (!nullToAbsent || RemoteFileID != null) {
+      map['remote_file_i_d'] = Variable<String>(RemoteFileID);
+    }
+    if (!nullToAbsent || RemoteTextFileID != null) {
+      map['remote_text_file_i_d'] = Variable<String>(RemoteTextFileID);
+    }
+    if (!nullToAbsent || Checksum != null) {
+      map['checksum'] = Variable<String>(Checksum);
+    }
+    if (!nullToAbsent || TextChecksum != null) {
+      map['text_checksum'] = Variable<String>(TextChecksum);
+    }
+    map['record_count'] = Variable<int>(RecordCount);
+    map['status'] = Variable<String>(Status);
+    map['attempt_count'] = Variable<int>(AttemptCount);
+    if (!nullToAbsent || LastAttemptAt != null) {
+      map['last_attempt_at'] = Variable<DateTime>(LastAttemptAt);
+    }
+    if (!nullToAbsent || LastError != null) {
+      map['last_error'] = Variable<String>(LastError);
+    }
+    if (!nullToAbsent || UploadedAt != null) {
+      map['uploaded_at'] = Variable<DateTime>(UploadedAt);
+    }
+    map['created_at'] = Variable<DateTime>(CreatedAt);
+    return map;
+  }
+
+  TransactionSyncBatchesCompanion toCompanion(bool nullToAbsent) {
+    return TransactionSyncBatchesCompanion(
+      ID: Value(ID),
+      BusinessDate: Value(BusinessDate),
+      FileName: Value(FileName),
+      TextFileName: TextFileName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(TextFileName),
+      LocalFilePath: LocalFilePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(LocalFilePath),
+      TextLocalFilePath: TextLocalFilePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(TextLocalFilePath),
+      RemoteFileID: RemoteFileID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(RemoteFileID),
+      RemoteTextFileID: RemoteTextFileID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(RemoteTextFileID),
+      Checksum: Checksum == null && nullToAbsent
+          ? const Value.absent()
+          : Value(Checksum),
+      TextChecksum: TextChecksum == null && nullToAbsent
+          ? const Value.absent()
+          : Value(TextChecksum),
+      RecordCount: Value(RecordCount),
+      Status: Value(Status),
+      AttemptCount: Value(AttemptCount),
+      LastAttemptAt: LastAttemptAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(LastAttemptAt),
+      LastError: LastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(LastError),
+      UploadedAt: UploadedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(UploadedAt),
+      CreatedAt: Value(CreatedAt),
+    );
+  }
+
+  factory TransactionSyncBatche.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TransactionSyncBatche(
+      ID: serializer.fromJson<int>(json['ID']),
+      BusinessDate: serializer.fromJson<String>(json['BusinessDate']),
+      FileName: serializer.fromJson<String>(json['FileName']),
+      TextFileName: serializer.fromJson<String?>(json['TextFileName']),
+      LocalFilePath: serializer.fromJson<String?>(json['LocalFilePath']),
+      TextLocalFilePath: serializer.fromJson<String?>(
+        json['TextLocalFilePath'],
+      ),
+      RemoteFileID: serializer.fromJson<String?>(json['RemoteFileID']),
+      RemoteTextFileID: serializer.fromJson<String?>(json['RemoteTextFileID']),
+      Checksum: serializer.fromJson<String?>(json['Checksum']),
+      TextChecksum: serializer.fromJson<String?>(json['TextChecksum']),
+      RecordCount: serializer.fromJson<int>(json['RecordCount']),
+      Status: serializer.fromJson<String>(json['Status']),
+      AttemptCount: serializer.fromJson<int>(json['AttemptCount']),
+      LastAttemptAt: serializer.fromJson<DateTime?>(json['LastAttemptAt']),
+      LastError: serializer.fromJson<String?>(json['LastError']),
+      UploadedAt: serializer.fromJson<DateTime?>(json['UploadedAt']),
+      CreatedAt: serializer.fromJson<DateTime>(json['CreatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'ID': serializer.toJson<int>(ID),
+      'BusinessDate': serializer.toJson<String>(BusinessDate),
+      'FileName': serializer.toJson<String>(FileName),
+      'TextFileName': serializer.toJson<String?>(TextFileName),
+      'LocalFilePath': serializer.toJson<String?>(LocalFilePath),
+      'TextLocalFilePath': serializer.toJson<String?>(TextLocalFilePath),
+      'RemoteFileID': serializer.toJson<String?>(RemoteFileID),
+      'RemoteTextFileID': serializer.toJson<String?>(RemoteTextFileID),
+      'Checksum': serializer.toJson<String?>(Checksum),
+      'TextChecksum': serializer.toJson<String?>(TextChecksum),
+      'RecordCount': serializer.toJson<int>(RecordCount),
+      'Status': serializer.toJson<String>(Status),
+      'AttemptCount': serializer.toJson<int>(AttemptCount),
+      'LastAttemptAt': serializer.toJson<DateTime?>(LastAttemptAt),
+      'LastError': serializer.toJson<String?>(LastError),
+      'UploadedAt': serializer.toJson<DateTime?>(UploadedAt),
+      'CreatedAt': serializer.toJson<DateTime>(CreatedAt),
+    };
+  }
+
+  TransactionSyncBatche copyWith({
+    int? ID,
+    String? BusinessDate,
+    String? FileName,
+    Value<String?> TextFileName = const Value.absent(),
+    Value<String?> LocalFilePath = const Value.absent(),
+    Value<String?> TextLocalFilePath = const Value.absent(),
+    Value<String?> RemoteFileID = const Value.absent(),
+    Value<String?> RemoteTextFileID = const Value.absent(),
+    Value<String?> Checksum = const Value.absent(),
+    Value<String?> TextChecksum = const Value.absent(),
+    int? RecordCount,
+    String? Status,
+    int? AttemptCount,
+    Value<DateTime?> LastAttemptAt = const Value.absent(),
+    Value<String?> LastError = const Value.absent(),
+    Value<DateTime?> UploadedAt = const Value.absent(),
+    DateTime? CreatedAt,
+  }) => TransactionSyncBatche(
+    ID: ID ?? this.ID,
+    BusinessDate: BusinessDate ?? this.BusinessDate,
+    FileName: FileName ?? this.FileName,
+    TextFileName: TextFileName.present ? TextFileName.value : this.TextFileName,
+    LocalFilePath: LocalFilePath.present
+        ? LocalFilePath.value
+        : this.LocalFilePath,
+    TextLocalFilePath: TextLocalFilePath.present
+        ? TextLocalFilePath.value
+        : this.TextLocalFilePath,
+    RemoteFileID: RemoteFileID.present ? RemoteFileID.value : this.RemoteFileID,
+    RemoteTextFileID: RemoteTextFileID.present
+        ? RemoteTextFileID.value
+        : this.RemoteTextFileID,
+    Checksum: Checksum.present ? Checksum.value : this.Checksum,
+    TextChecksum: TextChecksum.present ? TextChecksum.value : this.TextChecksum,
+    RecordCount: RecordCount ?? this.RecordCount,
+    Status: Status ?? this.Status,
+    AttemptCount: AttemptCount ?? this.AttemptCount,
+    LastAttemptAt: LastAttemptAt.present
+        ? LastAttemptAt.value
+        : this.LastAttemptAt,
+    LastError: LastError.present ? LastError.value : this.LastError,
+    UploadedAt: UploadedAt.present ? UploadedAt.value : this.UploadedAt,
+    CreatedAt: CreatedAt ?? this.CreatedAt,
+  );
+  TransactionSyncBatche copyWithCompanion(
+    TransactionSyncBatchesCompanion data,
+  ) {
+    return TransactionSyncBatche(
+      ID: data.ID.present ? data.ID.value : this.ID,
+      BusinessDate: data.BusinessDate.present
+          ? data.BusinessDate.value
+          : this.BusinessDate,
+      FileName: data.FileName.present ? data.FileName.value : this.FileName,
+      TextFileName: data.TextFileName.present
+          ? data.TextFileName.value
+          : this.TextFileName,
+      LocalFilePath: data.LocalFilePath.present
+          ? data.LocalFilePath.value
+          : this.LocalFilePath,
+      TextLocalFilePath: data.TextLocalFilePath.present
+          ? data.TextLocalFilePath.value
+          : this.TextLocalFilePath,
+      RemoteFileID: data.RemoteFileID.present
+          ? data.RemoteFileID.value
+          : this.RemoteFileID,
+      RemoteTextFileID: data.RemoteTextFileID.present
+          ? data.RemoteTextFileID.value
+          : this.RemoteTextFileID,
+      Checksum: data.Checksum.present ? data.Checksum.value : this.Checksum,
+      TextChecksum: data.TextChecksum.present
+          ? data.TextChecksum.value
+          : this.TextChecksum,
+      RecordCount: data.RecordCount.present
+          ? data.RecordCount.value
+          : this.RecordCount,
+      Status: data.Status.present ? data.Status.value : this.Status,
+      AttemptCount: data.AttemptCount.present
+          ? data.AttemptCount.value
+          : this.AttemptCount,
+      LastAttemptAt: data.LastAttemptAt.present
+          ? data.LastAttemptAt.value
+          : this.LastAttemptAt,
+      LastError: data.LastError.present ? data.LastError.value : this.LastError,
+      UploadedAt: data.UploadedAt.present
+          ? data.UploadedAt.value
+          : this.UploadedAt,
+      CreatedAt: data.CreatedAt.present ? data.CreatedAt.value : this.CreatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TransactionSyncBatche(')
+          ..write('ID: $ID, ')
+          ..write('BusinessDate: $BusinessDate, ')
+          ..write('FileName: $FileName, ')
+          ..write('TextFileName: $TextFileName, ')
+          ..write('LocalFilePath: $LocalFilePath, ')
+          ..write('TextLocalFilePath: $TextLocalFilePath, ')
+          ..write('RemoteFileID: $RemoteFileID, ')
+          ..write('RemoteTextFileID: $RemoteTextFileID, ')
+          ..write('Checksum: $Checksum, ')
+          ..write('TextChecksum: $TextChecksum, ')
+          ..write('RecordCount: $RecordCount, ')
+          ..write('Status: $Status, ')
+          ..write('AttemptCount: $AttemptCount, ')
+          ..write('LastAttemptAt: $LastAttemptAt, ')
+          ..write('LastError: $LastError, ')
+          ..write('UploadedAt: $UploadedAt, ')
+          ..write('CreatedAt: $CreatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    ID,
+    BusinessDate,
+    FileName,
+    TextFileName,
+    LocalFilePath,
+    TextLocalFilePath,
+    RemoteFileID,
+    RemoteTextFileID,
+    Checksum,
+    TextChecksum,
+    RecordCount,
+    Status,
+    AttemptCount,
+    LastAttemptAt,
+    LastError,
+    UploadedAt,
+    CreatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TransactionSyncBatche &&
+          other.ID == this.ID &&
+          other.BusinessDate == this.BusinessDate &&
+          other.FileName == this.FileName &&
+          other.TextFileName == this.TextFileName &&
+          other.LocalFilePath == this.LocalFilePath &&
+          other.TextLocalFilePath == this.TextLocalFilePath &&
+          other.RemoteFileID == this.RemoteFileID &&
+          other.RemoteTextFileID == this.RemoteTextFileID &&
+          other.Checksum == this.Checksum &&
+          other.TextChecksum == this.TextChecksum &&
+          other.RecordCount == this.RecordCount &&
+          other.Status == this.Status &&
+          other.AttemptCount == this.AttemptCount &&
+          other.LastAttemptAt == this.LastAttemptAt &&
+          other.LastError == this.LastError &&
+          other.UploadedAt == this.UploadedAt &&
+          other.CreatedAt == this.CreatedAt);
+}
+
+class TransactionSyncBatchesCompanion
+    extends UpdateCompanion<TransactionSyncBatche> {
+  final Value<int> ID;
+  final Value<String> BusinessDate;
+  final Value<String> FileName;
+  final Value<String?> TextFileName;
+  final Value<String?> LocalFilePath;
+  final Value<String?> TextLocalFilePath;
+  final Value<String?> RemoteFileID;
+  final Value<String?> RemoteTextFileID;
+  final Value<String?> Checksum;
+  final Value<String?> TextChecksum;
+  final Value<int> RecordCount;
+  final Value<String> Status;
+  final Value<int> AttemptCount;
+  final Value<DateTime?> LastAttemptAt;
+  final Value<String?> LastError;
+  final Value<DateTime?> UploadedAt;
+  final Value<DateTime> CreatedAt;
+  const TransactionSyncBatchesCompanion({
+    this.ID = const Value.absent(),
+    this.BusinessDate = const Value.absent(),
+    this.FileName = const Value.absent(),
+    this.TextFileName = const Value.absent(),
+    this.LocalFilePath = const Value.absent(),
+    this.TextLocalFilePath = const Value.absent(),
+    this.RemoteFileID = const Value.absent(),
+    this.RemoteTextFileID = const Value.absent(),
+    this.Checksum = const Value.absent(),
+    this.TextChecksum = const Value.absent(),
+    this.RecordCount = const Value.absent(),
+    this.Status = const Value.absent(),
+    this.AttemptCount = const Value.absent(),
+    this.LastAttemptAt = const Value.absent(),
+    this.LastError = const Value.absent(),
+    this.UploadedAt = const Value.absent(),
+    this.CreatedAt = const Value.absent(),
+  });
+  TransactionSyncBatchesCompanion.insert({
+    this.ID = const Value.absent(),
+    required String BusinessDate,
+    required String FileName,
+    this.TextFileName = const Value.absent(),
+    this.LocalFilePath = const Value.absent(),
+    this.TextLocalFilePath = const Value.absent(),
+    this.RemoteFileID = const Value.absent(),
+    this.RemoteTextFileID = const Value.absent(),
+    this.Checksum = const Value.absent(),
+    this.TextChecksum = const Value.absent(),
+    this.RecordCount = const Value.absent(),
+    this.Status = const Value.absent(),
+    this.AttemptCount = const Value.absent(),
+    this.LastAttemptAt = const Value.absent(),
+    this.LastError = const Value.absent(),
+    this.UploadedAt = const Value.absent(),
+    this.CreatedAt = const Value.absent(),
+  }) : BusinessDate = Value(BusinessDate),
+       FileName = Value(FileName);
+  static Insertable<TransactionSyncBatche> custom({
+    Expression<int>? ID,
+    Expression<String>? BusinessDate,
+    Expression<String>? FileName,
+    Expression<String>? TextFileName,
+    Expression<String>? LocalFilePath,
+    Expression<String>? TextLocalFilePath,
+    Expression<String>? RemoteFileID,
+    Expression<String>? RemoteTextFileID,
+    Expression<String>? Checksum,
+    Expression<String>? TextChecksum,
+    Expression<int>? RecordCount,
+    Expression<String>? Status,
+    Expression<int>? AttemptCount,
+    Expression<DateTime>? LastAttemptAt,
+    Expression<String>? LastError,
+    Expression<DateTime>? UploadedAt,
+    Expression<DateTime>? CreatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (ID != null) 'id': ID,
+      if (BusinessDate != null) 'business_date': BusinessDate,
+      if (FileName != null) 'file_name': FileName,
+      if (TextFileName != null) 'text_file_name': TextFileName,
+      if (LocalFilePath != null) 'local_file_path': LocalFilePath,
+      if (TextLocalFilePath != null) 'text_local_file_path': TextLocalFilePath,
+      if (RemoteFileID != null) 'remote_file_i_d': RemoteFileID,
+      if (RemoteTextFileID != null) 'remote_text_file_i_d': RemoteTextFileID,
+      if (Checksum != null) 'checksum': Checksum,
+      if (TextChecksum != null) 'text_checksum': TextChecksum,
+      if (RecordCount != null) 'record_count': RecordCount,
+      if (Status != null) 'status': Status,
+      if (AttemptCount != null) 'attempt_count': AttemptCount,
+      if (LastAttemptAt != null) 'last_attempt_at': LastAttemptAt,
+      if (LastError != null) 'last_error': LastError,
+      if (UploadedAt != null) 'uploaded_at': UploadedAt,
+      if (CreatedAt != null) 'created_at': CreatedAt,
+    });
+  }
+
+  TransactionSyncBatchesCompanion copyWith({
+    Value<int>? ID,
+    Value<String>? BusinessDate,
+    Value<String>? FileName,
+    Value<String?>? TextFileName,
+    Value<String?>? LocalFilePath,
+    Value<String?>? TextLocalFilePath,
+    Value<String?>? RemoteFileID,
+    Value<String?>? RemoteTextFileID,
+    Value<String?>? Checksum,
+    Value<String?>? TextChecksum,
+    Value<int>? RecordCount,
+    Value<String>? Status,
+    Value<int>? AttemptCount,
+    Value<DateTime?>? LastAttemptAt,
+    Value<String?>? LastError,
+    Value<DateTime?>? UploadedAt,
+    Value<DateTime>? CreatedAt,
+  }) {
+    return TransactionSyncBatchesCompanion(
+      ID: ID ?? this.ID,
+      BusinessDate: BusinessDate ?? this.BusinessDate,
+      FileName: FileName ?? this.FileName,
+      TextFileName: TextFileName ?? this.TextFileName,
+      LocalFilePath: LocalFilePath ?? this.LocalFilePath,
+      TextLocalFilePath: TextLocalFilePath ?? this.TextLocalFilePath,
+      RemoteFileID: RemoteFileID ?? this.RemoteFileID,
+      RemoteTextFileID: RemoteTextFileID ?? this.RemoteTextFileID,
+      Checksum: Checksum ?? this.Checksum,
+      TextChecksum: TextChecksum ?? this.TextChecksum,
+      RecordCount: RecordCount ?? this.RecordCount,
+      Status: Status ?? this.Status,
+      AttemptCount: AttemptCount ?? this.AttemptCount,
+      LastAttemptAt: LastAttemptAt ?? this.LastAttemptAt,
+      LastError: LastError ?? this.LastError,
+      UploadedAt: UploadedAt ?? this.UploadedAt,
+      CreatedAt: CreatedAt ?? this.CreatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (ID.present) {
+      map['id'] = Variable<int>(ID.value);
+    }
+    if (BusinessDate.present) {
+      map['business_date'] = Variable<String>(BusinessDate.value);
+    }
+    if (FileName.present) {
+      map['file_name'] = Variable<String>(FileName.value);
+    }
+    if (TextFileName.present) {
+      map['text_file_name'] = Variable<String>(TextFileName.value);
+    }
+    if (LocalFilePath.present) {
+      map['local_file_path'] = Variable<String>(LocalFilePath.value);
+    }
+    if (TextLocalFilePath.present) {
+      map['text_local_file_path'] = Variable<String>(TextLocalFilePath.value);
+    }
+    if (RemoteFileID.present) {
+      map['remote_file_i_d'] = Variable<String>(RemoteFileID.value);
+    }
+    if (RemoteTextFileID.present) {
+      map['remote_text_file_i_d'] = Variable<String>(RemoteTextFileID.value);
+    }
+    if (Checksum.present) {
+      map['checksum'] = Variable<String>(Checksum.value);
+    }
+    if (TextChecksum.present) {
+      map['text_checksum'] = Variable<String>(TextChecksum.value);
+    }
+    if (RecordCount.present) {
+      map['record_count'] = Variable<int>(RecordCount.value);
+    }
+    if (Status.present) {
+      map['status'] = Variable<String>(Status.value);
+    }
+    if (AttemptCount.present) {
+      map['attempt_count'] = Variable<int>(AttemptCount.value);
+    }
+    if (LastAttemptAt.present) {
+      map['last_attempt_at'] = Variable<DateTime>(LastAttemptAt.value);
+    }
+    if (LastError.present) {
+      map['last_error'] = Variable<String>(LastError.value);
+    }
+    if (UploadedAt.present) {
+      map['uploaded_at'] = Variable<DateTime>(UploadedAt.value);
+    }
+    if (CreatedAt.present) {
+      map['created_at'] = Variable<DateTime>(CreatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TransactionSyncBatchesCompanion(')
+          ..write('ID: $ID, ')
+          ..write('BusinessDate: $BusinessDate, ')
+          ..write('FileName: $FileName, ')
+          ..write('TextFileName: $TextFileName, ')
+          ..write('LocalFilePath: $LocalFilePath, ')
+          ..write('TextLocalFilePath: $TextLocalFilePath, ')
+          ..write('RemoteFileID: $RemoteFileID, ')
+          ..write('RemoteTextFileID: $RemoteTextFileID, ')
+          ..write('Checksum: $Checksum, ')
+          ..write('TextChecksum: $TextChecksum, ')
+          ..write('RecordCount: $RecordCount, ')
+          ..write('Status: $Status, ')
+          ..write('AttemptCount: $AttemptCount, ')
+          ..write('LastAttemptAt: $LastAttemptAt, ')
+          ..write('LastError: $LastError, ')
+          ..write('UploadedAt: $UploadedAt, ')
+          ..write('CreatedAt: $CreatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $StoreSettingsTable extends StoreSettings
     with TableInfo<$StoreSettingsTable, StoreSetting> {
   @override
@@ -2516,6 +3523,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TransactionItemsTable transactionItems = $TransactionItemsTable(
     this,
   );
+  late final $TransactionSyncBatchesTable transactionSyncBatches =
+      $TransactionSyncBatchesTable(this);
   late final $StoreSettingsTable storeSettings = $StoreSettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -2526,6 +3535,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     productVariants,
     transactions,
     transactionItems,
+    transactionSyncBatches,
     storeSettings,
   ];
 }
@@ -4234,6 +5244,469 @@ typedef $$TransactionItemsTableProcessedTableManager =
       TransactionItem,
       PrefetchHooks Function({bool TransactionID, bool ProductVariantID})
     >;
+typedef $$TransactionSyncBatchesTableCreateCompanionBuilder =
+    TransactionSyncBatchesCompanion Function({
+      Value<int> ID,
+      required String BusinessDate,
+      required String FileName,
+      Value<String?> TextFileName,
+      Value<String?> LocalFilePath,
+      Value<String?> TextLocalFilePath,
+      Value<String?> RemoteFileID,
+      Value<String?> RemoteTextFileID,
+      Value<String?> Checksum,
+      Value<String?> TextChecksum,
+      Value<int> RecordCount,
+      Value<String> Status,
+      Value<int> AttemptCount,
+      Value<DateTime?> LastAttemptAt,
+      Value<String?> LastError,
+      Value<DateTime?> UploadedAt,
+      Value<DateTime> CreatedAt,
+    });
+typedef $$TransactionSyncBatchesTableUpdateCompanionBuilder =
+    TransactionSyncBatchesCompanion Function({
+      Value<int> ID,
+      Value<String> BusinessDate,
+      Value<String> FileName,
+      Value<String?> TextFileName,
+      Value<String?> LocalFilePath,
+      Value<String?> TextLocalFilePath,
+      Value<String?> RemoteFileID,
+      Value<String?> RemoteTextFileID,
+      Value<String?> Checksum,
+      Value<String?> TextChecksum,
+      Value<int> RecordCount,
+      Value<String> Status,
+      Value<int> AttemptCount,
+      Value<DateTime?> LastAttemptAt,
+      Value<String?> LastError,
+      Value<DateTime?> UploadedAt,
+      Value<DateTime> CreatedAt,
+    });
+
+class $$TransactionSyncBatchesTableFilterComposer
+    extends Composer<_$AppDatabase, $TransactionSyncBatchesTable> {
+  $$TransactionSyncBatchesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get BusinessDate => $composableBuilder(
+    column: $table.BusinessDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get FileName => $composableBuilder(
+    column: $table.FileName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get TextFileName => $composableBuilder(
+    column: $table.TextFileName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get LocalFilePath => $composableBuilder(
+    column: $table.LocalFilePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get TextLocalFilePath => $composableBuilder(
+    column: $table.TextLocalFilePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get RemoteFileID => $composableBuilder(
+    column: $table.RemoteFileID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get RemoteTextFileID => $composableBuilder(
+    column: $table.RemoteTextFileID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get Checksum => $composableBuilder(
+    column: $table.Checksum,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get TextChecksum => $composableBuilder(
+    column: $table.TextChecksum,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get RecordCount => $composableBuilder(
+    column: $table.RecordCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get Status => $composableBuilder(
+    column: $table.Status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get AttemptCount => $composableBuilder(
+    column: $table.AttemptCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get LastAttemptAt => $composableBuilder(
+    column: $table.LastAttemptAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get LastError => $composableBuilder(
+    column: $table.LastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get UploadedAt => $composableBuilder(
+    column: $table.UploadedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get CreatedAt => $composableBuilder(
+    column: $table.CreatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TransactionSyncBatchesTableOrderingComposer
+    extends Composer<_$AppDatabase, $TransactionSyncBatchesTable> {
+  $$TransactionSyncBatchesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get BusinessDate => $composableBuilder(
+    column: $table.BusinessDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get FileName => $composableBuilder(
+    column: $table.FileName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get TextFileName => $composableBuilder(
+    column: $table.TextFileName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get LocalFilePath => $composableBuilder(
+    column: $table.LocalFilePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get TextLocalFilePath => $composableBuilder(
+    column: $table.TextLocalFilePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get RemoteFileID => $composableBuilder(
+    column: $table.RemoteFileID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get RemoteTextFileID => $composableBuilder(
+    column: $table.RemoteTextFileID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get Checksum => $composableBuilder(
+    column: $table.Checksum,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get TextChecksum => $composableBuilder(
+    column: $table.TextChecksum,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get RecordCount => $composableBuilder(
+    column: $table.RecordCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get Status => $composableBuilder(
+    column: $table.Status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get AttemptCount => $composableBuilder(
+    column: $table.AttemptCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get LastAttemptAt => $composableBuilder(
+    column: $table.LastAttemptAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get LastError => $composableBuilder(
+    column: $table.LastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get UploadedAt => $composableBuilder(
+    column: $table.UploadedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get CreatedAt => $composableBuilder(
+    column: $table.CreatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TransactionSyncBatchesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TransactionSyncBatchesTable> {
+  $$TransactionSyncBatchesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get ID =>
+      $composableBuilder(column: $table.ID, builder: (column) => column);
+
+  GeneratedColumn<String> get BusinessDate => $composableBuilder(
+    column: $table.BusinessDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get FileName =>
+      $composableBuilder(column: $table.FileName, builder: (column) => column);
+
+  GeneratedColumn<String> get TextFileName => $composableBuilder(
+    column: $table.TextFileName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get LocalFilePath => $composableBuilder(
+    column: $table.LocalFilePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get TextLocalFilePath => $composableBuilder(
+    column: $table.TextLocalFilePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get RemoteFileID => $composableBuilder(
+    column: $table.RemoteFileID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get RemoteTextFileID => $composableBuilder(
+    column: $table.RemoteTextFileID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get Checksum =>
+      $composableBuilder(column: $table.Checksum, builder: (column) => column);
+
+  GeneratedColumn<String> get TextChecksum => $composableBuilder(
+    column: $table.TextChecksum,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get RecordCount => $composableBuilder(
+    column: $table.RecordCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get Status =>
+      $composableBuilder(column: $table.Status, builder: (column) => column);
+
+  GeneratedColumn<int> get AttemptCount => $composableBuilder(
+    column: $table.AttemptCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get LastAttemptAt => $composableBuilder(
+    column: $table.LastAttemptAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get LastError =>
+      $composableBuilder(column: $table.LastError, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get UploadedAt => $composableBuilder(
+    column: $table.UploadedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get CreatedAt =>
+      $composableBuilder(column: $table.CreatedAt, builder: (column) => column);
+}
+
+class $$TransactionSyncBatchesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TransactionSyncBatchesTable,
+          TransactionSyncBatche,
+          $$TransactionSyncBatchesTableFilterComposer,
+          $$TransactionSyncBatchesTableOrderingComposer,
+          $$TransactionSyncBatchesTableAnnotationComposer,
+          $$TransactionSyncBatchesTableCreateCompanionBuilder,
+          $$TransactionSyncBatchesTableUpdateCompanionBuilder,
+          (
+            TransactionSyncBatche,
+            BaseReferences<
+              _$AppDatabase,
+              $TransactionSyncBatchesTable,
+              TransactionSyncBatche
+            >,
+          ),
+          TransactionSyncBatche,
+          PrefetchHooks Function()
+        > {
+  $$TransactionSyncBatchesTableTableManager(
+    _$AppDatabase db,
+    $TransactionSyncBatchesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TransactionSyncBatchesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$TransactionSyncBatchesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$TransactionSyncBatchesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                Value<String> BusinessDate = const Value.absent(),
+                Value<String> FileName = const Value.absent(),
+                Value<String?> TextFileName = const Value.absent(),
+                Value<String?> LocalFilePath = const Value.absent(),
+                Value<String?> TextLocalFilePath = const Value.absent(),
+                Value<String?> RemoteFileID = const Value.absent(),
+                Value<String?> RemoteTextFileID = const Value.absent(),
+                Value<String?> Checksum = const Value.absent(),
+                Value<String?> TextChecksum = const Value.absent(),
+                Value<int> RecordCount = const Value.absent(),
+                Value<String> Status = const Value.absent(),
+                Value<int> AttemptCount = const Value.absent(),
+                Value<DateTime?> LastAttemptAt = const Value.absent(),
+                Value<String?> LastError = const Value.absent(),
+                Value<DateTime?> UploadedAt = const Value.absent(),
+                Value<DateTime> CreatedAt = const Value.absent(),
+              }) => TransactionSyncBatchesCompanion(
+                ID: ID,
+                BusinessDate: BusinessDate,
+                FileName: FileName,
+                TextFileName: TextFileName,
+                LocalFilePath: LocalFilePath,
+                TextLocalFilePath: TextLocalFilePath,
+                RemoteFileID: RemoteFileID,
+                RemoteTextFileID: RemoteTextFileID,
+                Checksum: Checksum,
+                TextChecksum: TextChecksum,
+                RecordCount: RecordCount,
+                Status: Status,
+                AttemptCount: AttemptCount,
+                LastAttemptAt: LastAttemptAt,
+                LastError: LastError,
+                UploadedAt: UploadedAt,
+                CreatedAt: CreatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                required String BusinessDate,
+                required String FileName,
+                Value<String?> TextFileName = const Value.absent(),
+                Value<String?> LocalFilePath = const Value.absent(),
+                Value<String?> TextLocalFilePath = const Value.absent(),
+                Value<String?> RemoteFileID = const Value.absent(),
+                Value<String?> RemoteTextFileID = const Value.absent(),
+                Value<String?> Checksum = const Value.absent(),
+                Value<String?> TextChecksum = const Value.absent(),
+                Value<int> RecordCount = const Value.absent(),
+                Value<String> Status = const Value.absent(),
+                Value<int> AttemptCount = const Value.absent(),
+                Value<DateTime?> LastAttemptAt = const Value.absent(),
+                Value<String?> LastError = const Value.absent(),
+                Value<DateTime?> UploadedAt = const Value.absent(),
+                Value<DateTime> CreatedAt = const Value.absent(),
+              }) => TransactionSyncBatchesCompanion.insert(
+                ID: ID,
+                BusinessDate: BusinessDate,
+                FileName: FileName,
+                TextFileName: TextFileName,
+                LocalFilePath: LocalFilePath,
+                TextLocalFilePath: TextLocalFilePath,
+                RemoteFileID: RemoteFileID,
+                RemoteTextFileID: RemoteTextFileID,
+                Checksum: Checksum,
+                TextChecksum: TextChecksum,
+                RecordCount: RecordCount,
+                Status: Status,
+                AttemptCount: AttemptCount,
+                LastAttemptAt: LastAttemptAt,
+                LastError: LastError,
+                UploadedAt: UploadedAt,
+                CreatedAt: CreatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TransactionSyncBatchesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TransactionSyncBatchesTable,
+      TransactionSyncBatche,
+      $$TransactionSyncBatchesTableFilterComposer,
+      $$TransactionSyncBatchesTableOrderingComposer,
+      $$TransactionSyncBatchesTableAnnotationComposer,
+      $$TransactionSyncBatchesTableCreateCompanionBuilder,
+      $$TransactionSyncBatchesTableUpdateCompanionBuilder,
+      (
+        TransactionSyncBatche,
+        BaseReferences<
+          _$AppDatabase,
+          $TransactionSyncBatchesTable,
+          TransactionSyncBatche
+        >,
+      ),
+      TransactionSyncBatche,
+      PrefetchHooks Function()
+    >;
 typedef $$StoreSettingsTableCreateCompanionBuilder =
     StoreSettingsCompanion Function({
       Value<int> ID,
@@ -4444,6 +5917,11 @@ class $AppDatabaseManager {
       $$TransactionsTableTableManager(_db, _db.transactions);
   $$TransactionItemsTableTableManager get transactionItems =>
       $$TransactionItemsTableTableManager(_db, _db.transactionItems);
+  $$TransactionSyncBatchesTableTableManager get transactionSyncBatches =>
+      $$TransactionSyncBatchesTableTableManager(
+        _db,
+        _db.transactionSyncBatches,
+      );
   $$StoreSettingsTableTableManager get storeSettings =>
       $$StoreSettingsTableTableManager(_db, _db.storeSettings);
 }

@@ -9,6 +9,9 @@ import 'package:asken_pos/app/core/features/checkout/data/session/CashierSession
 import 'package:asken_pos/app/core/features/owner/data/ProductManagementService.dart';
 import 'package:asken_pos/app/core/features/owner/data/OwnerPinService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionRecordsService.dart';
+import 'package:asken_pos/app/core/features/owner/data/TransactionRetentionService.dart';
+import 'package:asken_pos/app/core/features/owner/data/TransactionSyncBatchService.dart';
+import 'package:asken_pos/app/core/features/owner/data/TransactionSyncOrchestrator.dart';
 
 final AppDatabaseProvider = Provider<AppDatabase>((ref) {
   final Database = AppDatabase();
@@ -45,6 +48,29 @@ final TransactionRecordsServiceProvider = Provider<TransactionRecordsService>((
 ) {
   return TransactionRecordsService(Database: ref.watch(AppDatabaseProvider));
 });
+
+final TransactionRetentionServiceProvider =
+    Provider<TransactionRetentionService>((ref) {
+      return TransactionRetentionService(
+        Database: ref.watch(AppDatabaseProvider),
+      );
+    });
+
+final TransactionSyncBatchServiceProvider =
+    Provider<TransactionSyncBatchService>((ref) {
+      return TransactionSyncBatchService(
+        Database: ref.watch(AppDatabaseProvider),
+      );
+    });
+
+final TransactionSyncOrchestratorProvider =
+    Provider<TransactionSyncOrchestrator>((ref) {
+      return TransactionSyncOrchestrator(
+        BatchService: ref.watch(TransactionSyncBatchServiceProvider),
+        RecordsService: ref.watch(TransactionRecordsServiceProvider),
+        ExportService: ref.watch(TransactionExportServiceProvider),
+      );
+    });
 
 final TransactionExportServiceProvider = Provider<TransactionExportService>(
   (ref) => const TransactionExportService(),
@@ -93,4 +119,10 @@ class OwnerModeNotifier extends Notifier<bool> {
 
 final AppInitializationProvider = FutureProvider<void>((ref) async {
   await ref.read(AppDatabaseProvider).SeedProducts();
+  await ref
+      .read(TransactionSyncBatchServiceProvider)
+      .RecoverInterruptedBatches();
+  await ref
+      .read(TransactionRetentionServiceProvider)
+      .DeleteSyncedTransactionsOlderThan();
 });
