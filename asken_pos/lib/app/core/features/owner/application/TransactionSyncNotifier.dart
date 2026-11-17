@@ -21,4 +21,15 @@ class TransactionSyncNotifier extends AsyncNotifier<TransactionSyncResult?> {
       () => ref.read(TransactionSyncServiceProvider).SyncPendingBatches(),
     );
   }
+
+  Future<void> SyncBatch(int BatchID) async {
+    if (state.isLoading) {
+      return;
+    }
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref.read(TransactionSyncServiceProvider).SyncBatch(BatchID: BatchID),
+    );
+  }
 }

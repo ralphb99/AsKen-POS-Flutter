@@ -120,6 +120,22 @@ class TransactionSyncOrchestrator {
     }
   }
 
+  Future<PreparedTransactionBatch?> PrepareBatchByID({
+    required int BatchID,
+  }) async {
+    final Batch = await BatchService.GetBatch(BatchID: BatchID);
+    if (Batch == null) {
+      throw StateError('The selected sync batch no longer exists.');
+    }
+
+    final BusinessDate = DateTime.tryParse(Batch.BusinessDate);
+    if (BusinessDate == null) {
+      throw StateError('The selected sync batch has an invalid business date.');
+    }
+
+    return PrepareDailyBatch(BusinessDate: BusinessDate);
+  }
+
   Future<String> _Checksum(File FileData) async {
     final Bytes = await FileData.readAsBytes();
     return sha256.convert(Bytes).toString();

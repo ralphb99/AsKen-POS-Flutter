@@ -104,6 +104,14 @@ final TransactionSyncServiceProvider = Provider<TransactionSyncService>((ref) {
   );
 });
 
+final TransactionSyncBatchesProvider = StreamProvider.autoDispose<
+  List<TransactionSyncBatche>
+>((ref) {
+  return ref
+      .watch(TransactionSyncBatchServiceProvider)
+      .WatchRecentBatches();
+});
+
 final OwnerTransactionRecordsProvider = FutureProvider.autoDispose
     .family<List<TransactionRecord>, TransactionRecordsDateRange>((ref, Range) {
       return ref

@@ -210,6 +210,15 @@ class OwnerDashboardPage extends ConsumerWidget {
                         : 'Sync Transactions',
                   ),
                 ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    AppRoutes.syncCenter,
+                  ),
+                  icon: const Icon(Icons.sync_alt_outlined),
+                  label: const Text('Open Sync Center'),
+                ),
               ],
             ),
           ),

@@ -103,6 +103,18 @@ class TransactionSyncBatchService {
         .get();
   }
 
+  Stream<List<TransactionSyncBatche>> WatchRecentBatches({int Limit = 30}) {
+    return (Database.select(Database.transactionSyncBatches)
+          ..orderBy([
+            (Batch) => OrderingTerm(
+              expression: Batch.BusinessDate,
+              mode: OrderingMode.desc,
+            ),
+          ])
+          ..limit(Limit))
+        .watch();
+  }
+
   Future<List<DateTime>> GetBusinessDatesWithUnsyncedTransactions() async {
     final UnsyncedTransactions =
         await (Database.select(Database.transactions)..where(
