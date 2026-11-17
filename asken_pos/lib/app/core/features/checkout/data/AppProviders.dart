@@ -12,6 +12,9 @@ import 'package:asken_pos/app/core/features/owner/data/TransactionRecordsService
 import 'package:asken_pos/app/core/features/owner/data/TransactionRetentionService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncBatchService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncOrchestrator.dart';
+import 'package:asken_pos/app/core/features/owner/data/GoogleDriveService.dart';
+import 'package:asken_pos/app/core/features/owner/data/GoogleDriveFileUploadService.dart';
+import 'package:asken_pos/app/core/features/owner/data/TransactionSyncService.dart';
 
 final AppDatabaseProvider = Provider<AppDatabase>((ref) {
   final Database = AppDatabase();
@@ -75,6 +78,31 @@ final TransactionSyncOrchestratorProvider =
 final TransactionExportServiceProvider = Provider<TransactionExportService>(
   (ref) => const TransactionExportService(),
 );
+
+final GoogleDriveServiceProvider = Provider<GoogleDriveService>((ref) {
+  final Service = GoogleDriveService();
+
+  ref.onDispose(() {
+    Service.Dispose();
+  });
+
+  return Service;
+});
+
+final GoogleDriveFileUploadServiceProvider =
+    Provider<GoogleDriveFileUploadService>((ref) {
+      return GoogleDriveFileUploadService(
+        DriveService: ref.watch(GoogleDriveServiceProvider),
+      );
+    });
+
+final TransactionSyncServiceProvider = Provider<TransactionSyncService>((ref) {
+  return TransactionSyncService(
+    BatchService: ref.watch(TransactionSyncBatchServiceProvider),
+    Orchestrator: ref.watch(TransactionSyncOrchestratorProvider),
+    UploadService: ref.watch(GoogleDriveFileUploadServiceProvider),
+  );
+});
 
 final OwnerTransactionRecordsProvider = FutureProvider.autoDispose
     .family<List<TransactionRecord>, TransactionRecordsDateRange>((ref, Range) {

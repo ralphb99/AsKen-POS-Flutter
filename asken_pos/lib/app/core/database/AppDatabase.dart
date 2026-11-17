@@ -42,33 +42,82 @@ class AppDatabase extends _$AppDatabase {
     },
     onUpgrade: (Migrator Migrator, int From, int To) async {
       if (From < 2) {
-        await Migrator.addColumn(transactions, transactions.PaymentMethod);
-        await Migrator.addColumn(transactions, transactions.SyncStatus);
-        await Migrator.addColumn(transactions, transactions.SyncAttemptCount);
-        await Migrator.addColumn(transactions, transactions.LastSyncAttemptAt);
-        await Migrator.addColumn(transactions, transactions.SyncedAt);
-        await Migrator.addColumn(transactions, transactions.LastSyncError);
-        await Migrator.addColumn(transactions, transactions.SyncBatchID);
+        await _AddColumnIfMissing(
+          Migrator,
+          transactions,
+          transactions.PaymentMethod,
+          'payment_method',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactions,
+          transactions.SyncStatus,
+          'sync_status',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactions,
+          transactions.SyncAttemptCount,
+          'sync_attempt_count',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactions,
+          transactions.LastSyncAttemptAt,
+          'last_sync_attempt_at',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactions,
+          transactions.SyncedAt,
+          'synced_at',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactions,
+          transactions.LastSyncError,
+          'last_sync_error',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactions,
+          transactions.SyncBatchID,
+          'sync_batch_i_d',
+        );
       }
       if (From < 3) {
-        await Migrator.createTable(transactionSyncBatches);
+        final HasTransactionSyncBatchesTable = await _HasTable(
+          'transaction_sync_batches',
+        );
+
+        if (!HasTransactionSyncBatchesTable) {
+          await Migrator.createTable(transactionSyncBatches);
+        }
       }
       if (From < 4) {
-        await Migrator.addColumn(
+        await _AddColumnIfMissing(
+          Migrator,
           transactionSyncBatches,
           transactionSyncBatches.TextFileName,
+          'text_file_name',
         );
-        await Migrator.addColumn(
+        await _AddColumnIfMissing(
+          Migrator,
           transactionSyncBatches,
           transactionSyncBatches.TextLocalFilePath,
+          'text_local_file_path',
         );
-        await Migrator.addColumn(
+        await _AddColumnIfMissing(
+          Migrator,
           transactionSyncBatches,
           transactionSyncBatches.TextChecksum,
+          'text_checksum',
         );
-        await Migrator.addColumn(
+        await _AddColumnIfMissing(
+          Migrator,
           transactionSyncBatches,
           transactionSyncBatches.RemoteTextFileID,
+          'remote_text_file_i_d',
         );
       }
     },
@@ -185,5 +234,35 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
     }).get();
+  }
+
+  Future<void> _AddColumnIfMissing(
+    Migrator Migrator,
+    TableInfo<Table, dynamic> Table,
+    GeneratedColumn<Object> Column,
+    String ColumnName,
+  ) async {
+    if (await _HasColumn(Table.actualTableName, ColumnName)) {
+      return;
+    }
+
+    await Migrator.addColumn(Table, Column);
+  }
+
+  Future<bool> _HasTable(String TableName) async {
+    final Result = await customSelect(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?",
+      variables: [Variable.withString(TableName)],
+    ).get();
+
+    return Result.isNotEmpty;
+  }
+
+  Future<bool> _HasColumn(String TableName, String ColumnName) async {
+    final Result = await customSelect(
+      'PRAGMA table_info("$TableName")',
+    ).get();
+
+    return Result.any((Row) => Row.data['name'] == ColumnName);
   }
 }

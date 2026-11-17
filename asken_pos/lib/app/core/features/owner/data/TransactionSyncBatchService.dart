@@ -238,6 +238,25 @@ class TransactionSyncBatchService {
     });
   }
 
+  Future<void> SaveRemoteFileID({
+    required int BatchID,
+    String? RemoteFileID,
+    String? RemoteTextFileID,
+  }) async {
+    await (Database.update(
+      Database.transactionSyncBatches,
+    )..where((Batch) => Batch.ID.equals(BatchID))).write(
+      TransactionSyncBatchesCompanion(
+        RemoteFileID: RemoteFileID == null
+            ? const Value.absent()
+            : Value(RemoteFileID),
+        RemoteTextFileID: RemoteTextFileID == null
+            ? const Value.absent()
+            : Value(RemoteTextFileID),
+      ),
+    );
+  }
+
   Future<void> MarkBatchFailed({
     required int BatchID,
     required String ErrorMessage,

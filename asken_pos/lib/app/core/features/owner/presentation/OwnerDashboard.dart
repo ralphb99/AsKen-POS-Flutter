@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
 import 'package:asken_pos/app/core/features/owner/application/OwnerAccess.dart';
+import 'package:asken_pos/app/core/features/owner/application/GoogleDriveConnectionNotifier.dart';
+import 'package:asken_pos/app/core/features/owner/application/TransactionSyncNotifier.dart';
+import 'package:asken_pos/app/core/features/owner/data/TransactionSyncService.dart';
+import 'package:asken_pos/app/core/features/owner/data/GoogleDriveService.dart';
 import 'package:asken_pos/app/core/features/owner/presentation/OwnerSettings.dart';
 import 'package:asken_pos/app/core/features/owner/presentation/ProductManagement.dart';
 import 'package:asken_pos/app/core/features/owner/presentation/TransactionRecords.dart';
@@ -17,6 +21,70 @@ class OwnerDashboardPage extends ConsumerWidget {
         body: Center(child: Text('Owner authentication is required.')),
       );
     }
+
+    ref.listen(GoogleDriveConnectionProvider, (Previous, Current) {
+      if (!Current.hasError || !context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(Current.error.toString())),
+      );
+    });
+
+    ref.listen(TransactionSyncProvider, (Previous, Current) {
+      if (!context.mounted) {
+        return;
+      }
+
+      if (Current.hasError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Sync failed. Check your connection and try again.',
+            ),
+            action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () => ref
+                  .read(TransactionSyncProvider.notifier)
+                  .SyncNow(),
+            ),
+          ),
+        );
+        return;
+      }
+
+      final TransactionSyncResult? Result = Current.value;
+      if (Result?.HasFailures == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${Result!.FailedBatchCount} batch(es) failed. Please try again.',
+            ),
+            action: SnackBarAction(
+              label: 'Retry',
+              onPressed: () => ref
+                  .read(TransactionSyncProvider.notifier)
+                  .SyncNow(),
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (Result != null) {
+        final Message = Result.SyncedBatchCount == 0
+            ? 'No pending transactions to sync.'
+            : '${Result.SyncedBatchCount} batch(es) synced successfully.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(Message)),
+        );
+      }
+    });
+
+    final GoogleDriveState = ref.watch(GoogleDriveConnectionProvider);
+    final GoogleDriveConnection? GoogleDriveAccount = GoogleDriveState.value;
+    final SyncState = ref.watch(TransactionSyncProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -103,6 +171,44 @@ class OwnerDashboardPage extends ConsumerWidget {
                   },
                   icon: const Icon(Icons.settings_outlined),
                   label: const Text('Owner Settings'),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: GoogleDriveState.isLoading
+                      ? null
+                      : GoogleDriveAccount == null
+                      ? () => ref
+                            .read(GoogleDriveConnectionProvider.notifier)
+                            .Connect()
+                      : () => ref
+                            .read(GoogleDriveConnectionProvider.notifier)
+                            .Disconnect(),
+                  icon: Icon(
+                    GoogleDriveAccount == null
+                        ? Icons.cloud_outlined
+                        : Icons.cloud_done_outlined,
+                  ),
+                  label: Text(
+                    GoogleDriveState.isLoading
+                        ? 'Connecting...'
+                        : GoogleDriveAccount == null
+                        ? 'Connect Google Drive'
+                        : 'Disconnect ${GoogleDriveAccount.Email}',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: GoogleDriveAccount == null || SyncState.isLoading
+                      ? null
+                      : () => ref
+                            .read(TransactionSyncProvider.notifier)
+                            .SyncNow(),
+                  icon: const Icon(Icons.sync_outlined),
+                  label: Text(
+                    SyncState.isLoading
+                        ? 'Syncing transactions...'
+                        : 'Sync Transactions',
+                  ),
                 ),
               ],
             ),
