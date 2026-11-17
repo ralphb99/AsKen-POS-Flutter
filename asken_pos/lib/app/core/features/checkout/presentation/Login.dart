@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:asken_pos/app/core/features/checkout/application/LoginController.dart';
 import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
-import 'package:asken_pos/app/core/features/owner/application/OwnerAccess.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -12,12 +12,11 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
+  final FormKey = GlobalKey<FormState>();
   final CashierNameController = TextEditingController();
   final OwnerPinController = TextEditingController();
   final ConfirmOwnerPinController = TextEditingController();
-  String CashierName = '';
-  bool IsOwnerMode = false;
+  bool IsOwnerAccessVisible = false;
 
   @override
   void dispose() {
@@ -29,95 +28,123 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final OwnerPinStatus = ref.watch(OwnerPinConfiguredProvider);
-    final IsOwnerPinLoading = OwnerPinStatus.isLoading;
-    final IsOwnerPinConfigured = OwnerPinStatus.asData?.value ?? false;
+    final LoginState = ref.watch(LoginControllerProvider);
+    final OwnerPinState = ref.watch(OwnerPinConfiguredProvider);
+    final IsBusy = LoginState.isLoading || OwnerPinState.isLoading;
+    final IsOwnerPinConfigured = OwnerPinState.asData?.value ?? false;
+
+    ref.listen(LoginControllerProvider, (Previous, Current) {
+      if (!Current.hasError || !context.mounted) {
+        return;
+      }
+
+      final ErrorMessage = Current.error.toString().replaceFirst(
+        'FormatException: ',
+        '',
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(ErrorMessage)),
+      );
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.blue.shade50,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: EdgeInsets.only(
-              left: 50,
-              right: 50,
-              top: 10,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 80,
-            ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 450),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+        child: LayoutBuilder(
+          builder: (_, Constraints) {
+            final MinimumHeight = Constraints.maxHeight > 32
+                ? Constraints.maxHeight - 32
+                : 0.0;
+
+            return SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: 320,
+                    minHeight: MinimumHeight,
+                  ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Form(
+                      key: FormKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
                     Text(
-                      textAlign: TextAlign.center,
                       'AsKen POS',
-                      style: Theme.of(context).textTheme.displayLarge,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-
-                    const SizedBox(height: 50),
-
+                    const SizedBox(height: 8),
                     Text(
-                      'Enter Cashier Name',
-                      style: Theme.of(context).textTheme.labelLarge,
+                      IsOwnerAccessVisible
+                          ? 'Owner access'
+                          : 'Educational Supply Store',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
+                        const SizedBox(height: 28),
+                        if (!IsOwnerAccessVisible) ...[
+                      TextFormField(
+                        controller: CashierNameController,
+                        autofocus: true,
+                        textCapitalization: TextCapitalization.words,
+                        textInputAction: TextInputAction.done,
+                        decoration: const InputDecoration(
+                          labelText: 'Cashier name',
+                          prefixIcon: Icon(Icons.person_outline),
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (Value) {
+                          if (Value == null || Value.trim().isEmpty) {
+                            return 'Please input name.';
+                          }
 
-                    const SizedBox(height: 10),
-
-                    TextFormField(
-                      controller: CashierNameController,
-                      onChanged: (Value) {
-                        final OwnerMode = OwnerAccess.IsOwnerName(Value);
-
-                        if (OwnerMode != IsOwnerMode) {
-                          setState(() {
-                            IsOwnerMode = OwnerMode;
-                          });
-                        }
-                      },
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                        labelText: 'Cashier Name',
-
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          return null;
+                        },
+                        onFieldSubmitted: IsBusy ? null : (_) => StartCashier(),
+                      ),
+                      const SizedBox(height: 30),
+                     SizedBox(
+                        height: 60,
+                        child: FilledButton(
+                          onPressed: IsBusy ? null : StartCashier,
+                          child: Text(IsBusy ? 'Checking...' : 'Enter Checkout Screen'),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your name';
-                        }
-
-                        return null;
-                      },
-                    ),
-
-                    if (IsOwnerMode) ...[
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
+                      SizedBox(
+                        height: 60,
+                        child: OutlinedButton.icon(
+                          onPressed: IsBusy ? null : ShowOwnerAccess,
+                          icon: const Icon(Icons.admin_panel_settings_outlined),
+                          label: const Text('Owner access'),
+                        ),
+                      ),
+                    ] else ...[
                       TextFormField(
                         controller: OwnerPinController,
+                        autofocus: true,
                         obscureText: true,
                         keyboardType: TextInputType.number,
                         maxLength: 6,
+                        textInputAction: IsOwnerPinConfigured
+                            ? TextInputAction.done
+                            : TextInputAction.next,
                         decoration: InputDecoration(
                           labelText: IsOwnerPinConfigured
                               ? 'Owner PIN'
-                              : 'Create Owner PIN',
+                              : 'Create owner PIN',
+                          prefixIcon: const Icon(Icons.lock_outline),
                           helperText: IsOwnerPinConfigured
                               ? 'Enter your 4 to 6 digit PIN.'
-                              : 'Create initial Secret Owner Pin',
+                              : 'Create a 4 to 6 digit PIN.',
                           border: const OutlineInputBorder(),
                         ),
                         validator: (Value) {
-                          if (!IsOwnerMode) {
-                            return null;
-                          }
-
                           if (Value == null ||
                               !RegExp(r'^\d{4,6}$').hasMatch(Value)) {
                             return 'Use 4 to 6 digits.';
@@ -125,16 +152,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                           return null;
                         },
+                        onFieldSubmitted: IsBusy
+                            ? null
+                            : (_) => EnterOwnerMode(IsOwnerPinConfigured),
                       ),
-                      const SizedBox(height: 16),
-                      if (!IsOwnerPinConfigured)
+                      if (!IsOwnerPinConfigured) ...[
+                        const SizedBox(height: 12),
                         TextFormField(
                           controller: ConfirmOwnerPinController,
                           obscureText: true,
                           keyboardType: TextInputType.number,
                           maxLength: 6,
+                          textInputAction: TextInputAction.done,
                           decoration: const InputDecoration(
-                            labelText: 'Confirm Owner PIN',
+                            labelText: 'Confirm owner PIN',
+                            prefixIcon: Icon(Icons.lock_reset_outlined),
                             border: OutlineInputBorder(),
                           ),
                           validator: (Value) {
@@ -144,124 +176,99 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                             return null;
                           },
+                          onFieldSubmitted: IsBusy
+                              ? null
+                              : (_) => EnterOwnerMode(IsOwnerPinConfigured),
                         ),
-                    ],
-
-                    const SizedBox(height: 100),
-
-                    SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          final FormState? CurrentForm = _formKey.currentState;
-
-                          if (CurrentForm == null || !CurrentForm.validate()) {
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //    SnackBar(
-                            //     content: Text('No Input'),
-                            //   ),
-                            // );
-
-                            return;
-                          } else {
-                            CashierName = CashierNameController.text.trim();
-
-                            if (OwnerAccess.IsOwnerName(CashierName)) {
-                              if (OwnerPinStatus.hasError) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Unable to load owner security settings.',
-                                    ),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              if (IsOwnerPinLoading) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Owner security is still loading.',
-                                    ),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              final OwnerPin = OwnerPinController.text;
-                              final OwnerPinService = ref.read(
-                                OwnerPinServiceProvider,
-                              );
-
-                              if (IsOwnerPinConfigured) {
-                                final IsValid = await OwnerPinService.VerifyPin(
-                                  OwnerPin,
-                                );
-
-                                if (!IsValid) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Incorrect owner PIN.'),
-                                    ),
-                                  );
-                                  return;
-                                }
-                              } else {
-                                await OwnerPinService.SetPin(OwnerPin);
-                                ref.invalidate(OwnerPinConfiguredProvider);
-                              }
-
-                              ref
-                                  .read(OwnerModeProvider.notifier)
-                                  .SetOwnerMode(true);
-
-                              Navigator.pushReplacementNamed(
-                                context,
-                                AppRoutes.ownerDashboard,
-                              );
-                              return;
-                            }
-
-                            await ref
-                                .read(CashierSessionServiceProvider)
-                                .SaveCashierName(CashierName);
-                            ref.invalidate(ActiveCashierProvider);
-
-                            if (!mounted) {
-                              return;
-                            }
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Success. Welcome $CashierName'),
-                              ),
-                            );
-
-                            Navigator.pushReplacementNamed(
-                              context,
-                              AppRoutes.checkout,
-                              arguments: CashierName,
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                      ],
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 60,
+                        child: FilledButton(
+                        onPressed: IsBusy
+                            ? null
+                            : () => EnterOwnerMode(IsOwnerPinConfigured),
+                        child: Text(
+                          IsBusy ? 'Checking...' : 'Enter Owner Dashboard',
                         ),
-                        child: Text('START'),
+                      ),
+                     ),
+
+                     const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: IsBusy ? null : HideOwnerAccess,
+                        child: const Text('Back to Cashier Login'),
+                      ),
+                        ],
+                      ]
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
+  }
+
+  void ShowOwnerAccess() {
+    setState(() {
+      IsOwnerAccessVisible = true;
+    });
+  }
+
+  void HideOwnerAccess() {
+    OwnerPinController.clear();
+    ConfirmOwnerPinController.clear();
+    FormKey.currentState?.reset();
+
+    setState(() {
+      IsOwnerAccessVisible = false;
+    });
+  }
+
+  Future<void> StartCashier() async {
+    if (!(FormKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    final Result = await ref
+        .read(LoginControllerProvider.notifier)
+        .AuthenticateCashier(CashierName: CashierNameController.text);
+
+    if (!mounted || Result == null || Result.IsOwner) {
+      return;
+    }
+
+    ref.invalidate(ActiveCashierProvider);
+    Navigator.pushReplacementNamed(
+      context,
+      AppRoutes.checkout,
+      arguments: Result.CashierName,
+    );
+  }
+
+  Future<void> EnterOwnerMode(bool IsOwnerPinConfigured) async {
+    if (!(FormKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    final Result = await ref
+        .read(LoginControllerProvider.notifier)
+        .AuthenticateOwner(
+          OwnerPin: OwnerPinController.text,
+          ConfirmOwnerPin: IsOwnerPinConfigured
+              ? OwnerPinController.text
+              : ConfirmOwnerPinController.text,
+        );
+
+    if (!mounted || Result == null || !Result.IsOwner) {
+      return;
+    }
+
+    ref.read(OwnerModeProvider.notifier).SetOwnerMode(true);
+    Navigator.pushReplacementNamed(context, AppRoutes.ownerDashboard);
   }
 }
