@@ -3,6 +3,7 @@ class UpdateAppProtocolSnapshot {
   final List<Map<String, dynamic>> ProductVariants;
   final List<Map<String, dynamic>> Transactions;
   final List<Map<String, dynamic>> TransactionItems;
+  final List<Map<String, dynamic>> TransactionPrintJobs;
   final List<Map<String, dynamic>> TransactionSyncBatches;
   final List<Map<String, dynamic>> StoreSettings;
 
@@ -11,6 +12,7 @@ class UpdateAppProtocolSnapshot {
     required this.ProductVariants,
     required this.Transactions,
     required this.TransactionItems,
+    required this.TransactionPrintJobs,
     required this.TransactionSyncBatches,
     required this.StoreSettings,
   });
@@ -21,6 +23,7 @@ class UpdateAppProtocolSnapshot {
       'ProductVariants': ProductVariants,
       'Transactions': Transactions,
       'TransactionItems': TransactionItems,
+      'TransactionPrintJobs': TransactionPrintJobs,
       'TransactionSyncBatches': TransactionSyncBatches,
       'StoreSettings': StoreSettings,
     };
@@ -32,6 +35,7 @@ class UpdateAppProtocolSnapshot {
       'ProductVariants': ProductVariants.length,
       'Transactions': Transactions.length,
       'TransactionItems': TransactionItems.length,
+      'TransactionPrintJobs': TransactionPrintJobs.length,
       'TransactionSyncBatches': TransactionSyncBatches.length,
       'StoreSettings': StoreSettings.length,
     };

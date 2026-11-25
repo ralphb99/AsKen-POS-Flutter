@@ -9,6 +9,7 @@ class UpdateAppProtocolImportDocument {
   final List<Map<String, dynamic>> ProductVariants;
   final List<Map<String, dynamic>> Transactions;
   final List<Map<String, dynamic>> TransactionItems;
+  final List<Map<String, dynamic>> TransactionPrintJobs;
   final List<Map<String, dynamic>> TransactionSyncBatches;
   final List<Map<String, dynamic>> StoreSettings;
 
@@ -23,6 +24,7 @@ class UpdateAppProtocolImportDocument {
     required this.ProductVariants,
     required this.Transactions,
     required this.TransactionItems,
+    required this.TransactionPrintJobs,
     required this.TransactionSyncBatches,
     required this.StoreSettings,
   });
@@ -33,6 +35,7 @@ class UpdateAppProtocolImportDocument {
       'ProductVariants': ProductVariants,
       'Transactions': Transactions,
       'TransactionItems': TransactionItems,
+      'TransactionPrintJobs': TransactionPrintJobs,
       'TransactionSyncBatches': TransactionSyncBatches,
       'StoreSettings': StoreSettings,
     };

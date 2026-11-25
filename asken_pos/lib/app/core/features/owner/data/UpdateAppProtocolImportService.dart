@@ -297,6 +297,71 @@ class UpdateAppProtocolImportService {
         );
       }
 
+      for (final TransactionPrintJobRow in Document.TransactionPrintJobs) {
+        final TransactionPrintJobID = _ReadID(
+          TransactionPrintJobRow,
+          'TransactionPrintJobs',
+        );
+        if (!Plan.InsertTransactionPrintJobIDs.contains(
+          TransactionPrintJobID,
+        )) {
+          continue;
+        }
+
+        await Database.into(Database.transactionPrintJobs).insert(
+          TransactionPrintJobsCompanion.insert(
+            ID: Value(TransactionPrintJobID),
+            TransactionID: _ReadInt(
+              TransactionPrintJobRow,
+              'TransactionID',
+              'TransactionPrintJobs',
+            ),
+            Status: Value(
+              _ReadString(
+                TransactionPrintJobRow,
+                'Status',
+                'TransactionPrintJobs',
+              ),
+            ),
+            AttemptCount: Value(
+              _ReadInt(
+                TransactionPrintJobRow,
+                'AttemptCount',
+                'TransactionPrintJobs',
+              ),
+            ),
+            LastAttemptAt: Value(
+              _ReadNullableDateTime(
+                TransactionPrintJobRow,
+                'LastAttemptAt',
+                'TransactionPrintJobs',
+              ),
+            ),
+            PrintedAt: Value(
+              _ReadNullableDateTime(
+                TransactionPrintJobRow,
+                'PrintedAt',
+                'TransactionPrintJobs',
+              ),
+            ),
+            LastError: Value(
+              _ReadNullableString(
+                TransactionPrintJobRow,
+                'LastError',
+                'TransactionPrintJobs',
+              ),
+            ),
+            CreatedAt: Value(
+              _ReadDateTime(
+                TransactionPrintJobRow,
+                'CreatedAt',
+                'TransactionPrintJobs',
+              ),
+            ),
+          ),
+        );
+      }
+
       for (final TransactionItemRow in Document.TransactionItems) {
         final TransactionItemID = _ReadID(
           TransactionItemRow,
@@ -466,6 +531,7 @@ class UpdateAppProtocolImportService {
       ProductVariants: _ReadRecords(Data, 'ProductVariants'),
       Transactions: _ReadRecords(Data, 'Transactions'),
       TransactionItems: _ReadRecords(Data, 'TransactionItems'),
+      TransactionPrintJobs: _ReadOptionalRecords(Data, 'TransactionPrintJobs'),
       TransactionSyncBatches: _ReadRecords(Data, 'TransactionSyncBatches'),
       StoreSettings: _ReadRecords(Data, 'StoreSettings'),
     );
@@ -487,6 +553,9 @@ class UpdateAppProtocolImportService {
     final ExistingTransactionItems = await Database.select(
       Database.transactionItems,
     ).get();
+    final ExistingTransactionPrintJobs = await Database.select(
+      Database.transactionPrintJobs,
+    ).get();
     final ExistingTransactionSyncBatches = await Database.select(
       Database.transactionSyncBatches,
     ).get();
@@ -507,6 +576,11 @@ class UpdateAppProtocolImportService {
     final ExistingTransactionItemIDs = ExistingTransactionItems.map(
       (Row) => Row.ID,
     ).toSet();
+    final ExistingTransactionPrintJobIDs = ExistingTransactionPrintJobs.map(
+      (Row) => Row.ID,
+    ).toSet();
+    final ExistingTransactionPrintJobTransactionIDs =
+        ExistingTransactionPrintJobs.map((Row) => Row.TransactionID).toSet();
     final ExistingTransactionSyncBatchIDs = ExistingTransactionSyncBatches.map(
       (Row) => Row.ID,
     ).toSet();
@@ -573,6 +647,21 @@ class UpdateAppProtocolImportService {
       }
     }
 
+    final InsertTransactionPrintJobIDs = <int>{};
+    for (final Row in Document.TransactionPrintJobs) {
+      final ID = _ReadID(Row, 'TransactionPrintJobs');
+      final TransactionID = _ReadInt(
+        Row,
+        'TransactionID',
+        'TransactionPrintJobs',
+      );
+      if (!ExistingTransactionPrintJobIDs.contains(ID) &&
+          !ExistingTransactionPrintJobTransactionIDs.contains(TransactionID) &&
+          InsertTransactionIDs.contains(TransactionID)) {
+        InsertTransactionPrintJobIDs.add(ID);
+      }
+    }
+
     final InsertStoreSettingIDs = <int>{};
     for (final Row in Document.StoreSettings) {
       final ID = _ReadID(Row, 'StoreSettings');
@@ -588,6 +677,7 @@ class UpdateAppProtocolImportService {
       InsertTransactionSyncBatchIDs: InsertTransactionSyncBatchIDs,
       InsertTransactionIDs: InsertTransactionIDs,
       InsertTransactionItemIDs: InsertTransactionItemIDs,
+      InsertTransactionPrintJobIDs: InsertTransactionPrintJobIDs,
       InsertStoreSettingIDs: InsertStoreSettingIDs,
     );
   }
@@ -600,6 +690,7 @@ class UpdateAppProtocolImportService {
       'ProductVariants': Document.ProductVariants.length,
       'Transactions': Document.Transactions.length,
       'TransactionItems': Document.TransactionItems.length,
+      'TransactionPrintJobs': Document.TransactionPrintJobs.length,
       'TransactionSyncBatches': Document.TransactionSyncBatches.length,
       'StoreSettings': Document.StoreSettings.length,
     };
@@ -623,6 +714,17 @@ class UpdateAppProtocolImportService {
     }).toList(growable: false);
   }
 
+  List<Map<String, dynamic>> _ReadOptionalRecords(
+    Map<String, dynamic> Data,
+    String Key,
+  ) {
+    if (!Data.containsKey(Key)) {
+      return const <Map<String, dynamic>>[];
+    }
+
+    return _ReadRecords(Data, Key);
+  }
+
   Map<String, dynamic> _ReadMap(dynamic Value, String FieldName) {
     if (Value is! Map) {
       throw FormatException('The backup field "$FieldName" is invalid.');
@@ -642,9 +744,16 @@ class UpdateAppProtocolImportService {
       'StoreSettings',
     ];
 
-    return <String, int>{
+    final Result = <String, int>{
       for (final Key in RequiredKeys) Key: _ReadInt(CountsMap, Key, 'Counts'),
     };
+
+    Result['TransactionPrintJobs'] =
+        CountsMap.containsKey('TransactionPrintJobs')
+        ? _ReadInt(CountsMap, 'TransactionPrintJobs', 'Counts')
+        : 0;
+
+    return Result;
   }
 
   void _ValidateDocumentData(UpdateAppProtocolImportDocument Document) {
@@ -740,6 +849,34 @@ class UpdateAppProtocolImportService {
       _ReadDateTime(Row, 'CreatedAt', 'Transactions');
     }
 
+    final TransactionPrintJobIDs = <int>{};
+    final TransactionPrintJobTransactionIDs = <int>{};
+    for (final Row in Document.TransactionPrintJobs) {
+      final ID = _ReadID(Row, 'TransactionPrintJobs');
+      _EnsureUnique(TransactionPrintJobIDs, ID, 'TransactionPrintJobs');
+      final TransactionID = _ReadInt(
+        Row,
+        'TransactionID',
+        'TransactionPrintJobs',
+      );
+      _EnsureUnique(
+        TransactionPrintJobTransactionIDs,
+        TransactionID,
+        'TransactionPrintJobs',
+      );
+      if (!TransactionIDs.contains(TransactionID)) {
+        throw FormatException(
+          'Print job $ID references missing transaction $TransactionID.',
+        );
+      }
+      _ValidatePrintStatus(_ReadString(Row, 'Status', 'TransactionPrintJobs'));
+      _ReadInt(Row, 'AttemptCount', 'TransactionPrintJobs');
+      _ReadNullableDateTime(Row, 'LastAttemptAt', 'TransactionPrintJobs');
+      _ReadNullableDateTime(Row, 'PrintedAt', 'TransactionPrintJobs');
+      _ReadNullableString(Row, 'LastError', 'TransactionPrintJobs');
+      _ReadDateTime(Row, 'CreatedAt', 'TransactionPrintJobs');
+    }
+
     final TransactionItemIDs = <int>{};
     for (final Row in Document.TransactionItems) {
       final ID = _ReadID(Row, 'TransactionItems');
@@ -792,6 +929,19 @@ class UpdateAppProtocolImportService {
       throw FormatException(
         'Unsupported sync status "$Status" in $CollectionName.',
       );
+    }
+  }
+
+  void _ValidatePrintStatus(String Status) {
+    const SupportedStatuses = <String>{
+      'pending',
+      'printing',
+      'printed',
+      'failed',
+    };
+
+    if (!SupportedStatuses.contains(Status)) {
+      throw FormatException('Unsupported print status "$Status".');
     }
   }
 
@@ -907,6 +1057,7 @@ class _ImportRestorePlan {
   final Set<int> InsertTransactionSyncBatchIDs;
   final Set<int> InsertTransactionIDs;
   final Set<int> InsertTransactionItemIDs;
+  final Set<int> InsertTransactionPrintJobIDs;
   final Set<int> InsertStoreSettingIDs;
 
   const _ImportRestorePlan({
@@ -916,6 +1067,7 @@ class _ImportRestorePlan {
     required this.InsertTransactionSyncBatchIDs,
     required this.InsertTransactionIDs,
     required this.InsertTransactionItemIDs,
+    required this.InsertTransactionPrintJobIDs,
     required this.InsertStoreSettingIDs,
   });
 
@@ -925,6 +1077,7 @@ class _ImportRestorePlan {
       'ProductVariants': InsertProductVariantIDs.length,
       'Transactions': InsertTransactionIDs.length,
       'TransactionItems': InsertTransactionItemIDs.length,
+      'TransactionPrintJobs': InsertTransactionPrintJobIDs.length,
       'TransactionSyncBatches': InsertTransactionSyncBatchIDs.length,
       'StoreSettings': InsertStoreSettingIDs.length,
     };
@@ -939,6 +1092,9 @@ class _ImportRestorePlan {
           Document.Transactions.length - InsertTransactionIDs.length,
       'TransactionItems':
           Document.TransactionItems.length - InsertTransactionItemIDs.length,
+      'TransactionPrintJobs':
+          Document.TransactionPrintJobs.length -
+          InsertTransactionPrintJobIDs.length,
       'TransactionSyncBatches':
           Document.TransactionSyncBatches.length -
           InsertTransactionSyncBatchIDs.length,

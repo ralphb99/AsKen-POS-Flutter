@@ -21,7 +21,7 @@ class TransactionRetentionService {
     }
 
     final Cutoff = (Now ?? DateTime.now()).subtract(RetentionPeriod);
-    final ExpiredTransactions =
+    final ExpiredCandidates =
         await (Database.select(Database.transactions)..where(
               (Transaction) =>
                   Transaction.SyncStatus.equals('synced') &
@@ -29,6 +29,18 @@ class TransactionRetentionService {
                   Transaction.SyncedAt.isSmallerThanValue(Cutoff),
             ))
             .get();
+
+    final ExpiredTransactions = <Transaction>[];
+    for (final TransactionData in ExpiredCandidates) {
+      final PrintJob =
+          await (Database.select(Database.transactionPrintJobs)
+                ..where((Job) => Job.TransactionID.equals(TransactionData.ID)))
+              .getSingleOrNull();
+
+      if (PrintJob == null || PrintJob.Status == 'printed') {
+        ExpiredTransactions.add(TransactionData);
+      }
+    }
 
     if (ExpiredTransactions.isEmpty) {
       return 0;
@@ -42,6 +54,10 @@ class TransactionRetentionService {
       await (Database.delete(
         Database.transactionItems,
       )..where((Item) => Item.TransactionID.isIn(TransactionIDs))).go();
+
+      await (Database.delete(
+        Database.transactionPrintJobs,
+      )..where((Job) => Job.TransactionID.isIn(TransactionIDs))).go();
 
       await (Database.delete(
         Database.transactions,

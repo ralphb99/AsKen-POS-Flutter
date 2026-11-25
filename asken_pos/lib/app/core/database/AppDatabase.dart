@@ -16,6 +16,7 @@ class ProductDataRow {
     ProductVariants,
     Transactions,
     TransactionItems,
+    TransactionPrintJobs,
     TransactionSyncBatches,
     StoreSettings,
   ],
@@ -33,7 +34,7 @@ class AppDatabase extends _$AppDatabase {
       );
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -120,6 +121,15 @@ class AppDatabase extends _$AppDatabase {
           'remote_text_file_i_d',
         );
       }
+      if (From < 5) {
+        final HasTransactionPrintJobsTable = await _HasTable(
+          'transaction_print_jobs',
+        );
+
+        if (!HasTransactionPrintJobsTable) {
+          await Migrator.createTable(transactionPrintJobs);
+        }
+      }
     },
   );
 
@@ -194,6 +204,23 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  Future<void> EnsureStoreSettings() async {
+    final ExistingSettings = await select(storeSettings).get();
+
+    if (ExistingSettings.isNotEmpty) {
+      return;
+    }
+
+    await into(storeSettings).insert(
+      StoreSettingsCompanion.insert(
+        StoreName: 'Educational Supply Store',
+        Address: 'Address not configured',
+        ContactNumber: const Value('Contact number not configured'),
+        ReceiptFooter: const Value('Thank you for your purchase.'),
+      ),
+    );
+  }
+
   Future<List<ProductDataRow>> GetProductData() {
     final ProductQuery =
         select(productVariants).join([
@@ -259,9 +286,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<bool> _HasColumn(String TableName, String ColumnName) async {
-    final Result = await customSelect(
-      'PRAGMA table_info("$TableName")',
-    ).get();
+    final Result = await customSelect('PRAGMA table_info("$TableName")').get();
 
     return Result.any((Row) => Row.data['name'] == ColumnName);
   }

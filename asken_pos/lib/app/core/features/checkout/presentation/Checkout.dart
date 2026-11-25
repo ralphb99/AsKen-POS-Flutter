@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:asken_pos/app/core/features/checkout/application/CheckoutController.dart';
 import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Product.dart';
 import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
+import 'package:asken_pos/app/core/features/printing/application/TransactionPrintNotifier.dart';
+import 'package:asken_pos/app/core/features/printing/domain/ReceiptData.dart';
 import 'package:asken_pos/app/routes/AppRoutes.dart';
 
 String formatPeso(int Cents) => '\u20B1${(Cents / 100).toStringAsFixed(2)}';
@@ -18,6 +19,9 @@ class CheckoutPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Checkout = ref.watch(CheckoutControllerProvider(CashierName));
+    final PendingPrintJobs = ref.watch(PendingPrintJobsProvider);
+    final PrintState = ref.watch(TransactionPrintProvider);
+
     return Checkout.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
@@ -26,6 +30,11 @@ class CheckoutPage extends ConsumerWidget {
       ),
       data: (State) => _CheckoutContent(
         State: State,
+        PendingPrintJobs: PendingPrintJobs.value ?? const <PendingPrintJob>[],
+        IsPrintLoading: PrintState.isLoading,
+        OnRetryPrint: (TransactionID) => ref
+            .read(TransactionPrintProvider.notifier)
+            .PrintTransaction(TransactionID: TransactionID),
         OnLogout: () async {
           await ref
               .read(CheckoutControllerProvider(CashierName).notifier)
@@ -59,6 +68,10 @@ class CheckoutPage extends ConsumerWidget {
 
 class _CheckoutContent extends StatelessWidget {
   final CheckoutState State;
+  final List<PendingPrintJob> PendingPrintJobs;
+  final bool IsPrintLoading;
+  final Future<TransactionPrintResult?> Function(int TransactionID)
+  OnRetryPrint;
   final Future<void> Function() OnLogout;
   final ValueChanged<String> OnSearchChanged;
   final ValueChanged<ProductDisplayData> OnAddProduct;
@@ -66,6 +79,9 @@ class _CheckoutContent extends StatelessWidget {
 
   const _CheckoutContent({
     required this.State,
+    required this.PendingPrintJobs,
+    required this.IsPrintLoading,
+    required this.OnRetryPrint,
     required this.OnLogout,
     required this.OnSearchChanged,
     required this.OnAddProduct,
@@ -115,6 +131,14 @@ class _CheckoutContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _CashierHeader(),
+        if (PendingPrintJobs.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _PendingPrintPanel(
+            Jobs: PendingPrintJobs,
+            IsRetrying: IsPrintLoading,
+            OnRetryPrint: OnRetryPrint,
+          ),
+        ],
         const SizedBox(height: 20),
         _SearchSection(),
         const SizedBox(height: 20),
@@ -130,6 +154,14 @@ class _CheckoutContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _CashierHeader(),
+        if (PendingPrintJobs.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _PendingPrintPanel(
+            Jobs: PendingPrintJobs,
+            IsRetrying: IsPrintLoading,
+            OnRetryPrint: OnRetryPrint,
+          ),
+        ],
         const SizedBox(height: 24),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,6 +396,68 @@ class _CheckoutContent extends StatelessWidget {
           style: TextStyle(color: Colors.grey.shade600),
         ),
       ],
+    );
+  }
+}
+
+class _PendingPrintPanel extends StatelessWidget {
+  final List<PendingPrintJob> Jobs;
+  final bool IsRetrying;
+  final Future<TransactionPrintResult?> Function(int TransactionID)
+  OnRetryPrint;
+
+  const _PendingPrintPanel({
+    required this.Jobs,
+    required this.IsRetrying,
+    required this.OnRetryPrint,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Job = Jobs.first;
+    final RemainingCount = Jobs.length - 1;
+    final IsFailed = Job.Status == 'failed';
+
+    return Card(
+      color: Theme.of(context).colorScheme.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              IsFailed ? 'Receipt printing failed' : 'Receipt printing pending',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Sale ${Job.ReceiptNumber} is already saved. You can continue checkout while printing is retried.',
+            ),
+            if (Job.LastError != null && Job.LastError!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(Job.LastError!),
+            ],
+            if (RemainingCount > 0) ...[
+              const SizedBox(height: 6),
+              Text('$RemainingCount more receipt(s) need attention.'),
+            ],
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              onPressed: IsRetrying
+                  ? null
+                  : () => OnRetryPrint(Job.TransactionID),
+              icon: IsRetrying
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.print_outlined),
+              label: Text(IsRetrying ? 'Printing...' : 'Retry Print'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

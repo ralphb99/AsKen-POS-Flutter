@@ -20,8 +20,8 @@
 ## Current architecture
 
 - Database: `lib/app/core/database/AppDatabase.dart`
-- Tables: `Products`, `ProductVariants`, `Transactions`, `TransactionItems`, `TransactionSyncBatches`, `StoreSettings`
-- Schema version: `4`
+- Tables: `Products`, `ProductVariants`, `Transactions`, `TransactionItems`, `TransactionPrintJobs`, `TransactionSyncBatches`, `StoreSettings`
+- Schema version: `5`
 - Generated Drift file: `lib/app/core/database/AppDatabase.g.dart`
 - Central providers: `lib/app/core/features/checkout/data/AppProviders.dart`
 - Owner feature modules:
@@ -34,6 +34,10 @@
 ## Database and migration status
 
 - Transactions are stored locally before any remote sync attempt.
+- Every saved transaction creates one durable `TransactionPrintJobs` row in the same database transaction.
+- Print job statuses are `pending`, `printing`, `printed`, and `failed`.
+- Print jobs store attempt count, last attempt time, printed time, and the last printer error.
+- Print jobs cascade when their retained transaction is deleted.
 - Transaction sync statuses are `pending`, `uploading`, `synced`, and `failed`.
 - `Transactions` stores payment method, sync attempt count, last attempt time, synced time, last error, and sync batch ID.
 - `TransactionSyncBatches` stores one daily batch per business date, local CSV/TXT paths, checksums, remote file IDs, status, attempt count, errors, and upload time.
@@ -55,9 +59,10 @@ It deletes transaction items and transactions only when:
 SyncStatus == synced
 SyncedAt is not null
 SyncedAt is older than 30 days
+Print job is printed, or no print job exists for a legacy transaction
 ```
 
-Pending, uploading, failed, and recently synced records remain locally. Batch metadata is retained.
+Pending, uploading, failed, recently synced, and not-yet-printed records remain locally. Batch metadata is retained.
 
 ## Google Drive configuration
 
@@ -121,6 +126,26 @@ Important scope consideration: `drive.file` is intentionally narrow. If owner au
 - Failed syncs show an owner-facing message and a Retry action.
 - The app does not block checkout when sync fails.
 
+## Thermal printing foundation
+
+The first printing checkpoint is implemented without binding the app to an unconfirmed printer model:
+
+- `TransactionService.dart` saves the transaction, line items, and pending print job atomically.
+- `ReceiptDataService.dart` rebuilds a receipt from persisted transaction data and the current store settings.
+- `TransactionPrintJobService.dart` claims, retries, completes, fails, and recovers interrupted print jobs.
+- `TransactionPrintService.dart` separates database print state from the hardware adapter and limits a print attempt to eight seconds.
+- `ThermalPrinterService.dart` defines the hardware boundary and currently provides a placeholder adapter that reports no configured printer.
+- `TransactionPrintNotifier.dart` exposes retry/reprint operations through Riverpod `AsyncNotifier`.
+- Checkout immediately returns to the cashier flow after the transaction is saved. Failed or pending printing appears as a retry panel and does not block new sales.
+- Owner Transaction Details includes Retry Print/Reprint Receipt.
+- Owner Settings now seeds and edits the initial receipt placeholders:
+  - `Educational Supply Store`
+  - `Address not configured`
+  - `Contact number not configured`
+  - `Thank you for your purchase.`
+- The transaction preview and the future hardware printer use the same persisted store settings.
+- No thermal-printer package or Bluetooth/USB permission has been selected yet. The adapter must wait for the owner’s printer model and transport type.
+
 ## Update App Protocol implementation status
 
 The first export checkpoint is implemented as an owner-only flow:
@@ -137,7 +162,8 @@ The first export checkpoint is implemented as an owner-only flow:
 - `UpdateAppProtocolExportService.dart` writes a readable UTF-8 JSON document with an `.askenbackup` extension through the native file save dialog.
 - The manifest contains the protocol version, database schema version, record counts, UTC creation time, and a SHA-256 checksum of the data payload.
 - Device-specific local CSV/TXT paths are intentionally excluded. The future importer can regenerate those files from the preserved transaction data.
-- The export/import protocol does not change the Drift schema and does not encrypt the backup yet.
+- The export/import protocol remains backward-compatible and does not encrypt the backup yet.
+- The backup protocol now also preserves `TransactionPrintJobs` when present. Older backups without that optional collection remain readable.
 - The owner is instructed to verify the file exists before installing a replacement APK.
 
 The import and restore-preview checkpoint is now implemented:
@@ -212,13 +238,19 @@ Manual daily sync is acceptable for the current business scale.
    - Sync recommended message.
 6. Add foreground automatic sync on app start/resume only after manual sync is verified.
 7. Add true background scheduling only if the business workflow requires it.
-8. Implement thermal printing last, after selecting and testing an ESC/POS Android printer.
+8. Verify the transaction print-state flow on Android with the placeholder adapter:
+   - Confirming a sale saves the transaction and print job atomically.
+   - Confirming a sale returns the cashier to checkout even when printing fails.
+   - Retry Print appears on checkout.
+   - Retry Print/Reprint Receipt works from Owner Transaction Details.
+   - Interrupted `printing` jobs recover as failed after app restart.
+9. Select the owner’s thermal printer model and transport type, then implement and test the ESC/POS adapter behind `ThermalPrinterService`.
 
 ## Validation notes
 
 - `flutter pub get` completed successfully after the Google Drive upload dependencies were added.
-- `dart analyze lib` completes with no errors after the Update App Protocol export implementation.
+- `dart analyze lib` completes with no errors after the Update App Protocol and printing-foundation implementations.
 - `git diff --check` passes; line-ending warnings may appear because the workspace uses mixed CRLF/LF files.
 - `flutter test` is currently blocked by the pre-existing `test/widget_test.dart`, whose `main` function is fully commented out. This is a test-fixture issue, not an application analyzer error.
 - Dart analyzer and build runner previously hung without output in the local environment; do not treat a hang as a clean validation result.
-- Runtime testing on an Android device is still required for Google authentication, shared-folder access, resumable upload behavior, login sizing, native backup saving, and backup contents.
+- Runtime testing on an Android device is still required for Google authentication, shared-folder access, resumable upload behavior, login sizing, native backup saving/import, print-job recovery, and the eventual thermal-printer adapter.

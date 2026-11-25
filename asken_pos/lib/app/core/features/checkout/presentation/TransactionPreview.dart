@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -56,7 +58,7 @@ class _TransactionPreviewPageState
     });
 
     try {
-      final ReceiptNumber = await ref
+      final SavedTransaction = await ref
           .read(TransactionServiceProvider)
           .SaveTransaction(
             CashierName: widget.CashierName,
@@ -68,13 +70,16 @@ class _TransactionPreviewPageState
           .read(CheckoutControllerProvider(widget.CashierName).notifier)
           .ClearCheckoutSession();
 
+      unawaited(
+        ref
+            .read(TransactionPrintServiceProvider)
+            .PrintTransaction(TransactionID: SavedTransaction.TransactionID),
+      );
+
       if (!mounted) {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Transaction saved: $ReceiptNumber')),
-      );
       Navigator.pushNamedAndRemoveUntil(
         context,
         AppRoutes.checkout,
@@ -96,6 +101,7 @@ class _TransactionPreviewPageState
   @override
   Widget build(BuildContext context) {
     final DateTime Now = DateTime.now();
+    final StoreSettings = ref.watch(StoreSettingsProvider).value;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -119,9 +125,15 @@ class _TransactionPreviewPageState
                   child: Column(
                     children: [
                       _ReceiptCard(
-                        StoreName: 'AsKen General Supply Store',
-                        Address: 'Brgy 1, Tuburan, Cebu',
-                        ContactNumber: null,
+                        StoreName:
+                            StoreSettings?.StoreName ??
+                            'Educational Supply Store',
+                        Address:
+                            StoreSettings?.Address ?? 'Address not configured',
+                        ContactNumber: StoreSettings?.ContactNumber,
+                        ReceiptFooter:
+                            StoreSettings?.ReceiptFooter ??
+                            'Thank you for your purchase.',
                         CashierName: widget.CashierName,
                         DateTimeValue: Now,
                         CartItems: widget.CartItems,
@@ -150,7 +162,7 @@ class _TransactionPreviewPageState
                       const SizedBox(height: 8),
                       Text(
                         SaveError ??
-                            'The receipt will be logged after confirmation.',
+                            'The transaction is saved locally before printing.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: SaveError == null ? null : Colors.red,
@@ -172,6 +184,7 @@ class _ReceiptCard extends StatelessWidget {
   final String StoreName;
   final String Address;
   final String? ContactNumber;
+  final String? ReceiptFooter;
   final String CashierName;
   final DateTime DateTimeValue;
   final List<CartItem> CartItems;
@@ -184,6 +197,7 @@ class _ReceiptCard extends StatelessWidget {
     required this.StoreName,
     required this.Address,
     required this.ContactNumber,
+    required this.ReceiptFooter,
     required this.CashierName,
     required this.DateTimeValue,
     required this.CartItems,
@@ -335,7 +349,7 @@ class _ReceiptCard extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Thank you for supporting us!',
+              ReceiptFooter ?? 'Thank you for your purchase.',
               textAlign: TextAlign.center,
               style: Theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,

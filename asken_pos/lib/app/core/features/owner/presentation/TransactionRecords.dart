@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
+import 'package:asken_pos/app/core/features/printing/application/TransactionPrintNotifier.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionRecordsService.dart';
 
 class TransactionRecordsPage extends ConsumerStatefulWidget {
@@ -89,7 +90,6 @@ class _TransactionRecordsPageState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-           
             ListTile(
               leading: const Icon(Icons.document_scanner),
               title: const Text('Save and open CSV file'),
@@ -123,9 +123,9 @@ class _TransactionRecordsPageState
             );
     } catch (Error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to save file: $Error')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to save file: $Error')));
       return;
     }
 
@@ -144,9 +144,9 @@ class _TransactionRecordsPageState
       }
     }
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(Message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(Message)));
   }
 
   @override
@@ -260,7 +260,12 @@ class _TransactionRecordsPageState
                           return Card(
                             elevation: 7,
                             child: ListTile(
-                              contentPadding: EdgeInsetsGeometry.fromLTRB(16, 10, 16, 10),
+                              contentPadding: EdgeInsetsGeometry.fromLTRB(
+                                16,
+                                10,
+                                16,
+                                10,
+                              ),
                               onTap: () => Navigator.push(
                                 Context,
                                 MaterialPageRoute(
@@ -282,19 +287,19 @@ class _TransactionRecordsPageState
                                 'Sync Status: ${TransactionData.SyncStatus.toUpperCase()}',
                               ),
                               subtitleTextStyle: TextStyle(
-                                  height: 2,
-                                  fontWeight: FontWeight.w500,
-                                   color: Colors.black,
-                                ),
+                                height: 2,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
                               isThreeLine: true,
                               trailing: Text(
                                 _FormatPeso(TransactionData.TotalInCents),
                               ),
                               leadingAndTrailingTextStyle: TextStyle(
-                                  height: 2,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.black,
-                                ),
+                                height: 2,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black,
+                              ),
                             ),
                           );
                         },
@@ -308,14 +313,19 @@ class _TransactionRecordsPageState
   }
 }
 
-class TransactionRecordDetailsPage extends StatelessWidget {
+class TransactionRecordDetailsPage extends ConsumerWidget {
   final TransactionRecord Record;
 
   const TransactionRecordDetailsPage({required this.Record, super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext Context, WidgetRef Ref) {
     final TransactionData = Record.TransactionData;
+    final PrintJobState = Ref.watch(
+      TransactionPrintJobProvider(TransactionData.ID),
+    );
+    final PrintJob = PrintJobState.value;
+    final PrintState = Ref.watch(TransactionPrintProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Transaction Details')),
@@ -324,13 +334,93 @@ class TransactionRecordDetailsPage extends StatelessWidget {
         children: [
           Text(
             TransactionData.ReceiptNumber,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(Context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
           Text('Cashier: ${TransactionData.CashierName}'),
           Text('Payment: ${TransactionData.PaymentMethod}'),
           Text('Status: ${TransactionData.Status}'),
           Text('Sync: ${TransactionData.SyncStatus}'),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Receipt printing',
+                    style: Theme.of(Context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    PrintJob == null
+                        ? 'Not printed yet'
+                        : 'Status: ${PrintJob.Status}',
+                  ),
+                  if (PrintJob?.LastError != null &&
+                      PrintJob!.LastError!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(PrintJob.LastError!),
+                  ],
+                  const SizedBox(height: 10),
+                  FilledButton.icon(
+                    onPressed: PrintState.isLoading
+                        ? null
+                        : () async {
+                            try {
+                              final Result =
+                                  await Ref.read(
+                                    TransactionPrintProvider.notifier,
+                                  ).PrintTransaction(
+                                    TransactionID: TransactionData.ID,
+                                  );
+                              Ref.invalidate(
+                                TransactionPrintJobProvider(TransactionData.ID),
+                              );
+
+                              if (!Context.mounted) {
+                                return;
+                              }
+
+                              ScaffoldMessenger.of(Context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    Result?.IsPrinted == true
+                                        ? 'Receipt printed successfully.'
+                                        : 'Transaction is saved, but printing failed. Try again when the printer is ready.',
+                                  ),
+                                ),
+                              );
+                            } catch (Error) {
+                              if (!Context.mounted) {
+                                return;
+                              }
+
+                              ScaffoldMessenger.of(Context).showSnackBar(
+                                SnackBar(content: Text(Error.toString())),
+                              );
+                            }
+                          },
+                    icon: PrintState.isLoading
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.print_outlined),
+                    label: Text(
+                      PrintState.isLoading
+                          ? 'Printing...'
+                          : PrintJob?.Status == 'printed'
+                          ? 'Reprint Receipt'
+                          : 'Retry Print',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           const Divider(height: 32),
           ...Record.Items.map(
             (Item) => ListTile(

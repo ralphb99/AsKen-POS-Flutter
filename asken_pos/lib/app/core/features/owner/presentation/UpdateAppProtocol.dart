@@ -41,7 +41,7 @@ class UpdateAppProtocolPage extends ConsumerWidget {
     final ImportSession = ImportState.value;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Update App Process')),
+      appBar: AppBar(title: const Text('App Update')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),

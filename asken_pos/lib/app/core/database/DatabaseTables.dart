@@ -76,6 +76,30 @@ class TransactionItems extends Table {
   IntColumn get LineTotalInCents => integer()();
 }
 
+class TransactionPrintJobs extends Table {
+  IntColumn get ID => integer().autoIncrement()();
+
+  IntColumn get TransactionID =>
+      integer().unique().references(
+        Transactions,
+        #ID,
+        onDelete: KeyAction.cascade,
+      )();
+
+  /// pending, printing, printed, or failed.
+  TextColumn get Status => text().withDefault(const Constant('pending'))();
+
+  IntColumn get AttemptCount => integer().withDefault(const Constant(0))();
+
+  DateTimeColumn get LastAttemptAt => dateTime().nullable()();
+
+  DateTimeColumn get PrintedAt => dateTime().nullable()();
+
+  TextColumn get LastError => text().nullable()();
+
+  DateTimeColumn get CreatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
 class TransactionSyncBatches extends Table {
   IntColumn get ID => integer().autoIncrement()();
 

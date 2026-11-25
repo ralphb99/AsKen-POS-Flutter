@@ -18,6 +18,9 @@ class UpdateAppProtocolSnapshotService {
       final TransactionItemRows = await Database.select(
         Database.transactionItems,
       ).get();
+      final TransactionPrintJobRows = await Database.select(
+        Database.transactionPrintJobs,
+      ).get();
       final TransactionSyncBatchRows = await Database.select(
         Database.transactionSyncBatches,
       ).get();
@@ -35,6 +38,9 @@ class UpdateAppProtocolSnapshotService {
         ).toList(growable: false),
         TransactionItems: TransactionItemRows.map(
           _MapTransactionItem,
+        ).toList(growable: false),
+        TransactionPrintJobs: TransactionPrintJobRows.map(
+          _MapTransactionPrintJob,
         ).toList(growable: false),
         TransactionSyncBatches: TransactionSyncBatchRows.map(
           _MapTransactionSyncBatch,
@@ -96,6 +102,21 @@ class UpdateAppProtocolSnapshotService {
       'UnitPriceInCents': TransactionItemRow.UnitPriceInCents,
       'Quantity': TransactionItemRow.Quantity,
       'LineTotalInCents': TransactionItemRow.LineTotalInCents,
+    };
+  }
+
+  Map<String, dynamic> _MapTransactionPrintJob(
+    TransactionPrintJob TransactionPrintJobRow,
+  ) {
+    return <String, dynamic>{
+      'ID': TransactionPrintJobRow.ID,
+      'TransactionID': TransactionPrintJobRow.TransactionID,
+      'Status': TransactionPrintJobRow.Status,
+      'AttemptCount': TransactionPrintJobRow.AttemptCount,
+      'LastAttemptAt': _FormatDateTime(TransactionPrintJobRow.LastAttemptAt),
+      'PrintedAt': _FormatDateTime(TransactionPrintJobRow.PrintedAt),
+      'LastError': TransactionPrintJobRow.LastError,
+      'CreatedAt': _FormatDateTime(TransactionPrintJobRow.CreatedAt),
     };
   }
 

@@ -2136,6 +2136,528 @@ class TransactionItemsCompanion extends UpdateCompanion<TransactionItem> {
   }
 }
 
+class $TransactionPrintJobsTable extends TransactionPrintJobs
+    with TableInfo<$TransactionPrintJobsTable, TransactionPrintJob> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TransactionPrintJobsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _IDMeta = const VerificationMeta('ID');
+  @override
+  late final GeneratedColumn<int> ID = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _TransactionIDMeta = const VerificationMeta(
+    'TransactionID',
+  );
+  @override
+  late final GeneratedColumn<int> TransactionID = GeneratedColumn<int>(
+    'transaction_i_d',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'UNIQUE REFERENCES transactions (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _StatusMeta = const VerificationMeta('Status');
+  @override
+  late final GeneratedColumn<String> Status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _AttemptCountMeta = const VerificationMeta(
+    'AttemptCount',
+  );
+  @override
+  late final GeneratedColumn<int> AttemptCount = GeneratedColumn<int>(
+    'attempt_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _LastAttemptAtMeta = const VerificationMeta(
+    'LastAttemptAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> LastAttemptAt =
+      GeneratedColumn<DateTime>(
+        'last_attempt_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _PrintedAtMeta = const VerificationMeta(
+    'PrintedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> PrintedAt = GeneratedColumn<DateTime>(
+    'printed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _LastErrorMeta = const VerificationMeta(
+    'LastError',
+  );
+  @override
+  late final GeneratedColumn<String> LastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _CreatedAtMeta = const VerificationMeta(
+    'CreatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> CreatedAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    ID,
+    TransactionID,
+    Status,
+    AttemptCount,
+    LastAttemptAt,
+    PrintedAt,
+    LastError,
+    CreatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'transaction_print_jobs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TransactionPrintJob> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_IDMeta, ID.isAcceptableOrUnknown(data['id']!, _IDMeta));
+    }
+    if (data.containsKey('transaction_i_d')) {
+      context.handle(
+        _TransactionIDMeta,
+        TransactionID.isAcceptableOrUnknown(
+          data['transaction_i_d']!,
+          _TransactionIDMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_TransactionIDMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _StatusMeta,
+        Status.isAcceptableOrUnknown(data['status']!, _StatusMeta),
+      );
+    }
+    if (data.containsKey('attempt_count')) {
+      context.handle(
+        _AttemptCountMeta,
+        AttemptCount.isAcceptableOrUnknown(
+          data['attempt_count']!,
+          _AttemptCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_attempt_at')) {
+      context.handle(
+        _LastAttemptAtMeta,
+        LastAttemptAt.isAcceptableOrUnknown(
+          data['last_attempt_at']!,
+          _LastAttemptAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('printed_at')) {
+      context.handle(
+        _PrintedAtMeta,
+        PrintedAt.isAcceptableOrUnknown(data['printed_at']!, _PrintedAtMeta),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _LastErrorMeta,
+        LastError.isAcceptableOrUnknown(data['last_error']!, _LastErrorMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _CreatedAtMeta,
+        CreatedAt.isAcceptableOrUnknown(data['created_at']!, _CreatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {ID};
+  @override
+  TransactionPrintJob map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TransactionPrintJob(
+      ID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      TransactionID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}transaction_i_d'],
+      )!,
+      Status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      AttemptCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempt_count'],
+      )!,
+      LastAttemptAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_attempt_at'],
+      ),
+      PrintedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}printed_at'],
+      ),
+      LastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      CreatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $TransactionPrintJobsTable createAlias(String alias) {
+    return $TransactionPrintJobsTable(attachedDatabase, alias);
+  }
+}
+
+class TransactionPrintJob extends DataClass
+    implements Insertable<TransactionPrintJob> {
+  final int ID;
+  final int TransactionID;
+
+  /// pending, printing, printed, or failed.
+  final String Status;
+  final int AttemptCount;
+  final DateTime? LastAttemptAt;
+  final DateTime? PrintedAt;
+  final String? LastError;
+  final DateTime CreatedAt;
+  const TransactionPrintJob({
+    required this.ID,
+    required this.TransactionID,
+    required this.Status,
+    required this.AttemptCount,
+    this.LastAttemptAt,
+    this.PrintedAt,
+    this.LastError,
+    required this.CreatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(ID);
+    map['transaction_i_d'] = Variable<int>(TransactionID);
+    map['status'] = Variable<String>(Status);
+    map['attempt_count'] = Variable<int>(AttemptCount);
+    if (!nullToAbsent || LastAttemptAt != null) {
+      map['last_attempt_at'] = Variable<DateTime>(LastAttemptAt);
+    }
+    if (!nullToAbsent || PrintedAt != null) {
+      map['printed_at'] = Variable<DateTime>(PrintedAt);
+    }
+    if (!nullToAbsent || LastError != null) {
+      map['last_error'] = Variable<String>(LastError);
+    }
+    map['created_at'] = Variable<DateTime>(CreatedAt);
+    return map;
+  }
+
+  TransactionPrintJobsCompanion toCompanion(bool nullToAbsent) {
+    return TransactionPrintJobsCompanion(
+      ID: Value(ID),
+      TransactionID: Value(TransactionID),
+      Status: Value(Status),
+      AttemptCount: Value(AttemptCount),
+      LastAttemptAt: LastAttemptAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(LastAttemptAt),
+      PrintedAt: PrintedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(PrintedAt),
+      LastError: LastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(LastError),
+      CreatedAt: Value(CreatedAt),
+    );
+  }
+
+  factory TransactionPrintJob.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TransactionPrintJob(
+      ID: serializer.fromJson<int>(json['ID']),
+      TransactionID: serializer.fromJson<int>(json['TransactionID']),
+      Status: serializer.fromJson<String>(json['Status']),
+      AttemptCount: serializer.fromJson<int>(json['AttemptCount']),
+      LastAttemptAt: serializer.fromJson<DateTime?>(json['LastAttemptAt']),
+      PrintedAt: serializer.fromJson<DateTime?>(json['PrintedAt']),
+      LastError: serializer.fromJson<String?>(json['LastError']),
+      CreatedAt: serializer.fromJson<DateTime>(json['CreatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'ID': serializer.toJson<int>(ID),
+      'TransactionID': serializer.toJson<int>(TransactionID),
+      'Status': serializer.toJson<String>(Status),
+      'AttemptCount': serializer.toJson<int>(AttemptCount),
+      'LastAttemptAt': serializer.toJson<DateTime?>(LastAttemptAt),
+      'PrintedAt': serializer.toJson<DateTime?>(PrintedAt),
+      'LastError': serializer.toJson<String?>(LastError),
+      'CreatedAt': serializer.toJson<DateTime>(CreatedAt),
+    };
+  }
+
+  TransactionPrintJob copyWith({
+    int? ID,
+    int? TransactionID,
+    String? Status,
+    int? AttemptCount,
+    Value<DateTime?> LastAttemptAt = const Value.absent(),
+    Value<DateTime?> PrintedAt = const Value.absent(),
+    Value<String?> LastError = const Value.absent(),
+    DateTime? CreatedAt,
+  }) => TransactionPrintJob(
+    ID: ID ?? this.ID,
+    TransactionID: TransactionID ?? this.TransactionID,
+    Status: Status ?? this.Status,
+    AttemptCount: AttemptCount ?? this.AttemptCount,
+    LastAttemptAt: LastAttemptAt.present
+        ? LastAttemptAt.value
+        : this.LastAttemptAt,
+    PrintedAt: PrintedAt.present ? PrintedAt.value : this.PrintedAt,
+    LastError: LastError.present ? LastError.value : this.LastError,
+    CreatedAt: CreatedAt ?? this.CreatedAt,
+  );
+  TransactionPrintJob copyWithCompanion(TransactionPrintJobsCompanion data) {
+    return TransactionPrintJob(
+      ID: data.ID.present ? data.ID.value : this.ID,
+      TransactionID: data.TransactionID.present
+          ? data.TransactionID.value
+          : this.TransactionID,
+      Status: data.Status.present ? data.Status.value : this.Status,
+      AttemptCount: data.AttemptCount.present
+          ? data.AttemptCount.value
+          : this.AttemptCount,
+      LastAttemptAt: data.LastAttemptAt.present
+          ? data.LastAttemptAt.value
+          : this.LastAttemptAt,
+      PrintedAt: data.PrintedAt.present ? data.PrintedAt.value : this.PrintedAt,
+      LastError: data.LastError.present ? data.LastError.value : this.LastError,
+      CreatedAt: data.CreatedAt.present ? data.CreatedAt.value : this.CreatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TransactionPrintJob(')
+          ..write('ID: $ID, ')
+          ..write('TransactionID: $TransactionID, ')
+          ..write('Status: $Status, ')
+          ..write('AttemptCount: $AttemptCount, ')
+          ..write('LastAttemptAt: $LastAttemptAt, ')
+          ..write('PrintedAt: $PrintedAt, ')
+          ..write('LastError: $LastError, ')
+          ..write('CreatedAt: $CreatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    ID,
+    TransactionID,
+    Status,
+    AttemptCount,
+    LastAttemptAt,
+    PrintedAt,
+    LastError,
+    CreatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TransactionPrintJob &&
+          other.ID == this.ID &&
+          other.TransactionID == this.TransactionID &&
+          other.Status == this.Status &&
+          other.AttemptCount == this.AttemptCount &&
+          other.LastAttemptAt == this.LastAttemptAt &&
+          other.PrintedAt == this.PrintedAt &&
+          other.LastError == this.LastError &&
+          other.CreatedAt == this.CreatedAt);
+}
+
+class TransactionPrintJobsCompanion
+    extends UpdateCompanion<TransactionPrintJob> {
+  final Value<int> ID;
+  final Value<int> TransactionID;
+  final Value<String> Status;
+  final Value<int> AttemptCount;
+  final Value<DateTime?> LastAttemptAt;
+  final Value<DateTime?> PrintedAt;
+  final Value<String?> LastError;
+  final Value<DateTime> CreatedAt;
+  const TransactionPrintJobsCompanion({
+    this.ID = const Value.absent(),
+    this.TransactionID = const Value.absent(),
+    this.Status = const Value.absent(),
+    this.AttemptCount = const Value.absent(),
+    this.LastAttemptAt = const Value.absent(),
+    this.PrintedAt = const Value.absent(),
+    this.LastError = const Value.absent(),
+    this.CreatedAt = const Value.absent(),
+  });
+  TransactionPrintJobsCompanion.insert({
+    this.ID = const Value.absent(),
+    required int TransactionID,
+    this.Status = const Value.absent(),
+    this.AttemptCount = const Value.absent(),
+    this.LastAttemptAt = const Value.absent(),
+    this.PrintedAt = const Value.absent(),
+    this.LastError = const Value.absent(),
+    this.CreatedAt = const Value.absent(),
+  }) : TransactionID = Value(TransactionID);
+  static Insertable<TransactionPrintJob> custom({
+    Expression<int>? ID,
+    Expression<int>? TransactionID,
+    Expression<String>? Status,
+    Expression<int>? AttemptCount,
+    Expression<DateTime>? LastAttemptAt,
+    Expression<DateTime>? PrintedAt,
+    Expression<String>? LastError,
+    Expression<DateTime>? CreatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (ID != null) 'id': ID,
+      if (TransactionID != null) 'transaction_i_d': TransactionID,
+      if (Status != null) 'status': Status,
+      if (AttemptCount != null) 'attempt_count': AttemptCount,
+      if (LastAttemptAt != null) 'last_attempt_at': LastAttemptAt,
+      if (PrintedAt != null) 'printed_at': PrintedAt,
+      if (LastError != null) 'last_error': LastError,
+      if (CreatedAt != null) 'created_at': CreatedAt,
+    });
+  }
+
+  TransactionPrintJobsCompanion copyWith({
+    Value<int>? ID,
+    Value<int>? TransactionID,
+    Value<String>? Status,
+    Value<int>? AttemptCount,
+    Value<DateTime?>? LastAttemptAt,
+    Value<DateTime?>? PrintedAt,
+    Value<String?>? LastError,
+    Value<DateTime>? CreatedAt,
+  }) {
+    return TransactionPrintJobsCompanion(
+      ID: ID ?? this.ID,
+      TransactionID: TransactionID ?? this.TransactionID,
+      Status: Status ?? this.Status,
+      AttemptCount: AttemptCount ?? this.AttemptCount,
+      LastAttemptAt: LastAttemptAt ?? this.LastAttemptAt,
+      PrintedAt: PrintedAt ?? this.PrintedAt,
+      LastError: LastError ?? this.LastError,
+      CreatedAt: CreatedAt ?? this.CreatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (ID.present) {
+      map['id'] = Variable<int>(ID.value);
+    }
+    if (TransactionID.present) {
+      map['transaction_i_d'] = Variable<int>(TransactionID.value);
+    }
+    if (Status.present) {
+      map['status'] = Variable<String>(Status.value);
+    }
+    if (AttemptCount.present) {
+      map['attempt_count'] = Variable<int>(AttemptCount.value);
+    }
+    if (LastAttemptAt.present) {
+      map['last_attempt_at'] = Variable<DateTime>(LastAttemptAt.value);
+    }
+    if (PrintedAt.present) {
+      map['printed_at'] = Variable<DateTime>(PrintedAt.value);
+    }
+    if (LastError.present) {
+      map['last_error'] = Variable<String>(LastError.value);
+    }
+    if (CreatedAt.present) {
+      map['created_at'] = Variable<DateTime>(CreatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TransactionPrintJobsCompanion(')
+          ..write('ID: $ID, ')
+          ..write('TransactionID: $TransactionID, ')
+          ..write('Status: $Status, ')
+          ..write('AttemptCount: $AttemptCount, ')
+          ..write('LastAttemptAt: $LastAttemptAt, ')
+          ..write('PrintedAt: $PrintedAt, ')
+          ..write('LastError: $LastError, ')
+          ..write('CreatedAt: $CreatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $TransactionSyncBatchesTable extends TransactionSyncBatches
     with TableInfo<$TransactionSyncBatchesTable, TransactionSyncBatche> {
   @override
@@ -3523,6 +4045,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TransactionItemsTable transactionItems = $TransactionItemsTable(
     this,
   );
+  late final $TransactionPrintJobsTable transactionPrintJobs =
+      $TransactionPrintJobsTable(this);
   late final $TransactionSyncBatchesTable transactionSyncBatches =
       $TransactionSyncBatchesTable(this);
   late final $StoreSettingsTable storeSettings = $StoreSettingsTable(this);
@@ -3535,9 +4059,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     productVariants,
     transactions,
     transactionItems,
+    transactionPrintJobs,
     transactionSyncBatches,
     storeSettings,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'transactions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('transaction_print_jobs', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$ProductsTableCreateCompanionBuilder =
@@ -4351,6 +4886,31 @@ final class $$TransactionsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $TransactionPrintJobsTable,
+    List<TransactionPrintJob>
+  >
+  _transactionPrintJobsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.transactionPrintJobs,
+        aliasName: 'transactions__id__transaction_print_jobs__transaction_i_d',
+      );
+
+  $$TransactionPrintJobsTableProcessedTableManager
+  get transactionPrintJobsRefs {
+    final manager = $$TransactionPrintJobsTableTableManager(
+      $_db,
+      $_db.transactionPrintJobs,
+    ).filter((f) => f.TransactionID.ID.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _transactionPrintJobsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$TransactionsTableFilterComposer
@@ -4443,6 +5003,31 @@ class $$TransactionsTableFilterComposer
           }) => $$TransactionItemsTableFilterComposer(
             $db: $db,
             $table: $db.transactionItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> transactionPrintJobsRefs(
+    Expression<bool> Function($$TransactionPrintJobsTableFilterComposer f) f,
+  ) {
+    final $$TransactionPrintJobsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ID,
+      referencedTable: $db.transactionPrintJobs,
+      getReferencedColumn: (t) => t.TransactionID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionPrintJobsTableFilterComposer(
+            $db: $db,
+            $table: $db.transactionPrintJobs,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4618,6 +5203,32 @@ class $$TransactionsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> transactionPrintJobsRefs<T extends Object>(
+    Expression<T> Function($$TransactionPrintJobsTableAnnotationComposer a) f,
+  ) {
+    final $$TransactionPrintJobsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.ID,
+          referencedTable: $db.transactionPrintJobs,
+          getReferencedColumn: (t) => t.TransactionID,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$TransactionPrintJobsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.transactionPrintJobs,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$TransactionsTableTableManager
@@ -4633,7 +5244,10 @@ class $$TransactionsTableTableManager
           $$TransactionsTableUpdateCompanionBuilder,
           (Transaction, $$TransactionsTableReferences),
           Transaction,
-          PrefetchHooks Function({bool transactionItemsRefs})
+          PrefetchHooks Function({
+            bool transactionItemsRefs,
+            bool transactionPrintJobsRefs,
+          })
         > {
   $$TransactionsTableTableManager(_$AppDatabase db, $TransactionsTable table)
     : super(
@@ -4714,40 +5328,66 @@ class $$TransactionsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({transactionItemsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (transactionItemsRefs) db.transactionItems,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (transactionItemsRefs)
-                    await $_getPrefetchedData<
-                      Transaction,
-                      $TransactionsTable,
-                      TransactionItem
-                    >(
-                      currentTable: table,
-                      referencedTable: $$TransactionsTableReferences
-                          ._transactionItemsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$TransactionsTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).transactionItemsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where(
-                            (e) => e.TransactionID == item.ID,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({
+                transactionItemsRefs = false,
+                transactionPrintJobsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (transactionItemsRefs) db.transactionItems,
+                    if (transactionPrintJobsRefs) db.transactionPrintJobs,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (transactionItemsRefs)
+                        await $_getPrefetchedData<
+                          Transaction,
+                          $TransactionsTable,
+                          TransactionItem
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TransactionsTableReferences
+                              ._transactionItemsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TransactionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).transactionItemsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.TransactionID == item.ID,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (transactionPrintJobsRefs)
+                        await $_getPrefetchedData<
+                          Transaction,
+                          $TransactionsTable,
+                          TransactionPrintJob
+                        >(
+                          currentTable: table,
+                          referencedTable: $$TransactionsTableReferences
+                              ._transactionPrintJobsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$TransactionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).transactionPrintJobsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.TransactionID == item.ID,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -4764,7 +5404,10 @@ typedef $$TransactionsTableProcessedTableManager =
       $$TransactionsTableUpdateCompanionBuilder,
       (Transaction, $$TransactionsTableReferences),
       Transaction,
-      PrefetchHooks Function({bool transactionItemsRefs})
+      PrefetchHooks Function({
+        bool transactionItemsRefs,
+        bool transactionPrintJobsRefs,
+      })
     >;
 typedef $$TransactionItemsTableCreateCompanionBuilder =
     TransactionItemsCompanion Function({
@@ -5243,6 +5886,399 @@ typedef $$TransactionItemsTableProcessedTableManager =
       (TransactionItem, $$TransactionItemsTableReferences),
       TransactionItem,
       PrefetchHooks Function({bool TransactionID, bool ProductVariantID})
+    >;
+typedef $$TransactionPrintJobsTableCreateCompanionBuilder =
+    TransactionPrintJobsCompanion Function({
+      Value<int> ID,
+      required int TransactionID,
+      Value<String> Status,
+      Value<int> AttemptCount,
+      Value<DateTime?> LastAttemptAt,
+      Value<DateTime?> PrintedAt,
+      Value<String?> LastError,
+      Value<DateTime> CreatedAt,
+    });
+typedef $$TransactionPrintJobsTableUpdateCompanionBuilder =
+    TransactionPrintJobsCompanion Function({
+      Value<int> ID,
+      Value<int> TransactionID,
+      Value<String> Status,
+      Value<int> AttemptCount,
+      Value<DateTime?> LastAttemptAt,
+      Value<DateTime?> PrintedAt,
+      Value<String?> LastError,
+      Value<DateTime> CreatedAt,
+    });
+
+final class $$TransactionPrintJobsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $TransactionPrintJobsTable,
+          TransactionPrintJob
+        > {
+  $$TransactionPrintJobsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $TransactionsTable _TransactionIDTable(_$AppDatabase db) => db
+      .transactions
+      .createAlias('transaction_print_jobs__transaction_i_d__transactions__id');
+
+  $$TransactionsTableProcessedTableManager get TransactionID {
+    final $_column = $_itemColumn<int>('transaction_i_d')!;
+
+    final manager = $$TransactionsTableTableManager(
+      $_db,
+      $_db.transactions,
+    ).filter((f) => f.ID.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_TransactionIDTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$TransactionPrintJobsTableFilterComposer
+    extends Composer<_$AppDatabase, $TransactionPrintJobsTable> {
+  $$TransactionPrintJobsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get Status => $composableBuilder(
+    column: $table.Status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get AttemptCount => $composableBuilder(
+    column: $table.AttemptCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get LastAttemptAt => $composableBuilder(
+    column: $table.LastAttemptAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get PrintedAt => $composableBuilder(
+    column: $table.PrintedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get LastError => $composableBuilder(
+    column: $table.LastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get CreatedAt => $composableBuilder(
+    column: $table.CreatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$TransactionsTableFilterComposer get TransactionID {
+    final $$TransactionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.TransactionID,
+      referencedTable: $db.transactions,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableFilterComposer(
+            $db: $db,
+            $table: $db.transactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TransactionPrintJobsTableOrderingComposer
+    extends Composer<_$AppDatabase, $TransactionPrintJobsTable> {
+  $$TransactionPrintJobsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get Status => $composableBuilder(
+    column: $table.Status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get AttemptCount => $composableBuilder(
+    column: $table.AttemptCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get LastAttemptAt => $composableBuilder(
+    column: $table.LastAttemptAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get PrintedAt => $composableBuilder(
+    column: $table.PrintedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get LastError => $composableBuilder(
+    column: $table.LastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get CreatedAt => $composableBuilder(
+    column: $table.CreatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$TransactionsTableOrderingComposer get TransactionID {
+    final $$TransactionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.TransactionID,
+      referencedTable: $db.transactions,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.transactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TransactionPrintJobsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TransactionPrintJobsTable> {
+  $$TransactionPrintJobsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get ID =>
+      $composableBuilder(column: $table.ID, builder: (column) => column);
+
+  GeneratedColumn<String> get Status =>
+      $composableBuilder(column: $table.Status, builder: (column) => column);
+
+  GeneratedColumn<int> get AttemptCount => $composableBuilder(
+    column: $table.AttemptCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get LastAttemptAt => $composableBuilder(
+    column: $table.LastAttemptAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get PrintedAt =>
+      $composableBuilder(column: $table.PrintedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get LastError =>
+      $composableBuilder(column: $table.LastError, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get CreatedAt =>
+      $composableBuilder(column: $table.CreatedAt, builder: (column) => column);
+
+  $$TransactionsTableAnnotationComposer get TransactionID {
+    final $$TransactionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.TransactionID,
+      referencedTable: $db.transactions,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.transactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$TransactionPrintJobsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TransactionPrintJobsTable,
+          TransactionPrintJob,
+          $$TransactionPrintJobsTableFilterComposer,
+          $$TransactionPrintJobsTableOrderingComposer,
+          $$TransactionPrintJobsTableAnnotationComposer,
+          $$TransactionPrintJobsTableCreateCompanionBuilder,
+          $$TransactionPrintJobsTableUpdateCompanionBuilder,
+          (TransactionPrintJob, $$TransactionPrintJobsTableReferences),
+          TransactionPrintJob,
+          PrefetchHooks Function({bool TransactionID})
+        > {
+  $$TransactionPrintJobsTableTableManager(
+    _$AppDatabase db,
+    $TransactionPrintJobsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TransactionPrintJobsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TransactionPrintJobsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$TransactionPrintJobsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                Value<int> TransactionID = const Value.absent(),
+                Value<String> Status = const Value.absent(),
+                Value<int> AttemptCount = const Value.absent(),
+                Value<DateTime?> LastAttemptAt = const Value.absent(),
+                Value<DateTime?> PrintedAt = const Value.absent(),
+                Value<String?> LastError = const Value.absent(),
+                Value<DateTime> CreatedAt = const Value.absent(),
+              }) => TransactionPrintJobsCompanion(
+                ID: ID,
+                TransactionID: TransactionID,
+                Status: Status,
+                AttemptCount: AttemptCount,
+                LastAttemptAt: LastAttemptAt,
+                PrintedAt: PrintedAt,
+                LastError: LastError,
+                CreatedAt: CreatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                required int TransactionID,
+                Value<String> Status = const Value.absent(),
+                Value<int> AttemptCount = const Value.absent(),
+                Value<DateTime?> LastAttemptAt = const Value.absent(),
+                Value<DateTime?> PrintedAt = const Value.absent(),
+                Value<String?> LastError = const Value.absent(),
+                Value<DateTime> CreatedAt = const Value.absent(),
+              }) => TransactionPrintJobsCompanion.insert(
+                ID: ID,
+                TransactionID: TransactionID,
+                Status: Status,
+                AttemptCount: AttemptCount,
+                LastAttemptAt: LastAttemptAt,
+                PrintedAt: PrintedAt,
+                LastError: LastError,
+                CreatedAt: CreatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$TransactionPrintJobsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({TransactionID = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (TransactionID) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.TransactionID,
+                                referencedTable:
+                                    $$TransactionPrintJobsTableReferences._TransactionIDTable(
+                                      db,
+                                    ),
+                                referencedColumn:
+                                    $$TransactionPrintJobsTableReferences._TransactionIDTable(
+                                      db,
+                                    ).ID,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$TransactionPrintJobsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TransactionPrintJobsTable,
+      TransactionPrintJob,
+      $$TransactionPrintJobsTableFilterComposer,
+      $$TransactionPrintJobsTableOrderingComposer,
+      $$TransactionPrintJobsTableAnnotationComposer,
+      $$TransactionPrintJobsTableCreateCompanionBuilder,
+      $$TransactionPrintJobsTableUpdateCompanionBuilder,
+      (TransactionPrintJob, $$TransactionPrintJobsTableReferences),
+      TransactionPrintJob,
+      PrefetchHooks Function({bool TransactionID})
     >;
 typedef $$TransactionSyncBatchesTableCreateCompanionBuilder =
     TransactionSyncBatchesCompanion Function({
@@ -5917,6 +6953,8 @@ class $AppDatabaseManager {
       $$TransactionsTableTableManager(_db, _db.transactions);
   $$TransactionItemsTableTableManager get transactionItems =>
       $$TransactionItemsTableTableManager(_db, _db.transactionItems);
+  $$TransactionPrintJobsTableTableManager get transactionPrintJobs =>
+      $$TransactionPrintJobsTableTableManager(_db, _db.transactionPrintJobs);
   $$TransactionSyncBatchesTableTableManager get transactionSyncBatches =>
       $$TransactionSyncBatchesTableTableManager(
         _db,

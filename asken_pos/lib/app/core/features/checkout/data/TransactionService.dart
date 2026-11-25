@@ -8,7 +8,7 @@ class TransactionService {
 
   const TransactionService({required this.Database});
 
-  Future<String> SaveTransaction({
+  Future<SavedTransaction> SaveTransaction({
     required String CashierName,
     required List<CartItem> CartItems,
     required int CartTotalInCents,
@@ -19,7 +19,7 @@ class TransactionService {
 
     final ReceiptNumber = _CreateReceiptNumber();
 
-    await Database.transaction(() async {
+    return Database.transaction(() async {
       final TransactionID = await Database.into(Database.transactions).insert(
         TransactionsCompanion.insert(
           ReceiptNumber: ReceiptNumber,
@@ -44,9 +44,22 @@ class TransactionService {
           ),
         );
       }
-    });
 
-    return ReceiptNumber;
+      await Database.into(Database.transactionPrintJobs).insert(
+        TransactionPrintJobsCompanion.insert(TransactionID: TransactionID),
+      );
+
+      final SavedTransactionData =
+          await (Database.select(Database.transactions)
+                ..where((Transaction) => Transaction.ID.equals(TransactionID)))
+              .getSingle();
+
+      return SavedTransaction(
+        TransactionID: SavedTransactionData.ID,
+        ReceiptNumber: SavedTransactionData.ReceiptNumber,
+        CreatedAt: SavedTransactionData.CreatedAt,
+      );
+    });
   }
 
   String _CreateReceiptNumber() {
@@ -56,4 +69,16 @@ class TransactionService {
 
     return 'ASK-$Timestamp-$Microseconds';
   }
+}
+
+class SavedTransaction {
+  final int TransactionID;
+  final String ReceiptNumber;
+  final DateTime CreatedAt;
+
+  const SavedTransaction({
+    required this.TransactionID,
+    required this.ReceiptNumber,
+    required this.CreatedAt,
+  });
 }

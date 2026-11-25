@@ -15,6 +15,12 @@ import 'package:asken_pos/app/core/features/owner/data/TransactionSyncOrchestrat
 import 'package:asken_pos/app/core/features/owner/data/GoogleDriveService.dart';
 import 'package:asken_pos/app/core/features/owner/data/GoogleDriveFileUploadService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncService.dart';
+import 'package:asken_pos/app/core/features/printing/data/ReceiptDataService.dart';
+import 'package:asken_pos/app/core/features/printing/data/StoreSettingsService.dart';
+import 'package:asken_pos/app/core/features/printing/data/ThermalPrinterService.dart';
+import 'package:asken_pos/app/core/features/printing/data/TransactionPrintJobService.dart';
+import 'package:asken_pos/app/core/features/printing/data/TransactionPrintService.dart';
+import 'package:asken_pos/app/core/features/printing/domain/ReceiptData.dart';
 import 'package:asken_pos/app/core/features/owner/data/UpdateAppProtocolExportService.dart';
 import 'package:asken_pos/app/core/features/owner/data/UpdateAppProtocolImportService.dart';
 import 'package:asken_pos/app/core/features/owner/data/UpdateAppProtocolSnapshotService.dart';
@@ -107,6 +113,54 @@ final TransactionSyncServiceProvider = Provider<TransactionSyncService>((ref) {
   );
 });
 
+final StoreSettingsServiceProvider = Provider<StoreSettingsService>((Ref) {
+  return StoreSettingsService(Database: Ref.watch(AppDatabaseProvider));
+});
+
+final StoreSettingsProvider = FutureProvider<StoreSetting>((Ref) {
+  return Ref.watch(StoreSettingsServiceProvider).GetSettings();
+});
+
+final TransactionPrintJobServiceProvider = Provider<TransactionPrintJobService>(
+  (Ref) {
+    return TransactionPrintJobService(Database: Ref.watch(AppDatabaseProvider));
+  },
+);
+
+final ReceiptDataServiceProvider = Provider<ReceiptDataService>((Ref) {
+  return ReceiptDataService(
+    Database: Ref.watch(AppDatabaseProvider),
+    StoreSettings: Ref.watch(StoreSettingsServiceProvider),
+  );
+});
+
+final ThermalPrinterServiceProvider = Provider<ThermalPrinterService>((Ref) {
+  return const PlaceholderThermalPrinterService();
+});
+
+final TransactionPrintServiceProvider = Provider<TransactionPrintService>((
+  Ref,
+) {
+  return TransactionPrintService(
+    JobService: Ref.watch(TransactionPrintJobServiceProvider),
+    ReceiptService: Ref.watch(ReceiptDataServiceProvider),
+    PrinterService: Ref.watch(ThermalPrinterServiceProvider),
+  );
+});
+
+final PendingPrintJobsProvider =
+    StreamProvider.autoDispose<List<PendingPrintJob>>(
+      (Ref) =>
+          Ref.watch(TransactionPrintJobServiceProvider).WatchActionableJobs(),
+    );
+
+final TransactionPrintJobProvider = FutureProvider.autoDispose
+    .family<TransactionPrintJob?, int>((Ref, TransactionID) {
+      return Ref.watch(
+        TransactionPrintJobServiceProvider,
+      ).GetJob(TransactionID: TransactionID);
+    });
+
 final UpdateAppProtocolSnapshotServiceProvider =
     Provider<UpdateAppProtocolSnapshotService>((Ref) {
       return UpdateAppProtocolSnapshotService(
@@ -129,13 +183,12 @@ final UpdateAppProtocolImportServiceProvider =
       );
     });
 
-final TransactionSyncBatchesProvider = StreamProvider.autoDispose<
-  List<TransactionSyncBatche>
->((ref) {
-  return ref
-      .watch(TransactionSyncBatchServiceProvider)
-      .WatchRecentBatches();
-});
+final TransactionSyncBatchesProvider =
+    StreamProvider.autoDispose<List<TransactionSyncBatche>>((ref) {
+      return ref
+          .watch(TransactionSyncBatchServiceProvider)
+          .WatchRecentBatches();
+    });
 
 final OwnerTransactionRecordsProvider = FutureProvider.autoDispose
     .family<List<TransactionRecord>, TransactionRecordsDateRange>((ref, Range) {
@@ -180,9 +233,11 @@ class OwnerModeNotifier extends Notifier<bool> {
 
 final AppInitializationProvider = FutureProvider<void>((ref) async {
   await ref.read(AppDatabaseProvider).SeedProducts();
+  await ref.read(StoreSettingsServiceProvider).EnsureSettings();
   await ref
       .read(TransactionSyncBatchServiceProvider)
       .RecoverInterruptedBatches();
+  await ref.read(TransactionPrintJobServiceProvider).RecoverInterruptedJobs();
   await ref
       .read(TransactionRetentionServiceProvider)
       .DeleteSyncedTransactionsOlderThan();
