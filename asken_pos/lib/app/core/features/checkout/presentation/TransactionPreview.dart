@@ -150,7 +150,7 @@ class _TransactionPreviewPageState
                       const SizedBox(height: 8),
                       Text(
                         SaveError ??
-                            'The receipt will be saved locally after confirmation.',
+                            'The receipt will be logged after confirmation.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: SaveError == null ? null : Colors.red,

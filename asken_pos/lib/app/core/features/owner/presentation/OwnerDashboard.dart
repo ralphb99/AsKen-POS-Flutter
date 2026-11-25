@@ -121,12 +121,7 @@ class OwnerDashboardPage extends ConsumerWidget {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Product management tools will be available here.',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+
                 const SizedBox(height: 16),
                 Text(
                   'Access keyword: ${OwnerAccess.AccessName}',
@@ -218,6 +213,13 @@ class OwnerDashboardPage extends ConsumerWidget {
                   ),
                   icon: const Icon(Icons.sync_alt_outlined),
                   label: const Text('Open Sync Center'),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, AppRoutes.updateAppProtocol),
+                  icon: const Icon(Icons.system_update_alt_outlined),
+                  label: const Text('Prepare App Update Backup'),
                 ),
               ],
             ),

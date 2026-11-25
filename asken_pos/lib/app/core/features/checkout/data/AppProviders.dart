@@ -15,6 +15,9 @@ import 'package:asken_pos/app/core/features/owner/data/TransactionSyncOrchestrat
 import 'package:asken_pos/app/core/features/owner/data/GoogleDriveService.dart';
 import 'package:asken_pos/app/core/features/owner/data/GoogleDriveFileUploadService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncService.dart';
+import 'package:asken_pos/app/core/features/owner/data/UpdateAppProtocolExportService.dart';
+import 'package:asken_pos/app/core/features/owner/data/UpdateAppProtocolImportService.dart';
+import 'package:asken_pos/app/core/features/owner/data/UpdateAppProtocolSnapshotService.dart';
 
 final AppDatabaseProvider = Provider<AppDatabase>((ref) {
   final Database = AppDatabase();
@@ -103,6 +106,28 @@ final TransactionSyncServiceProvider = Provider<TransactionSyncService>((ref) {
     UploadService: ref.watch(GoogleDriveFileUploadServiceProvider),
   );
 });
+
+final UpdateAppProtocolSnapshotServiceProvider =
+    Provider<UpdateAppProtocolSnapshotService>((Ref) {
+      return UpdateAppProtocolSnapshotService(
+        Database: Ref.watch(AppDatabaseProvider),
+      );
+    });
+
+final UpdateAppProtocolExportServiceProvider =
+    Provider<UpdateAppProtocolExportService>((Ref) {
+      return UpdateAppProtocolExportService(
+        Database: Ref.watch(AppDatabaseProvider),
+        SnapshotService: Ref.watch(UpdateAppProtocolSnapshotServiceProvider),
+      );
+    });
+
+final UpdateAppProtocolImportServiceProvider =
+    Provider<UpdateAppProtocolImportService>((Ref) {
+      return UpdateAppProtocolImportService(
+        Database: Ref.watch(AppDatabaseProvider),
+      );
+    });
 
 final TransactionSyncBatchesProvider = StreamProvider.autoDispose<
   List<TransactionSyncBatche>

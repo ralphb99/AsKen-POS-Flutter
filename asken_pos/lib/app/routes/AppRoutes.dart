@@ -4,6 +4,7 @@ import 'package:asken_pos/app/core/features/checkout/presentation/Checkout.dart'
 import 'package:asken_pos/app/core/features/checkout/presentation/TransactionPreview.dart';
 import 'package:asken_pos/app/core/features/owner/presentation/OwnerDashboard.dart';
 import 'package:asken_pos/app/core/features/owner/presentation/SyncCenter.dart';
+import 'package:asken_pos/app/core/features/owner/presentation/UpdateAppProtocol.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String transactionpreview = '/transaction-preview';
   static const String ownerDashboard = '/owner-dashboard';
   static const String syncCenter = '/sync-center';
+  static const String updateAppProtocol = '/update-app-protocol';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -44,6 +46,9 @@ class AppRoutes {
 
       case syncCenter:
         return MaterialPageRoute(builder: (_) => const SyncCenterPage());
+
+      case updateAppProtocol:
+        return MaterialPageRoute(builder: (_) => const UpdateAppProtocolPage());
 
       default:
         return MaterialPageRoute(builder: (_) => const LoginPage());

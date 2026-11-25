@@ -121,6 +121,35 @@ Important scope consideration: `drive.file` is intentionally narrow. If owner au
 - Failed syncs show an owner-facing message and a Retry action.
 - The app does not block checkout when sync fails.
 
+## Update App Protocol implementation status
+
+The first export checkpoint is implemented as an owner-only flow:
+
+- `UpdateAppProtocolPage.dart` is available from the Owner Dashboard.
+- `UpdateAppProtocolNotifier.dart` owns the asynchronous export state through Riverpod.
+- `UpdateAppProtocolSnapshotService.dart` reads a consistent Drift snapshot of:
+  - Products.
+  - Product variants.
+  - Transactions, including pending, failed, uploading, and synced status fields.
+  - Transaction items.
+  - Transaction sync batches, including retry metadata, remote file IDs, and checksums.
+  - Store settings.
+- `UpdateAppProtocolExportService.dart` writes a readable UTF-8 JSON document with an `.askenbackup` extension through the native file save dialog.
+- The manifest contains the protocol version, database schema version, record counts, UTC creation time, and a SHA-256 checksum of the data payload.
+- Device-specific local CSV/TXT paths are intentionally excluded. The future importer can regenerate those files from the preserved transaction data.
+- The export/import protocol does not change the Drift schema and does not encrypt the backup yet.
+- The owner is instructed to verify the file exists before installing a replacement APK.
+
+The import and restore-preview checkpoint is now implemented:
+
+- `UpdateAppProtocolImportService.dart` opens and validates `.askenbackup` files.
+- Validation checks the protocol name/version, supported database schema version, required collections, manifest counts, SHA-256 data checksum, record types, duplicate IDs/keys, foreign-key relationships, dates, and sync statuses.
+- `UpdateAppProtocolImportNotifier.dart` exposes file selection, preview, and restore state through Riverpod `AsyncNotifier`.
+- The owner page shows incoming record counts, unsynced transaction count, and existing/conflicting records before restore.
+- Restore runs inside one Drift transaction and inserts only non-conflicting records.
+- Existing records are never overwritten or deleted. Conflicting records and dependent transaction items are skipped and reported.
+- Device-specific local CSV/TXT paths remain excluded; the updated app can regenerate those files from the restored records.
+
 ## Current sync policy
 
 Manual daily sync is acceptable for the current business scale.
@@ -156,7 +185,19 @@ Manual daily sync is acceptable for the current business scale.
 
 ## Next checkpoints
 
-1. Run an end-to-end Android verification:
+1. Run an end-to-end Android verification of the Update App Protocol export and restore:
+   - Enter Owner Mode.
+   - Open Prepare App Update Backup.
+   - Export a backup to a user-selected location.
+   - Confirm the file has the `.askenbackup` extension and opens as readable JSON.
+   - Confirm the manifest counts and checksum are present.
+   - Pick the exported file again.
+   - Confirm the preview counts and conflict count.
+   - Confirm a valid backup restores without overwriting existing records.
+   - Confirm a damaged or modified backup is rejected before database writes.
+2. Add explicit conflict-resolution options if the owner needs to replace changed seeded/catalog records after reviewing the conflict list. Keep insert-only restore as the default.
+3. Add password-protected encryption after the plain protocol/import contract is verified. Keep the manifest available for validation without exposing sensitive data.
+4. Continue the existing operational verification:
    - Cashier login.
    - First-time owner PIN setup.
    - Existing owner PIN login.
@@ -165,18 +206,19 @@ Manual daily sync is acceptable for the current business scale.
    - CSV/TXT upload.
    - Synced transaction status.
    - Failed upload and retry.
-2. Add a clear daily sync status indicator on the Owner Dashboard:
+5. Add a clear daily sync status indicator on the Owner Dashboard:
    - Pending count.
    - Last successful sync.
    - Sync recommended message.
-3. Add foreground automatic sync on app start/resume only after manual sync is verified.
-4. Add password-protected AES ZIP export containing CSV/TXT files for disaster recovery.
-5. Add true background scheduling only if the business workflow requires it.
-6. Implement thermal printing last, after selecting and testing an ESC/POS Android printer.
+6. Add foreground automatic sync on app start/resume only after manual sync is verified.
+7. Add true background scheduling only if the business workflow requires it.
+8. Implement thermal printing last, after selecting and testing an ESC/POS Android printer.
 
 ## Validation notes
 
 - `flutter pub get` completed successfully after the Google Drive upload dependencies were added.
+- `dart analyze lib` completes with no errors after the Update App Protocol export implementation.
 - `git diff --check` passes; line-ending warnings may appear because the workspace uses mixed CRLF/LF files.
+- `flutter test` is currently blocked by the pre-existing `test/widget_test.dart`, whose `main` function is fully commented out. This is a test-fixture issue, not an application analyzer error.
 - Dart analyzer and build runner previously hung without output in the local environment; do not treat a hang as a clean validation result.
-- Runtime testing on an Android device is still required for Google authentication, shared-folder access, resumable upload behavior, and login sizing.
+- Runtime testing on an Android device is still required for Google authentication, shared-folder access, resumable upload behavior, login sizing, native backup saving, and backup contents.
