@@ -14,6 +14,7 @@ class UpdateAppProtocolImportDocument {
   final List<Map<String, dynamic>> EodSummaries;
   final List<Map<String, dynamic>> EodSummaryItems;
   final List<Map<String, dynamic>> StoreSettings;
+  final List<Map<String, dynamic>> CloudSyncSettings;
 
   const UpdateAppProtocolImportDocument({
     required this.SourceFileName,
@@ -31,6 +32,7 @@ class UpdateAppProtocolImportDocument {
     required this.EodSummaries,
     required this.EodSummaryItems,
     required this.StoreSettings,
+    required this.CloudSyncSettings,
   });
 
   Map<String, dynamic> ToDataPayload() {
@@ -44,6 +46,7 @@ class UpdateAppProtocolImportDocument {
       'EodSummaries': EodSummaries,
       'EodSummaryItems': EodSummaryItems,
       'StoreSettings': StoreSettings,
+      'CloudSyncSettings': CloudSyncSettings,
     };
   }
 

@@ -305,6 +305,20 @@ class UpdateAppProtocolImportService {
                 'TransactionSyncBatches',
               ),
             ),
+            TransactionLogsFolderID: Value(
+              _ReadNullableString(
+                TransactionSyncBatchRow,
+                'TransactionLogsFolderID',
+                'TransactionSyncBatches',
+              ),
+            ),
+            EodLogsFolderID: Value(
+              _ReadNullableString(
+                TransactionSyncBatchRow,
+                'EodLogsFolderID',
+                'TransactionSyncBatches',
+              ),
+            ),
             RecordCount: Value(
               _ReadInt(
                 TransactionSyncBatchRow,
@@ -577,6 +591,84 @@ class UpdateAppProtocolImportService {
         );
       }
 
+      for (final CloudSyncSettingRow in Document.CloudSyncSettings) {
+        final CloudSyncSettingID = _ReadID(
+          CloudSyncSettingRow,
+          'CloudSyncSettings',
+        );
+        if (!Plan.InsertCloudSyncSettingIDs.contains(CloudSyncSettingID)) {
+          continue;
+        }
+
+        await Database.into(Database.cloudSyncSettings).insert(
+          CloudSyncSettingsCompanion.insert(
+            ID: Value(CloudSyncSettingID),
+            RootFolderID: Value(
+              _ReadNullableString(
+                CloudSyncSettingRow,
+                'RootFolderID',
+                'CloudSyncSettings',
+              ),
+            ),
+            TransactionLogsFolderID: _ReadString(
+              CloudSyncSettingRow,
+              'TransactionLogsFolderID',
+              'CloudSyncSettings',
+            ),
+            EodLogsFolderID: _ReadString(
+              CloudSyncSettingRow,
+              'EodLogsFolderID',
+              'CloudSyncSettings',
+            ),
+            InstallationID: Value(
+              _ReadNullableString(
+                    CloudSyncSettingRow,
+                    'InstallationID',
+                    'CloudSyncSettings',
+                  ) ??
+                  '',
+            ),
+            FolderOwnerEmail: Value(
+              _ReadNullableString(
+                CloudSyncSettingRow,
+                'FolderOwnerEmail',
+                'CloudSyncSettings',
+              ),
+            ),
+            ProvisioningStatus: Value(
+              _ReadNullableString(
+                    CloudSyncSettingRow,
+                    'ProvisioningStatus',
+                    'CloudSyncSettings',
+                  ) ??
+                  'unprovisioned',
+            ),
+            IsAppOwned: Value(
+              _ReadBoolOrDefault(
+                CloudSyncSettingRow,
+                'IsAppOwned',
+                'CloudSyncSettings',
+                false,
+              ),
+            ),
+            LastValidatedAt: Value(
+              _ReadNullableDateTime(
+                CloudSyncSettingRow,
+                'LastValidatedAt',
+                'CloudSyncSettings',
+              ),
+            ),
+            UpdatedAt: Value(
+              _ReadDateTime(
+                CloudSyncSettingRow,
+                'UpdatedAt',
+                'CloudSyncSettings',
+              ),
+            ),
+          ),
+        );
+      }
+
       return UpdateAppProtocolImportResult(
         InsertedCounts: Plan.GetInsertedCounts(Document),
         SkippedCounts: Plan.GetSkippedCounts(Document),
@@ -667,6 +759,7 @@ class UpdateAppProtocolImportService {
       EodSummaries: _ReadOptionalRecords(Data, 'EodSummaries'),
       EodSummaryItems: _ReadOptionalRecords(Data, 'EodSummaryItems'),
       StoreSettings: _ReadRecords(Data, 'StoreSettings'),
+      CloudSyncSettings: _ReadOptionalRecords(Data, 'CloudSyncSettings'),
     );
 
     _ValidateDocumentData(ParsedDocument);
@@ -700,6 +793,9 @@ class UpdateAppProtocolImportService {
     ).get();
     final ExistingStoreSettings = await Database.select(
       Database.storeSettings,
+    ).get();
+    final ExistingCloudSyncSettings = await Database.select(
+      Database.cloudSyncSettings,
     ).get();
 
     final ExistingProductIDs = ExistingProducts.map((Row) => Row.ID).toSet();
@@ -737,6 +833,9 @@ class UpdateAppProtocolImportService {
       (Row) => Row.ID,
     ).toSet();
     final ExistingStoreSettingIDs = ExistingStoreSettings.map(
+      (Row) => Row.ID,
+    ).toSet();
+    final ExistingCloudSyncSettingIDs = ExistingCloudSyncSettings.map(
       (Row) => Row.ID,
     ).toSet();
 
@@ -847,6 +946,14 @@ class UpdateAppProtocolImportService {
       }
     }
 
+    final InsertCloudSyncSettingIDs = <int>{};
+    for (final Row in Document.CloudSyncSettings) {
+      final ID = _ReadID(Row, 'CloudSyncSettings');
+      if (!ExistingCloudSyncSettingIDs.contains(ID)) {
+        InsertCloudSyncSettingIDs.add(ID);
+      }
+    }
+
     return _ImportRestorePlan(
       InsertProductIDs: InsertProductIDs,
       InsertProductVariantIDs: InsertProductVariantIDs,
@@ -859,6 +966,7 @@ class UpdateAppProtocolImportService {
       InsertTransactionItemIDs: InsertTransactionItemIDs,
       InsertTransactionPrintJobIDs: InsertTransactionPrintJobIDs,
       InsertStoreSettingIDs: InsertStoreSettingIDs,
+      InsertCloudSyncSettingIDs: InsertCloudSyncSettingIDs,
     );
   }
 
@@ -875,6 +983,7 @@ class UpdateAppProtocolImportService {
       'EodSummaries': Document.EodSummaries.length,
       'EodSummaryItems': Document.EodSummaryItems.length,
       'StoreSettings': Document.StoreSettings.length,
+      'CloudSyncSettings': Document.CloudSyncSettings.length,
     };
   }
 
@@ -939,6 +1048,9 @@ class UpdateAppProtocolImportService {
         : 0;
     Result['EodSummaryItems'] = CountsMap.containsKey('EodSummaryItems')
         ? _ReadInt(CountsMap, 'EodSummaryItems', 'Counts')
+        : 0;
+    Result['CloudSyncSettings'] = CountsMap.containsKey('CloudSyncSettings')
+        ? _ReadInt(CountsMap, 'CloudSyncSettings', 'Counts')
         : 0;
 
     return Result;
@@ -1065,6 +1177,12 @@ class UpdateAppProtocolImportService {
       _ReadNullableString(Row, 'EodRemoteTextFileID', 'TransactionSyncBatches');
       _ReadNullableString(Row, 'EodChecksum', 'TransactionSyncBatches');
       _ReadNullableString(Row, 'EodTextChecksum', 'TransactionSyncBatches');
+      _ReadNullableString(
+        Row,
+        'TransactionLogsFolderID',
+        'TransactionSyncBatches',
+      );
+      _ReadNullableString(Row, 'EodLogsFolderID', 'TransactionSyncBatches');
       _ReadInt(Row, 'RecordCount', 'TransactionSyncBatches');
       _ValidateSyncStatus(
         _ReadString(Row, 'Status', 'TransactionSyncBatches'),
@@ -1178,6 +1296,21 @@ class UpdateAppProtocolImportService {
       _ReadNullableString(Row, 'ReceiptFooter', 'StoreSettings');
     }
 
+    final CloudSyncSettingIDs = <int>{};
+    for (final Row in Document.CloudSyncSettings) {
+      final ID = _ReadID(Row, 'CloudSyncSettings');
+      _EnsureUnique(CloudSyncSettingIDs, ID, 'CloudSyncSettings');
+      _ReadString(Row, 'TransactionLogsFolderID', 'CloudSyncSettings');
+      _ReadString(Row, 'EodLogsFolderID', 'CloudSyncSettings');
+      _ReadNullableString(Row, 'RootFolderID', 'CloudSyncSettings');
+      _ReadNullableString(Row, 'InstallationID', 'CloudSyncSettings');
+      _ReadNullableString(Row, 'FolderOwnerEmail', 'CloudSyncSettings');
+      _ReadNullableString(Row, 'ProvisioningStatus', 'CloudSyncSettings');
+      _ReadNullableBool(Row, 'IsAppOwned', 'CloudSyncSettings');
+      _ReadNullableDateTime(Row, 'LastValidatedAt', 'CloudSyncSettings');
+      _ReadDateTime(Row, 'UpdatedAt', 'CloudSyncSettings');
+    }
+
     final IncomingCounts = _GetIncomingCounts(Document);
     for (final Entry in IncomingCounts.entries) {
       if (Document.Counts[Entry.key] != Entry.value) {
@@ -1245,6 +1378,31 @@ class UpdateAppProtocolImportService {
     }
 
     throw FormatException('Field "$Key" in $CollectionName must be a boolean.');
+  }
+
+  bool _ReadBoolOrDefault(
+    Map<String, dynamic> Row,
+    String Key,
+    String CollectionName,
+    bool DefaultValue,
+  ) {
+    if (!Row.containsKey(Key) || Row[Key] == null) {
+      return DefaultValue;
+    }
+
+    return _ReadBool(Row, Key, CollectionName);
+  }
+
+  bool? _ReadNullableBool(
+    Map<String, dynamic> Row,
+    String Key,
+    String CollectionName,
+  ) {
+    if (!Row.containsKey(Key) || Row[Key] == null) {
+      return null;
+    }
+
+    return _ReadBool(Row, Key, CollectionName);
   }
 
   String _ReadString(
@@ -1326,6 +1484,7 @@ class _ImportRestorePlan {
   final Set<int> InsertTransactionItemIDs;
   final Set<int> InsertTransactionPrintJobIDs;
   final Set<int> InsertStoreSettingIDs;
+  final Set<int> InsertCloudSyncSettingIDs;
 
   const _ImportRestorePlan({
     required this.InsertProductIDs,
@@ -1339,6 +1498,7 @@ class _ImportRestorePlan {
     required this.InsertTransactionItemIDs,
     required this.InsertTransactionPrintJobIDs,
     required this.InsertStoreSettingIDs,
+    required this.InsertCloudSyncSettingIDs,
   });
 
   Map<String, int> GetInsertedCounts(UpdateAppProtocolImportDocument Document) {
@@ -1352,6 +1512,7 @@ class _ImportRestorePlan {
       'TransactionPrintJobs': InsertTransactionPrintJobIDs.length,
       'TransactionSyncBatches': InsertTransactionSyncBatchIDs.length,
       'StoreSettings': InsertStoreSettingIDs.length,
+      'CloudSyncSettings': InsertCloudSyncSettingIDs.length,
     };
   }
 
@@ -1375,6 +1536,8 @@ class _ImportRestorePlan {
           InsertTransactionSyncBatchIDs.length,
       'StoreSettings':
           Document.StoreSettings.length - InsertStoreSettingIDs.length,
+      'CloudSyncSettings':
+          Document.CloudSyncSettings.length - InsertCloudSyncSettingIDs.length,
     };
   }
 }

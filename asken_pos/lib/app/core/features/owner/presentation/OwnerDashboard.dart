@@ -116,23 +116,7 @@ class OwnerDashboardPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.admin_panel_settings_outlined, size: 56),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Owner Mode Active',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-
-                  const SizedBox(height: 20),
                   _TodayEodPanel(State: EodState),
-
-                  const SizedBox(height: 16),
-                  Text(
-                    'Access keyword: ${OwnerAccess.AccessName}',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
                   const SizedBox(height: 24),
                   OutlinedButton.icon(
                     onPressed: () {
@@ -251,8 +235,10 @@ class _TodayEodPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 10,
+      color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(30),
         child: State.when(
           loading: () => const SizedBox(
             height: 80,
@@ -271,7 +257,7 @@ class _TodayEodPanel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Today\'s EOD tally',
+                  'Today\'s EOD Summary',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
@@ -284,11 +270,11 @@ class _TodayEodPanel extends StatelessWidget {
                       Value: '${Data.TransactionCount}',
                     ),
                     _EodMetric(
-                      Label: 'Sold units',
+                      Label: 'Sold Units',
                       Value: '${Data.SoldUnitCount}',
                     ),
                     _EodMetric(
-                      Label: 'Total sales',
+                      Label: 'Total Sales',
                       Value: _FormatPeso(Data.TotalSalesInCents),
                     ),
                   ],
@@ -298,7 +284,7 @@ class _TodayEodPanel extends StatelessWidget {
                 if (Data.TransactionCount == 0) ...[
                   const SizedBox(height: 6),
                   Text(
-                    'No EOD is created until at least one sale is confirmed.',
+                    'No EOD yet',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

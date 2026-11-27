@@ -137,6 +137,10 @@ class TransactionSyncBatches extends Table {
 
   TextColumn get EodTextChecksum => text().nullable()();
 
+  TextColumn get TransactionLogsFolderID => text().nullable()();
+
+  TextColumn get EodLogsFolderID => text().nullable()();
+
   IntColumn get RecordCount => integer().withDefault(const Constant(0))();
 
   /// pending, uploading, synced, or failed.
@@ -200,4 +204,27 @@ class StoreSettings extends Table {
   TextColumn get ContactNumber => text().nullable()();
 
   TextColumn get ReceiptFooter => text().nullable()();
+}
+
+class CloudSyncSettings extends Table {
+  IntColumn get ID => integer().autoIncrement()();
+
+  TextColumn get RootFolderID => text().nullable()();
+
+  TextColumn get TransactionLogsFolderID => text()();
+
+  TextColumn get EodLogsFolderID => text()();
+
+  TextColumn get InstallationID => text().withDefault(const Constant(''))();
+
+  TextColumn get FolderOwnerEmail => text().nullable()();
+
+  TextColumn get ProvisioningStatus =>
+      text().withDefault(const Constant('unprovisioned'))();
+
+  BoolColumn get IsAppOwned => boolean().withDefault(const Constant(false))();
+
+  DateTimeColumn get LastValidatedAt => dateTime().nullable()();
+
+  DateTimeColumn get UpdatedAt => dateTime().withDefault(currentDateAndTime)();
 }

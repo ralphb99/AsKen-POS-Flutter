@@ -4,7 +4,7 @@
 
 - Project root: `D:\AsKen-POS-Flutter\asken_pos`
 - Build an offline-first Flutter POS for a small educational-supply business.
-- Drift is the source of truth for products, transactions, transaction items, sync batches, and logs.
+- Drift is the source of truth for products, transactions, transaction items, EOD summaries, sync batches, cloud-folder configuration, and logs.
 - Use Flutter Riverpod first for dependency injection and state management.
 - Use Riverpod `AsyncNotifier` for asynchronous workflows.
 - Use auto-disposal where the feature lifetime is temporary.
@@ -20,8 +20,8 @@
 ## Current architecture
 
 - Database: `lib/app/core/database/AppDatabase.dart`
-- Tables: `Products`, `ProductVariants`, `Transactions`, `TransactionItems`, `TransactionPrintJobs`, `TransactionSyncBatches`, `StoreSettings`
-- Schema version: `5`
+- Tables: `Products`, `ProductVariants`, `Transactions`, `TransactionItems`, `TransactionPrintJobs`, `TransactionSyncBatches`, `EodSummaries`, `EodSummaryItems`, `StoreSettings`, `CloudSyncSettings`
+- Schema version: `9`
 - Generated Drift file: `lib/app/core/database/AppDatabase.g.dart`
 - Central providers: `lib/app/core/features/checkout/data/AppProviders.dart`
 - Owner feature modules:
@@ -41,11 +41,18 @@
 - Transaction sync statuses are `pending`, `uploading`, `synced`, and `failed`.
 - `Transactions` stores payment method, sync attempt count, last attempt time, synced time, last error, and sync batch ID.
 - `TransactionSyncBatches` stores one daily batch per business date, local CSV/TXT paths, checksums, remote file IDs, status, attempt count, errors, and upload time.
+- `EodSummaries` stores one daily summary per business date and `EodSummaryItems` aggregates repeated sales by product variant, product snapshot, unit snapshot, and unit price.
+- `CloudSyncSettings` stores the app-owned root, transaction-log, and EOD-log Google Drive folder IDs, installation identity, provisioning state, owner account, and last validation time for this isolated business installation.
+- Each `TransactionSyncBatches` row snapshots `TransactionLogsFolderID` and `EodLogsFolderID` so a folder reconfiguration cannot split one partially uploaded batch across destinations.
 - Database migrations are defensive and idempotent.
 - Migration checks existing tables and columns before creating or adding them.
 - Drift expands acronym column names, for example:
   - `SyncBatchID` -> `sync_batch_i_d`
   - `RemoteTextFileID` -> `remote_text_file_i_d`
+- `TransactionLogsFolderID` -> `transaction_logs_folder_i_d`
+- `EodLogsFolderID` -> `eod_logs_folder_i_d`
+- `RootFolderID` -> `root_folder_i_d`
+- `InstallationID` -> `installation_i_d`
 - Do not add another schema migration unless the schema actually changes.
 - Do not manually edit `AppDatabase.g.dart`; use Drift generation when the environment supports it.
 
@@ -72,12 +79,17 @@ Pending, uploading, failed, recently synced, and not-yet-printed records remain 
 - Web OAuth `serverClientId`: `588343940601-5m912oev3mf1h4m27uhu1b6bprot15o0.apps.googleusercontent.com`
 - Android OAuth client is configured in Google Cloud using package name and SHA-1.
 - Never hardcode an Android client secret or embed any client secret in the application.
-- Designated shared transaction folder ID:
-  `124xmqGfTcVs8Dssy4W9_TIas1XIAX0FC`
-
-The designated folder is created in the development Google Drive account and shared with the business owner as Editor. The owner authenticates in the app and the service validates that fixed folder instead of creating a separate folder in the owner account.
+- Folder IDs are not hard-coded as business configuration. On first connection, the app creates an `AsKen POS - <Business Name>` root folder with `Transaction Logs` and `EOD Logs` child folders in the authenticated business account.
+- The app stores the generated IDs in `CloudSyncSettings` and reuses them on later connections.
+- Existing manually-created folders, including the previous transaction and EOD folder IDs, are not deleted or overwritten and remain available as archives.
+- Folder metadata contains an app marker, installation ID, and folder type so provisioning can discover and resume app-owned folders without creating duplicates.
+- Transaction CSV/TXT files upload only to `TransactionLogsFolderID`.
+- EOD CSV/TXT files upload only to `EodLogsFolderID`.
+- New sync batches use the provisioned destinations; existing batches retain their snapshotted destinations.
 
 Important scope consideration: `drive.file` is intentionally narrow. If owner authentication cannot access the shared folder with the configured scope, do not silently broaden permissions. Review a Google Picker-based folder selection flow first. A full `drive` scope requires security and OAuth review consideration.
+
+Current troubleshooting note: Google Drive may return `File not found`/404 when a pre-existing folder exists but the connected account or app cannot read it. The app now provisions its own folders under the authenticated account and sends `supportsAllDrives: true` for validation, creation, and uploads. This avoids requiring Picker or a broad `drive` scope for normal setup.
 
 ## Google Drive implementation completed
 
@@ -86,19 +98,24 @@ Important scope consideration: `drive.file` is intentionally narrow. If owner au
   - Uses the configured Web server client ID.
   - Authenticates the selected Google account.
   - Requests `drive.file` authorization.
-  - Validates the designated transaction folder ID.
+  - Reads provisioning state through `CloudSyncSettingsService`.
+  - Creates or resumes the app-owned root, transaction-log, and EOD-log folders on first connection.
+  - Stores app properties for installation ID and folder type to make provisioning idempotent.
+  - Validates both app-owned folders before reporting a successful connection.
   - Creates and closes the authenticated Google API client safely.
 - `GoogleDriveConnectionNotifier.dart`
   - Riverpod auto-dispose async connection state.
   - Connect and disconnect operations.
 - `GoogleDriveFileUploadService.dart`
   - Uploads or updates CSV and TXT files.
+  - Receives the destination parent folder ID per upload.
   - Uses resumable uploads.
   - Uses stored remote file IDs when retrying.
 - `TransactionSyncService.dart`
   - Prepares daily local batches.
   - Claims batches before upload.
-  - Uploads CSV and TXT files.
+  - Uploads transaction CSV/TXT files to the transaction folder.
+  - Uploads EOD CSV/TXT files to the separate EOD folder.
   - Saves remote file IDs after each successful file upload.
   - Marks transactions and batches synced only after both files succeed.
   - Marks failed batches and transactions with the error message.
@@ -106,13 +123,21 @@ Important scope consideration: `drive.file` is intentionally narrow. If owner au
 - `TransactionSyncNotifier.dart`
   - Riverpod async manual sync state.
   - Supports sync-all and individual batch retry.
+- `CloudSyncSettingsService.dart` and `CloudSyncSettingsNotifier.dart`
+  - Persist provisioning state, installation identity, generated folder IDs, and validation metadata.
+  - Use Riverpod `AsyncNotifier` for cloud-folder setup state.
+- `CloudSyncSettings.dart`
+  - Owner-only read-only setup/status page; folder IDs are generated by the app rather than entered manually.
 
 ## Current owner experience
 
 - Owner Dashboard includes:
   - Google Drive connect/disconnect.
-  - Sync Transactions action.
+  - Today-only EOD dashboard metrics: transaction count, sold units, total sales, and distinct cashier names.
+  - EOD Summary records, date filtering, detail view, and CSV/TXT export.
+  - Sync Transactions and EOD action.
   - Open Sync Center action.
+  - Owner Settings and Cloud Folder Setup.
 - Sync Center shows:
   - Pending batches.
   - Uploading batches.
@@ -125,6 +150,25 @@ Important scope consideration: `drive.file` is intentionally narrow. If owner au
   - Sync all pending batches.
 - Failed syncs show an owner-facing message and a Retry action.
 - The app does not block checkout when sync fails.
+- Clearing an unsaved checkout only clears the current session and never creates an EOD entry.
+
+## Reusable business-installation model
+
+- The same application binary/codebase is reused by different businesses.
+- Each business installation has its own isolated Drift database and cloud-folder configuration.
+- No `BusinessID` is required on transaction, product, or EOD records for this deployment model.
+- Business identity is represented by persisted store settings, receipt/export naming configuration, and the configured cloud folders.
+- Technical identifiers such as the SQLite database name, table names, package ID, OAuth client ID, and Drive scopes remain application-level configuration.
+
+## EOD module implementation
+
+- A completed sale records its EOD summary inside the same Drift transaction as the transaction, transaction items, and print job.
+- EOD summaries are created only for confirmed/completed sales.
+- Repeated sales of the same product variant, product snapshot, unit snapshot, and unit price aggregate into one EOD line.
+- Unsaved checkout clearing does not create or alter EOD data.
+- Owner Dashboard shows today-only EOD metrics.
+- Owner EOD Summary supports date filtering, detailed views, cashier names, CSV/TXT export, and offline persistence.
+- Existing transactions are backfilled into EOD summaries during initialization when required.
 
 ## Thermal printing foundation
 
@@ -158,10 +202,13 @@ The first export checkpoint is implemented as an owner-only flow:
   - Transactions, including pending, failed, uploading, and synced status fields.
   - Transaction items.
   - Transaction sync batches, including retry metadata, remote file IDs, and checksums.
+  - EOD summaries and aggregated EOD summary items.
   - Store settings.
+  - Cloud sync folder settings and per-batch destination folder snapshots.
 - `UpdateAppProtocolExportService.dart` writes a readable UTF-8 JSON document with an `.askenbackup` extension through the native file save dialog.
 - The manifest contains the protocol version, database schema version, record counts, UTC creation time, and a SHA-256 checksum of the data payload.
 - Device-specific local CSV/TXT paths are intentionally excluded. The future importer can regenerate those files from the preserved transaction data.
+- Remote folder IDs are preserved as configuration and batch metadata; OAuth tokens and authenticated clients are never stored in Drift backups.
 - The export/import protocol remains backward-compatible and does not encrypt the backup yet.
 - The backup protocol now also preserves `TransactionPrintJobs` when present. Older backups without that optional collection remain readable.
 - The owner is instructed to verify the file exists before installing a replacement APK.
@@ -211,6 +258,14 @@ Manual daily sync is acceptable for the current business scale.
 
 ## Next checkpoints
 
+0. Verify the per-business cloud-folder setup on Android:
+   - Connect a new business Google account.
+   - Confirm the app creates one root folder with separate Transaction Logs and EOD Logs children.
+   - Confirm generated folder IDs and app-owned provisioning state load from Drift.
+   - Disconnect/reconnect and confirm no duplicate folders are created.
+   - Confirm transaction files upload only to the transaction folder.
+   - Confirm EOD files upload only to the EOD folder.
+   - Delete or revoke access to an app-owned folder and verify the repair path reports the failure safely.
 1. Run an end-to-end Android verification of the Update App Protocol export and restore:
    - Enter Owner Mode.
    - Open Prepare App Update Backup.
@@ -232,13 +287,13 @@ Manual daily sync is acceptable for the current business scale.
    - CSV/TXT upload.
    - Synced transaction status.
    - Failed upload and retry.
-5. Add a clear daily sync status indicator on the Owner Dashboard:
+6. Add a clear daily sync status indicator on the Owner Dashboard:
    - Pending count.
    - Last successful sync.
    - Sync recommended message.
-6. Add foreground automatic sync on app start/resume only after manual sync is verified.
-7. Add true background scheduling only if the business workflow requires it.
-8. Verify the transaction print-state flow on Android with the placeholder adapter:
+7. Add foreground automatic sync on app start/resume only after manual sync is verified.
+8. Add true background scheduling only if the business workflow requires it.
+9. Verify the transaction print-state flow on Android with the placeholder adapter:
    - Confirming a sale saves the transaction and print job atomically.
    - Confirming a sale returns the cashier to checkout even when printing fails.
    - Retry Print appears on checkout.
@@ -249,8 +304,10 @@ Manual daily sync is acceptable for the current business scale.
 ## Validation notes
 
 - `flutter pub get` completed successfully after the Google Drive upload dependencies were added.
-- `dart analyze lib` completes with no errors after the Update App Protocol and printing-foundation implementations.
+- Direct Dart SDK analysis of `lib` and `test` completes with no errors after the cloud-folder implementation. The repository continues to emit existing PascalCase and file-name informational lints.
+- Drift generation completed with the direct Dart SDK and regenerated `AppDatabase.g.dart` for schema version 9.
 - `git diff --check` passes; line-ending warnings may appear because the workspace uses mixed CRLF/LF files.
-- `flutter test` is currently blocked by the pre-existing `test/widget_test.dart`, whose `main` function is fully commented out. This is a test-fixture issue, not an application analyzer error.
-- Dart analyzer and build runner previously hung without output in the local environment; do not treat a hang as a clean validation result.
+- `flutter test test/eod_summary_test.dart` passes all four focused tests, including unprovisioned cloud settings and separate transaction/EOD batch destinations.
+- Full widget-test validation still needs the pre-existing `test/widget_test.dart` fixture reviewed; its `main` function is fully commented out.
+- The `dart` command wrapper can hang without output in this environment; use `D:\DevTools\flutter\bin\cache\dart-sdk\bin\dart.exe` for bounded analyzer and Drift-generation checks.
 - Runtime testing on an Android device is still required for Google authentication, shared-folder access, resumable upload behavior, login sizing, native backup saving/import, print-job recovery, and the eventual thermal-printer adapter.

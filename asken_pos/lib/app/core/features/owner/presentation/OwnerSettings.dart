@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:asken_pos/app/core/features/checkout/data/AppProviders.dart';
+import 'package:asken_pos/app/core/features/owner/presentation/CloudSyncSettings.dart';
 
 class OwnerSettingsPage extends ConsumerStatefulWidget {
   const OwnerSettingsPage({super.key});
@@ -275,6 +276,19 @@ class _OwnerSettingsPageState extends ConsumerState<OwnerSettingsPage> {
                             ? 'Saving receipt details...'
                             : 'Save Receipt Details',
                       ),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CloudSyncSettingsPage(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.cloud_sync_outlined),
+                      label: const Text('Cloud Folder Setup'),
                     ),
                   ],
                 ],

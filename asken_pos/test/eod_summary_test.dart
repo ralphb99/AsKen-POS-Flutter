@@ -7,6 +7,8 @@ import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Product.dart';
 import 'package:asken_pos/app/core/features/owner/data/EodSummaryExportService.dart';
 import 'package:asken_pos/app/core/features/owner/data/EodSummaryService.dart';
+import 'package:asken_pos/app/core/features/owner/data/CloudSyncSettingsService.dart';
+import 'package:asken_pos/app/core/features/owner/data/TransactionSyncBatchService.dart';
 import 'package:asken_pos/app/core/features/owner/domain/EodSummary.dart';
 
 void main() {
@@ -142,6 +144,34 @@ void main() {
     expect(Csv, contains('Item-Entry,Unit/Measurement'));
     expect(Csv, contains('"Ballpen","box",6.00,2,12.00'));
     expect(Csv, endsWith('TOTAL,,,,12.00'));
+  });
+
+  test('keeps transaction and EOD folder destinations separate per batch', () async {
+    final CloudService = CloudSyncSettingsService(Database: Database);
+    final BatchService = TransactionSyncBatchService(Database: Database);
+
+    final InitialSettings = await CloudService.GetSettings();
+    expect(InitialSettings.IsAppOwned, false);
+    expect(InitialSettings.ProvisioningStatus, 'unprovisioned');
+    expect(InitialSettings.InstallationID, isNotEmpty);
+
+    final Batch = await BatchService.GetOrCreateDailyBatch(
+      BusinessDate: DateTime(2026, 11, 27),
+      TransactionLogsFolderID: 'transaction-folder-1',
+      EodLogsFolderID: 'eod-folder-1',
+    );
+
+    expect(Batch.TransactionLogsFolderID, 'transaction-folder-1');
+    expect(Batch.EodLogsFolderID, 'eod-folder-1');
+
+    final ExistingBatch = await BatchService.GetOrCreateDailyBatch(
+      BusinessDate: DateTime(2026, 11, 27),
+      TransactionLogsFolderID: 'transaction-folder-2',
+      EodLogsFolderID: 'eod-folder-2',
+    );
+
+    expect(ExistingBatch.TransactionLogsFolderID, 'transaction-folder-1');
+    expect(ExistingBatch.EodLogsFolderID, 'eod-folder-1');
   });
 }
 

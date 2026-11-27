@@ -31,6 +31,9 @@ class UpdateAppProtocolSnapshotService {
       final StoreSettingRows = await Database.select(
         Database.storeSettings,
       ).get();
+      final CloudSyncSettingRows = await Database.select(
+        Database.cloudSyncSettings,
+      ).get();
 
       return UpdateAppProtocolSnapshot(
         Products: ProductRows.map(_MapProduct).toList(growable: false),
@@ -57,6 +60,9 @@ class UpdateAppProtocolSnapshotService {
         ).toList(growable: false),
         StoreSettings: StoreSettingRows.map(
           _MapStoreSetting,
+        ).toList(growable: false),
+        CloudSyncSettings: CloudSyncSettingRows.map(
+          _MapCloudSyncSetting,
         ).toList(growable: false),
       );
     });
@@ -148,6 +154,9 @@ class UpdateAppProtocolSnapshotService {
       'EodRemoteTextFileID': TransactionSyncBatchRow.EodRemoteTextFileID,
       'EodChecksum': TransactionSyncBatchRow.EodChecksum,
       'EodTextChecksum': TransactionSyncBatchRow.EodTextChecksum,
+      'TransactionLogsFolderID':
+          TransactionSyncBatchRow.TransactionLogsFolderID,
+      'EodLogsFolderID': TransactionSyncBatchRow.EodLogsFolderID,
       'RecordCount': TransactionSyncBatchRow.RecordCount,
       'Status': TransactionSyncBatchRow.Status,
       'AttemptCount': TransactionSyncBatchRow.AttemptCount,
@@ -190,6 +199,23 @@ class UpdateAppProtocolSnapshotService {
       'Address': StoreSettingRow.Address,
       'ContactNumber': StoreSettingRow.ContactNumber,
       'ReceiptFooter': StoreSettingRow.ReceiptFooter,
+    };
+  }
+
+  Map<String, dynamic> _MapCloudSyncSetting(
+    CloudSyncSetting CloudSyncSettingRow,
+  ) {
+    return <String, dynamic>{
+      'ID': CloudSyncSettingRow.ID,
+      'RootFolderID': CloudSyncSettingRow.RootFolderID,
+      'TransactionLogsFolderID': CloudSyncSettingRow.TransactionLogsFolderID,
+      'EodLogsFolderID': CloudSyncSettingRow.EodLogsFolderID,
+      'InstallationID': CloudSyncSettingRow.InstallationID,
+      'FolderOwnerEmail': CloudSyncSettingRow.FolderOwnerEmail,
+      'ProvisioningStatus': CloudSyncSettingRow.ProvisioningStatus,
+      'IsAppOwned': CloudSyncSettingRow.IsAppOwned,
+      'LastValidatedAt': _FormatDateTime(CloudSyncSettingRow.LastValidatedAt),
+      'UpdatedAt': _FormatDateTime(CloudSyncSettingRow.UpdatedAt),
     };
   }
 

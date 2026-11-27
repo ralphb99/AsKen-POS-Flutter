@@ -13,6 +13,7 @@ class GoogleDriveFileUploadService {
     required File LocalFile,
     required String FileName,
     required String ContentType,
+    required String ParentFolderID,
     String? RemoteFileID,
   }) async {
     final Drive.DriveApi DriveAPI = DriveService.GetDriveAPI();
@@ -25,7 +26,7 @@ class GoogleDriveFileUploadService {
     final Metadata = Drive.File(
       name: FileName,
       parents: RemoteFileID == null
-          ? <String>[GoogleDriveService.TransactionLogsFolderID]
+          ? <String>[ParentFolderID]
           : null,
     );
 
@@ -34,6 +35,7 @@ class GoogleDriveFileUploadService {
         Metadata,
         uploadMedia: Media,
         uploadOptions: Commons.UploadOptions.resumable,
+        supportsAllDrives: true,
         $fields: 'id,name,mimeType,parents',
       );
     }
@@ -43,6 +45,7 @@ class GoogleDriveFileUploadService {
       RemoteFileID,
       uploadMedia: Media,
       uploadOptions: Commons.UploadOptions.resumable,
+      supportsAllDrives: true,
       $fields: 'id,name,mimeType,parents',
     );
   }

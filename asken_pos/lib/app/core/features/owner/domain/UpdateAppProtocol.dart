@@ -8,6 +8,7 @@ class UpdateAppProtocolSnapshot {
   final List<Map<String, dynamic>> EodSummaries;
   final List<Map<String, dynamic>> EodSummaryItems;
   final List<Map<String, dynamic>> StoreSettings;
+  final List<Map<String, dynamic>> CloudSyncSettings;
 
   const UpdateAppProtocolSnapshot({
     required this.Products,
@@ -19,6 +20,7 @@ class UpdateAppProtocolSnapshot {
     required this.EodSummaries,
     required this.EodSummaryItems,
     required this.StoreSettings,
+    required this.CloudSyncSettings,
   });
 
   Map<String, dynamic> ToDataPayload() {
@@ -32,6 +34,7 @@ class UpdateAppProtocolSnapshot {
       'EodSummaries': EodSummaries,
       'EodSummaryItems': EodSummaryItems,
       'StoreSettings': StoreSettings,
+      'CloudSyncSettings': CloudSyncSettings,
     };
   }
 
@@ -46,6 +49,7 @@ class UpdateAppProtocolSnapshot {
       'EodSummaries': EodSummaries.length,
       'EodSummaryItems': EodSummaryItems.length,
       'StoreSettings': StoreSettings.length,
+      'CloudSyncSettings': CloudSyncSettings.length,
     };
   }
 }
