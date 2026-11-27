@@ -110,7 +110,7 @@ class _CheckoutContent extends StatelessWidget {
             final IsWideLayout = Constraints.maxWidth >= 760;
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1120),
@@ -130,7 +130,14 @@ class _CheckoutContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _CashierHeader(),
+       _CashierHeader(),
+        const SizedBox(height: 10),
+        _SearchSection(),
+        const SizedBox(height: 20),
+        _ProductResults(),
+        const SizedBox(height: 20),
+        _CartSection(context),
+
         if (PendingPrintJobs.isNotEmpty) ...[
           const SizedBox(height: 12),
           _PendingPrintPanel(
@@ -139,12 +146,7 @@ class _CheckoutContent extends StatelessWidget {
             OnRetryPrint: OnRetryPrint,
           ),
         ],
-        const SizedBox(height: 20),
-        _SearchSection(),
-        const SizedBox(height: 20),
-        _ProductResults(),
-        const SizedBox(height: 20),
-        _CartSection(context),
+        
       ],
     );
   }
@@ -154,34 +156,34 @@ class _CheckoutContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _CashierHeader(),
-        if (PendingPrintJobs.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          _PendingPrintPanel(
-            Jobs: PendingPrintJobs,
-            IsRetrying: IsPrintLoading,
-            OnRetryPrint: OnRetryPrint,
-          ),
-        ],
         const SizedBox(height: 24),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 6,
+              flex: 10,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _SearchSection(),
                   const SizedBox(height: 20),
                   _ProductResults(),
+                  _CartSection(context),
+                   if (PendingPrintJobs.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _PendingPrintPanel(
+                      Jobs: PendingPrintJobs,
+                      IsRetrying: IsPrintLoading,
+                      OnRetryPrint: OnRetryPrint,
+                    ),
+                  ],
                 ],
               ),
             ),
-            const SizedBox(width: 24),
-            Expanded(flex: 5, child: _CartSection(context)),
           ],
         ),
       ],
+
     );
   }
 
@@ -190,7 +192,7 @@ class _CheckoutContent extends StatelessWidget {
       elevation: 0,
       color: Colors.blue.shade700,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(10),
         child: Row(
           children: [
             CircleAvatar(
@@ -237,7 +239,7 @@ class _CheckoutContent extends StatelessWidget {
           onChanged: OnSearchChanged,
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
-            hintText: 'Search product, color...',
+            hintText: 'Search product, brands...',
             prefixIcon: const Icon(Icons.search),
             suffixIcon: State.SearchQuery.isEmpty
                 ? null
@@ -426,7 +428,7 @@ class _PendingPrintPanel extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              IsFailed ? 'Receipt printing failed' : 'Receipt printing pending',
+              IsFailed ? 'Receipt Printing failed' : 'Receipt printing pending',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 6),

@@ -349,13 +349,13 @@ class TransactionRecordDetailsPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Receipt printing',
+                    'Receipt Printing',
                     style: Theme.of(Context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     PrintJob == null
-                        ? 'Not printed yet'
+                        ? 'Not Printed'
                         : 'Status: ${PrintJob.Status}',
                   ),
                   if (PrintJob?.LastError != null &&
