@@ -9465,10 +9465,6 @@ class $$EodSummariesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get TotalSalesInCents => $composableBuilder(
-    column: $table.TotalSalesInCents,
-    builder: (column) => ColumnOrderings(column),
-  );
 
   ColumnOrderings<DateTime> get UpdatedAt => $composableBuilder(
     column: $table.UpdatedAt,
