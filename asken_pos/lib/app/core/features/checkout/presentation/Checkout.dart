@@ -52,6 +52,39 @@ class CheckoutPage extends ConsumerWidget {
             (Route<dynamic> Route) => false,
           );
         },
+        OnClearTransaction: () async {
+          if (State.CartItems.isEmpty) {
+            return;
+          }
+
+          final ShouldClear = await showDialog<bool>(
+            context: context,
+            builder: (Context) => AlertDialog(
+              title: const Text('Clear transaction?'),
+              content: const Text(
+                'This removes the current unsaved transaction. It will not be added to EOD.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(Context, false),
+                  child: const Text('Keep transaction'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(Context, true),
+                  child: const Text('Clear transaction'),
+                ),
+              ],
+            ),
+          );
+
+          if (ShouldClear != true || !context.mounted) {
+            return;
+          }
+
+          await ref
+              .read(CheckoutControllerProvider(CashierName).notifier)
+              .ClearCheckoutSession();
+        },
         OnSearchChanged: (Query) => ref
             .read(CheckoutControllerProvider(CashierName).notifier)
             .SetSearchQuery(Query),
@@ -73,6 +106,7 @@ class _CheckoutContent extends StatelessWidget {
   final Future<TransactionPrintResult?> Function(int TransactionID)
   OnRetryPrint;
   final Future<void> Function() OnLogout;
+  final Future<void> Function() OnClearTransaction;
   final ValueChanged<String> OnSearchChanged;
   final ValueChanged<ProductDisplayData> OnAddProduct;
   final void Function(int Index, int Amount) OnChangeQuantity;
@@ -83,6 +117,7 @@ class _CheckoutContent extends StatelessWidget {
     required this.IsPrintLoading,
     required this.OnRetryPrint,
     required this.OnLogout,
+    required this.OnClearTransaction,
     required this.OnSearchChanged,
     required this.OnAddProduct,
     required this.OnChangeQuantity,
@@ -130,7 +165,7 @@ class _CheckoutContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-       _CashierHeader(),
+        _CashierHeader(),
         const SizedBox(height: 10),
         _SearchSection(),
         const SizedBox(height: 20),
@@ -146,7 +181,6 @@ class _CheckoutContent extends StatelessWidget {
             OnRetryPrint: OnRetryPrint,
           ),
         ],
-        
       ],
     );
   }
@@ -169,7 +203,7 @@ class _CheckoutContent extends StatelessWidget {
                   const SizedBox(height: 20),
                   _ProductResults(),
                   _CartSection(context),
-                   if (PendingPrintJobs.isNotEmpty) ...[
+                  if (PendingPrintJobs.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     _PendingPrintPanel(
                       Jobs: PendingPrintJobs,
@@ -183,7 +217,6 @@ class _CheckoutContent extends StatelessWidget {
           ],
         ),
       ],
-
     );
   }
 
@@ -379,6 +412,12 @@ class _CheckoutContent extends StatelessWidget {
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 15),
               ),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: State.CartItems.isEmpty ? null : OnClearTransaction,
+              icon: const Icon(Icons.remove_shopping_cart_outlined),
+              label: const Text('Clear Transaction'),
             ),
           ],
         ),

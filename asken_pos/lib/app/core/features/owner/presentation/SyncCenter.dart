@@ -24,9 +24,8 @@ class SyncCenterPage extends ConsumerWidget {
       appBar: AppBar(title: const Text('Sync Center')),
       body: Batches.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (Error, StackTrace) => Center(
-          child: Text('Unable to load sync batches: $Error'),
-        ),
+        error: (Error, StackTrace) =>
+            Center(child: Text('Unable to load sync batches: $Error')),
         data: (Rows) => RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(TransactionSyncBatchesProvider);
@@ -39,9 +38,8 @@ class SyncCenterPage extends ConsumerWidget {
               FilledButton.icon(
                 onPressed: IsSyncing
                     ? null
-                    : () => ref
-                          .read(TransactionSyncProvider.notifier)
-                          .SyncNow(),
+                    : () =>
+                          ref.read(TransactionSyncProvider.notifier).SyncNow(),
                 icon: const Icon(Icons.sync),
                 label: Text(IsSyncing ? 'Syncing...' : 'Sync All Pending'),
               ),
@@ -50,7 +48,7 @@ class SyncCenterPage extends ConsumerWidget {
                 const Card(
                   child: Padding(
                     padding: EdgeInsets.all(20),
-                    child: Text('No transaction sync batches yet.'),
+                    child: Text('No transaction or EOD sync batches yet.'),
                   ),
                 )
               else
@@ -117,10 +115,7 @@ class _SummaryValue extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(Label, style: Theme.of(context).textTheme.labelMedium),
-        Text(
-          '$Value',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text('$Value', style: Theme.of(context).textTheme.titleLarge),
       ],
     );
   }
@@ -150,6 +145,8 @@ class _SyncBatchTile extends StatelessWidget {
         title: Text(Batch.BusinessDate),
         subtitle: Text(
           '${Batch.FileName} / ${Batch.TextFileName ?? 'TXT unavailable'}\n'
+          '${Batch.EodFileName ?? 'EOD CSV unavailable'} / '
+          '${Batch.EodTextFileName ?? 'EOD TXT unavailable'}\n'
           'Attempts: ${Batch.AttemptCount}'
           '${LastAttempt == null ? '' : '\nLast attempt: ${DateFormat('MMM d, yyyy h:mm a').format(LastAttempt)}'}'
           '${Batch.LastError == null ? '' : '\nError: ${Batch.LastError}'}',

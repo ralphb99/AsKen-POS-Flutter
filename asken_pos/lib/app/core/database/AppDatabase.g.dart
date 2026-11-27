@@ -2778,6 +2778,94 @@ class $TransactionSyncBatchesTable extends TransactionSyncBatches
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _EodFileNameMeta = const VerificationMeta(
+    'EodFileName',
+  );
+  @override
+  late final GeneratedColumn<String> EodFileName = GeneratedColumn<String>(
+    'eod_file_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _EodTextFileNameMeta = const VerificationMeta(
+    'EodTextFileName',
+  );
+  @override
+  late final GeneratedColumn<String> EodTextFileName = GeneratedColumn<String>(
+    'eod_text_file_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _EodLocalFilePathMeta = const VerificationMeta(
+    'EodLocalFilePath',
+  );
+  @override
+  late final GeneratedColumn<String> EodLocalFilePath = GeneratedColumn<String>(
+    'eod_local_file_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _EodTextLocalFilePathMeta =
+      const VerificationMeta('EodTextLocalFilePath');
+  @override
+  late final GeneratedColumn<String> EodTextLocalFilePath =
+      GeneratedColumn<String>(
+        'eod_text_local_file_path',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _EodRemoteFileIDMeta = const VerificationMeta(
+    'EodRemoteFileID',
+  );
+  @override
+  late final GeneratedColumn<String> EodRemoteFileID = GeneratedColumn<String>(
+    'eod_remote_file_i_d',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _EodRemoteTextFileIDMeta =
+      const VerificationMeta('EodRemoteTextFileID');
+  @override
+  late final GeneratedColumn<String> EodRemoteTextFileID =
+      GeneratedColumn<String>(
+        'eod_remote_text_file_i_d',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _EodChecksumMeta = const VerificationMeta(
+    'EodChecksum',
+  );
+  @override
+  late final GeneratedColumn<String> EodChecksum = GeneratedColumn<String>(
+    'eod_checksum',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _EodTextChecksumMeta = const VerificationMeta(
+    'EodTextChecksum',
+  );
+  @override
+  late final GeneratedColumn<String> EodTextChecksum = GeneratedColumn<String>(
+    'eod_text_checksum',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _RecordCountMeta = const VerificationMeta(
     'RecordCount',
   );
@@ -2870,6 +2958,14 @@ class $TransactionSyncBatchesTable extends TransactionSyncBatches
     RemoteTextFileID,
     Checksum,
     TextChecksum,
+    EodFileName,
+    EodTextFileName,
+    EodLocalFilePath,
+    EodTextLocalFilePath,
+    EodRemoteFileID,
+    EodRemoteTextFileID,
+    EodChecksum,
+    EodTextChecksum,
     RecordCount,
     Status,
     AttemptCount,
@@ -2969,6 +3065,78 @@ class $TransactionSyncBatchesTable extends TransactionSyncBatches
         TextChecksum.isAcceptableOrUnknown(
           data['text_checksum']!,
           _TextChecksumMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_file_name')) {
+      context.handle(
+        _EodFileNameMeta,
+        EodFileName.isAcceptableOrUnknown(
+          data['eod_file_name']!,
+          _EodFileNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_text_file_name')) {
+      context.handle(
+        _EodTextFileNameMeta,
+        EodTextFileName.isAcceptableOrUnknown(
+          data['eod_text_file_name']!,
+          _EodTextFileNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_local_file_path')) {
+      context.handle(
+        _EodLocalFilePathMeta,
+        EodLocalFilePath.isAcceptableOrUnknown(
+          data['eod_local_file_path']!,
+          _EodLocalFilePathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_text_local_file_path')) {
+      context.handle(
+        _EodTextLocalFilePathMeta,
+        EodTextLocalFilePath.isAcceptableOrUnknown(
+          data['eod_text_local_file_path']!,
+          _EodTextLocalFilePathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_remote_file_i_d')) {
+      context.handle(
+        _EodRemoteFileIDMeta,
+        EodRemoteFileID.isAcceptableOrUnknown(
+          data['eod_remote_file_i_d']!,
+          _EodRemoteFileIDMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_remote_text_file_i_d')) {
+      context.handle(
+        _EodRemoteTextFileIDMeta,
+        EodRemoteTextFileID.isAcceptableOrUnknown(
+          data['eod_remote_text_file_i_d']!,
+          _EodRemoteTextFileIDMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_checksum')) {
+      context.handle(
+        _EodChecksumMeta,
+        EodChecksum.isAcceptableOrUnknown(
+          data['eod_checksum']!,
+          _EodChecksumMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_text_checksum')) {
+      context.handle(
+        _EodTextChecksumMeta,
+        EodTextChecksum.isAcceptableOrUnknown(
+          data['eod_text_checksum']!,
+          _EodTextChecksumMeta,
         ),
       );
     }
@@ -3072,6 +3240,38 @@ class $TransactionSyncBatchesTable extends TransactionSyncBatches
         DriftSqlType.string,
         data['${effectivePrefix}text_checksum'],
       ),
+      EodFileName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_file_name'],
+      ),
+      EodTextFileName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_text_file_name'],
+      ),
+      EodLocalFilePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_local_file_path'],
+      ),
+      EodTextLocalFilePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_text_local_file_path'],
+      ),
+      EodRemoteFileID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_remote_file_i_d'],
+      ),
+      EodRemoteTextFileID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_remote_text_file_i_d'],
+      ),
+      EodChecksum: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_checksum'],
+      ),
+      EodTextChecksum: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_text_checksum'],
+      ),
       RecordCount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}record_count'],
@@ -3123,6 +3323,14 @@ class TransactionSyncBatche extends DataClass
   final String? RemoteTextFileID;
   final String? Checksum;
   final String? TextChecksum;
+  final String? EodFileName;
+  final String? EodTextFileName;
+  final String? EodLocalFilePath;
+  final String? EodTextLocalFilePath;
+  final String? EodRemoteFileID;
+  final String? EodRemoteTextFileID;
+  final String? EodChecksum;
+  final String? EodTextChecksum;
   final int RecordCount;
 
   /// pending, uploading, synced, or failed.
@@ -3143,6 +3351,14 @@ class TransactionSyncBatche extends DataClass
     this.RemoteTextFileID,
     this.Checksum,
     this.TextChecksum,
+    this.EodFileName,
+    this.EodTextFileName,
+    this.EodLocalFilePath,
+    this.EodTextLocalFilePath,
+    this.EodRemoteFileID,
+    this.EodRemoteTextFileID,
+    this.EodChecksum,
+    this.EodTextChecksum,
     required this.RecordCount,
     required this.Status,
     required this.AttemptCount,
@@ -3177,6 +3393,30 @@ class TransactionSyncBatche extends DataClass
     }
     if (!nullToAbsent || TextChecksum != null) {
       map['text_checksum'] = Variable<String>(TextChecksum);
+    }
+    if (!nullToAbsent || EodFileName != null) {
+      map['eod_file_name'] = Variable<String>(EodFileName);
+    }
+    if (!nullToAbsent || EodTextFileName != null) {
+      map['eod_text_file_name'] = Variable<String>(EodTextFileName);
+    }
+    if (!nullToAbsent || EodLocalFilePath != null) {
+      map['eod_local_file_path'] = Variable<String>(EodLocalFilePath);
+    }
+    if (!nullToAbsent || EodTextLocalFilePath != null) {
+      map['eod_text_local_file_path'] = Variable<String>(EodTextLocalFilePath);
+    }
+    if (!nullToAbsent || EodRemoteFileID != null) {
+      map['eod_remote_file_i_d'] = Variable<String>(EodRemoteFileID);
+    }
+    if (!nullToAbsent || EodRemoteTextFileID != null) {
+      map['eod_remote_text_file_i_d'] = Variable<String>(EodRemoteTextFileID);
+    }
+    if (!nullToAbsent || EodChecksum != null) {
+      map['eod_checksum'] = Variable<String>(EodChecksum);
+    }
+    if (!nullToAbsent || EodTextChecksum != null) {
+      map['eod_text_checksum'] = Variable<String>(EodTextChecksum);
     }
     map['record_count'] = Variable<int>(RecordCount);
     map['status'] = Variable<String>(Status);
@@ -3220,6 +3460,30 @@ class TransactionSyncBatche extends DataClass
       TextChecksum: TextChecksum == null && nullToAbsent
           ? const Value.absent()
           : Value(TextChecksum),
+      EodFileName: EodFileName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodFileName),
+      EodTextFileName: EodTextFileName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodTextFileName),
+      EodLocalFilePath: EodLocalFilePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodLocalFilePath),
+      EodTextLocalFilePath: EodTextLocalFilePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodTextLocalFilePath),
+      EodRemoteFileID: EodRemoteFileID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodRemoteFileID),
+      EodRemoteTextFileID: EodRemoteTextFileID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodRemoteTextFileID),
+      EodChecksum: EodChecksum == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodChecksum),
+      EodTextChecksum: EodTextChecksum == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodTextChecksum),
       RecordCount: Value(RecordCount),
       Status: Value(Status),
       AttemptCount: Value(AttemptCount),
@@ -3254,6 +3518,18 @@ class TransactionSyncBatche extends DataClass
       RemoteTextFileID: serializer.fromJson<String?>(json['RemoteTextFileID']),
       Checksum: serializer.fromJson<String?>(json['Checksum']),
       TextChecksum: serializer.fromJson<String?>(json['TextChecksum']),
+      EodFileName: serializer.fromJson<String?>(json['EodFileName']),
+      EodTextFileName: serializer.fromJson<String?>(json['EodTextFileName']),
+      EodLocalFilePath: serializer.fromJson<String?>(json['EodLocalFilePath']),
+      EodTextLocalFilePath: serializer.fromJson<String?>(
+        json['EodTextLocalFilePath'],
+      ),
+      EodRemoteFileID: serializer.fromJson<String?>(json['EodRemoteFileID']),
+      EodRemoteTextFileID: serializer.fromJson<String?>(
+        json['EodRemoteTextFileID'],
+      ),
+      EodChecksum: serializer.fromJson<String?>(json['EodChecksum']),
+      EodTextChecksum: serializer.fromJson<String?>(json['EodTextChecksum']),
       RecordCount: serializer.fromJson<int>(json['RecordCount']),
       Status: serializer.fromJson<String>(json['Status']),
       AttemptCount: serializer.fromJson<int>(json['AttemptCount']),
@@ -3277,6 +3553,14 @@ class TransactionSyncBatche extends DataClass
       'RemoteTextFileID': serializer.toJson<String?>(RemoteTextFileID),
       'Checksum': serializer.toJson<String?>(Checksum),
       'TextChecksum': serializer.toJson<String?>(TextChecksum),
+      'EodFileName': serializer.toJson<String?>(EodFileName),
+      'EodTextFileName': serializer.toJson<String?>(EodTextFileName),
+      'EodLocalFilePath': serializer.toJson<String?>(EodLocalFilePath),
+      'EodTextLocalFilePath': serializer.toJson<String?>(EodTextLocalFilePath),
+      'EodRemoteFileID': serializer.toJson<String?>(EodRemoteFileID),
+      'EodRemoteTextFileID': serializer.toJson<String?>(EodRemoteTextFileID),
+      'EodChecksum': serializer.toJson<String?>(EodChecksum),
+      'EodTextChecksum': serializer.toJson<String?>(EodTextChecksum),
       'RecordCount': serializer.toJson<int>(RecordCount),
       'Status': serializer.toJson<String>(Status),
       'AttemptCount': serializer.toJson<int>(AttemptCount),
@@ -3298,6 +3582,14 @@ class TransactionSyncBatche extends DataClass
     Value<String?> RemoteTextFileID = const Value.absent(),
     Value<String?> Checksum = const Value.absent(),
     Value<String?> TextChecksum = const Value.absent(),
+    Value<String?> EodFileName = const Value.absent(),
+    Value<String?> EodTextFileName = const Value.absent(),
+    Value<String?> EodLocalFilePath = const Value.absent(),
+    Value<String?> EodTextLocalFilePath = const Value.absent(),
+    Value<String?> EodRemoteFileID = const Value.absent(),
+    Value<String?> EodRemoteTextFileID = const Value.absent(),
+    Value<String?> EodChecksum = const Value.absent(),
+    Value<String?> EodTextChecksum = const Value.absent(),
     int? RecordCount,
     String? Status,
     int? AttemptCount,
@@ -3322,6 +3614,26 @@ class TransactionSyncBatche extends DataClass
         : this.RemoteTextFileID,
     Checksum: Checksum.present ? Checksum.value : this.Checksum,
     TextChecksum: TextChecksum.present ? TextChecksum.value : this.TextChecksum,
+    EodFileName: EodFileName.present ? EodFileName.value : this.EodFileName,
+    EodTextFileName: EodTextFileName.present
+        ? EodTextFileName.value
+        : this.EodTextFileName,
+    EodLocalFilePath: EodLocalFilePath.present
+        ? EodLocalFilePath.value
+        : this.EodLocalFilePath,
+    EodTextLocalFilePath: EodTextLocalFilePath.present
+        ? EodTextLocalFilePath.value
+        : this.EodTextLocalFilePath,
+    EodRemoteFileID: EodRemoteFileID.present
+        ? EodRemoteFileID.value
+        : this.EodRemoteFileID,
+    EodRemoteTextFileID: EodRemoteTextFileID.present
+        ? EodRemoteTextFileID.value
+        : this.EodRemoteTextFileID,
+    EodChecksum: EodChecksum.present ? EodChecksum.value : this.EodChecksum,
+    EodTextChecksum: EodTextChecksum.present
+        ? EodTextChecksum.value
+        : this.EodTextChecksum,
     RecordCount: RecordCount ?? this.RecordCount,
     Status: Status ?? this.Status,
     AttemptCount: AttemptCount ?? this.AttemptCount,
@@ -3360,6 +3672,30 @@ class TransactionSyncBatche extends DataClass
       TextChecksum: data.TextChecksum.present
           ? data.TextChecksum.value
           : this.TextChecksum,
+      EodFileName: data.EodFileName.present
+          ? data.EodFileName.value
+          : this.EodFileName,
+      EodTextFileName: data.EodTextFileName.present
+          ? data.EodTextFileName.value
+          : this.EodTextFileName,
+      EodLocalFilePath: data.EodLocalFilePath.present
+          ? data.EodLocalFilePath.value
+          : this.EodLocalFilePath,
+      EodTextLocalFilePath: data.EodTextLocalFilePath.present
+          ? data.EodTextLocalFilePath.value
+          : this.EodTextLocalFilePath,
+      EodRemoteFileID: data.EodRemoteFileID.present
+          ? data.EodRemoteFileID.value
+          : this.EodRemoteFileID,
+      EodRemoteTextFileID: data.EodRemoteTextFileID.present
+          ? data.EodRemoteTextFileID.value
+          : this.EodRemoteTextFileID,
+      EodChecksum: data.EodChecksum.present
+          ? data.EodChecksum.value
+          : this.EodChecksum,
+      EodTextChecksum: data.EodTextChecksum.present
+          ? data.EodTextChecksum.value
+          : this.EodTextChecksum,
       RecordCount: data.RecordCount.present
           ? data.RecordCount.value
           : this.RecordCount,
@@ -3391,6 +3727,14 @@ class TransactionSyncBatche extends DataClass
           ..write('RemoteTextFileID: $RemoteTextFileID, ')
           ..write('Checksum: $Checksum, ')
           ..write('TextChecksum: $TextChecksum, ')
+          ..write('EodFileName: $EodFileName, ')
+          ..write('EodTextFileName: $EodTextFileName, ')
+          ..write('EodLocalFilePath: $EodLocalFilePath, ')
+          ..write('EodTextLocalFilePath: $EodTextLocalFilePath, ')
+          ..write('EodRemoteFileID: $EodRemoteFileID, ')
+          ..write('EodRemoteTextFileID: $EodRemoteTextFileID, ')
+          ..write('EodChecksum: $EodChecksum, ')
+          ..write('EodTextChecksum: $EodTextChecksum, ')
           ..write('RecordCount: $RecordCount, ')
           ..write('Status: $Status, ')
           ..write('AttemptCount: $AttemptCount, ')
@@ -3403,7 +3747,7 @@ class TransactionSyncBatche extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     ID,
     BusinessDate,
     FileName,
@@ -3414,6 +3758,14 @@ class TransactionSyncBatche extends DataClass
     RemoteTextFileID,
     Checksum,
     TextChecksum,
+    EodFileName,
+    EodTextFileName,
+    EodLocalFilePath,
+    EodTextLocalFilePath,
+    EodRemoteFileID,
+    EodRemoteTextFileID,
+    EodChecksum,
+    EodTextChecksum,
     RecordCount,
     Status,
     AttemptCount,
@@ -3421,7 +3773,7 @@ class TransactionSyncBatche extends DataClass
     LastError,
     UploadedAt,
     CreatedAt,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3436,6 +3788,14 @@ class TransactionSyncBatche extends DataClass
           other.RemoteTextFileID == this.RemoteTextFileID &&
           other.Checksum == this.Checksum &&
           other.TextChecksum == this.TextChecksum &&
+          other.EodFileName == this.EodFileName &&
+          other.EodTextFileName == this.EodTextFileName &&
+          other.EodLocalFilePath == this.EodLocalFilePath &&
+          other.EodTextLocalFilePath == this.EodTextLocalFilePath &&
+          other.EodRemoteFileID == this.EodRemoteFileID &&
+          other.EodRemoteTextFileID == this.EodRemoteTextFileID &&
+          other.EodChecksum == this.EodChecksum &&
+          other.EodTextChecksum == this.EodTextChecksum &&
           other.RecordCount == this.RecordCount &&
           other.Status == this.Status &&
           other.AttemptCount == this.AttemptCount &&
@@ -3457,6 +3817,14 @@ class TransactionSyncBatchesCompanion
   final Value<String?> RemoteTextFileID;
   final Value<String?> Checksum;
   final Value<String?> TextChecksum;
+  final Value<String?> EodFileName;
+  final Value<String?> EodTextFileName;
+  final Value<String?> EodLocalFilePath;
+  final Value<String?> EodTextLocalFilePath;
+  final Value<String?> EodRemoteFileID;
+  final Value<String?> EodRemoteTextFileID;
+  final Value<String?> EodChecksum;
+  final Value<String?> EodTextChecksum;
   final Value<int> RecordCount;
   final Value<String> Status;
   final Value<int> AttemptCount;
@@ -3475,6 +3843,14 @@ class TransactionSyncBatchesCompanion
     this.RemoteTextFileID = const Value.absent(),
     this.Checksum = const Value.absent(),
     this.TextChecksum = const Value.absent(),
+    this.EodFileName = const Value.absent(),
+    this.EodTextFileName = const Value.absent(),
+    this.EodLocalFilePath = const Value.absent(),
+    this.EodTextLocalFilePath = const Value.absent(),
+    this.EodRemoteFileID = const Value.absent(),
+    this.EodRemoteTextFileID = const Value.absent(),
+    this.EodChecksum = const Value.absent(),
+    this.EodTextChecksum = const Value.absent(),
     this.RecordCount = const Value.absent(),
     this.Status = const Value.absent(),
     this.AttemptCount = const Value.absent(),
@@ -3494,6 +3870,14 @@ class TransactionSyncBatchesCompanion
     this.RemoteTextFileID = const Value.absent(),
     this.Checksum = const Value.absent(),
     this.TextChecksum = const Value.absent(),
+    this.EodFileName = const Value.absent(),
+    this.EodTextFileName = const Value.absent(),
+    this.EodLocalFilePath = const Value.absent(),
+    this.EodTextLocalFilePath = const Value.absent(),
+    this.EodRemoteFileID = const Value.absent(),
+    this.EodRemoteTextFileID = const Value.absent(),
+    this.EodChecksum = const Value.absent(),
+    this.EodTextChecksum = const Value.absent(),
     this.RecordCount = const Value.absent(),
     this.Status = const Value.absent(),
     this.AttemptCount = const Value.absent(),
@@ -3514,6 +3898,14 @@ class TransactionSyncBatchesCompanion
     Expression<String>? RemoteTextFileID,
     Expression<String>? Checksum,
     Expression<String>? TextChecksum,
+    Expression<String>? EodFileName,
+    Expression<String>? EodTextFileName,
+    Expression<String>? EodLocalFilePath,
+    Expression<String>? EodTextLocalFilePath,
+    Expression<String>? EodRemoteFileID,
+    Expression<String>? EodRemoteTextFileID,
+    Expression<String>? EodChecksum,
+    Expression<String>? EodTextChecksum,
     Expression<int>? RecordCount,
     Expression<String>? Status,
     Expression<int>? AttemptCount,
@@ -3533,6 +3925,16 @@ class TransactionSyncBatchesCompanion
       if (RemoteTextFileID != null) 'remote_text_file_i_d': RemoteTextFileID,
       if (Checksum != null) 'checksum': Checksum,
       if (TextChecksum != null) 'text_checksum': TextChecksum,
+      if (EodFileName != null) 'eod_file_name': EodFileName,
+      if (EodTextFileName != null) 'eod_text_file_name': EodTextFileName,
+      if (EodLocalFilePath != null) 'eod_local_file_path': EodLocalFilePath,
+      if (EodTextLocalFilePath != null)
+        'eod_text_local_file_path': EodTextLocalFilePath,
+      if (EodRemoteFileID != null) 'eod_remote_file_i_d': EodRemoteFileID,
+      if (EodRemoteTextFileID != null)
+        'eod_remote_text_file_i_d': EodRemoteTextFileID,
+      if (EodChecksum != null) 'eod_checksum': EodChecksum,
+      if (EodTextChecksum != null) 'eod_text_checksum': EodTextChecksum,
       if (RecordCount != null) 'record_count': RecordCount,
       if (Status != null) 'status': Status,
       if (AttemptCount != null) 'attempt_count': AttemptCount,
@@ -3554,6 +3956,14 @@ class TransactionSyncBatchesCompanion
     Value<String?>? RemoteTextFileID,
     Value<String?>? Checksum,
     Value<String?>? TextChecksum,
+    Value<String?>? EodFileName,
+    Value<String?>? EodTextFileName,
+    Value<String?>? EodLocalFilePath,
+    Value<String?>? EodTextLocalFilePath,
+    Value<String?>? EodRemoteFileID,
+    Value<String?>? EodRemoteTextFileID,
+    Value<String?>? EodChecksum,
+    Value<String?>? EodTextChecksum,
     Value<int>? RecordCount,
     Value<String>? Status,
     Value<int>? AttemptCount,
@@ -3573,6 +3983,14 @@ class TransactionSyncBatchesCompanion
       RemoteTextFileID: RemoteTextFileID ?? this.RemoteTextFileID,
       Checksum: Checksum ?? this.Checksum,
       TextChecksum: TextChecksum ?? this.TextChecksum,
+      EodFileName: EodFileName ?? this.EodFileName,
+      EodTextFileName: EodTextFileName ?? this.EodTextFileName,
+      EodLocalFilePath: EodLocalFilePath ?? this.EodLocalFilePath,
+      EodTextLocalFilePath: EodTextLocalFilePath ?? this.EodTextLocalFilePath,
+      EodRemoteFileID: EodRemoteFileID ?? this.EodRemoteFileID,
+      EodRemoteTextFileID: EodRemoteTextFileID ?? this.EodRemoteTextFileID,
+      EodChecksum: EodChecksum ?? this.EodChecksum,
+      EodTextChecksum: EodTextChecksum ?? this.EodTextChecksum,
       RecordCount: RecordCount ?? this.RecordCount,
       Status: Status ?? this.Status,
       AttemptCount: AttemptCount ?? this.AttemptCount,
@@ -3616,6 +4034,34 @@ class TransactionSyncBatchesCompanion
     if (TextChecksum.present) {
       map['text_checksum'] = Variable<String>(TextChecksum.value);
     }
+    if (EodFileName.present) {
+      map['eod_file_name'] = Variable<String>(EodFileName.value);
+    }
+    if (EodTextFileName.present) {
+      map['eod_text_file_name'] = Variable<String>(EodTextFileName.value);
+    }
+    if (EodLocalFilePath.present) {
+      map['eod_local_file_path'] = Variable<String>(EodLocalFilePath.value);
+    }
+    if (EodTextLocalFilePath.present) {
+      map['eod_text_local_file_path'] = Variable<String>(
+        EodTextLocalFilePath.value,
+      );
+    }
+    if (EodRemoteFileID.present) {
+      map['eod_remote_file_i_d'] = Variable<String>(EodRemoteFileID.value);
+    }
+    if (EodRemoteTextFileID.present) {
+      map['eod_remote_text_file_i_d'] = Variable<String>(
+        EodRemoteTextFileID.value,
+      );
+    }
+    if (EodChecksum.present) {
+      map['eod_checksum'] = Variable<String>(EodChecksum.value);
+    }
+    if (EodTextChecksum.present) {
+      map['eod_text_checksum'] = Variable<String>(EodTextChecksum.value);
+    }
     if (RecordCount.present) {
       map['record_count'] = Variable<int>(RecordCount.value);
     }
@@ -3653,6 +4099,14 @@ class TransactionSyncBatchesCompanion
           ..write('RemoteTextFileID: $RemoteTextFileID, ')
           ..write('Checksum: $Checksum, ')
           ..write('TextChecksum: $TextChecksum, ')
+          ..write('EodFileName: $EodFileName, ')
+          ..write('EodTextFileName: $EodTextFileName, ')
+          ..write('EodLocalFilePath: $EodLocalFilePath, ')
+          ..write('EodTextLocalFilePath: $EodTextLocalFilePath, ')
+          ..write('EodRemoteFileID: $EodRemoteFileID, ')
+          ..write('EodRemoteTextFileID: $EodRemoteTextFileID, ')
+          ..write('EodChecksum: $EodChecksum, ')
+          ..write('EodTextChecksum: $EodTextChecksum, ')
           ..write('RecordCount: $RecordCount, ')
           ..write('Status: $Status, ')
           ..write('AttemptCount: $AttemptCount, ')
@@ -3660,6 +4114,1016 @@ class TransactionSyncBatchesCompanion
           ..write('LastError: $LastError, ')
           ..write('UploadedAt: $UploadedAt, ')
           ..write('CreatedAt: $CreatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $EodSummariesTable extends EodSummaries
+    with TableInfo<$EodSummariesTable, EodSummary> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $EodSummariesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _IDMeta = const VerificationMeta('ID');
+  @override
+  late final GeneratedColumn<int> ID = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _BusinessDateMeta = const VerificationMeta(
+    'BusinessDate',
+  );
+  @override
+  late final GeneratedColumn<String> BusinessDate = GeneratedColumn<String>(
+    'business_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _TransactionCountMeta = const VerificationMeta(
+    'TransactionCount',
+  );
+  @override
+  late final GeneratedColumn<int> TransactionCount = GeneratedColumn<int>(
+    'transaction_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _SoldUnitCountMeta = const VerificationMeta(
+    'SoldUnitCount',
+  );
+  @override
+  late final GeneratedColumn<int> SoldUnitCount = GeneratedColumn<int>(
+    'sold_unit_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _TotalSalesInCentsMeta = const VerificationMeta(
+    'TotalSalesInCents',
+  );
+  @override
+  late final GeneratedColumn<int> TotalSalesInCents = GeneratedColumn<int>(
+    'total_sales_in_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _CreatedAtMeta = const VerificationMeta(
+    'CreatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> CreatedAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _UpdatedAtMeta = const VerificationMeta(
+    'UpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> UpdatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    ID,
+    BusinessDate,
+    TransactionCount,
+    SoldUnitCount,
+    TotalSalesInCents,
+    CreatedAt,
+    UpdatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'eod_summaries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<EodSummary> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_IDMeta, ID.isAcceptableOrUnknown(data['id']!, _IDMeta));
+    }
+    if (data.containsKey('business_date')) {
+      context.handle(
+        _BusinessDateMeta,
+        BusinessDate.isAcceptableOrUnknown(
+          data['business_date']!,
+          _BusinessDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_BusinessDateMeta);
+    }
+    if (data.containsKey('transaction_count')) {
+      context.handle(
+        _TransactionCountMeta,
+        TransactionCount.isAcceptableOrUnknown(
+          data['transaction_count']!,
+          _TransactionCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sold_unit_count')) {
+      context.handle(
+        _SoldUnitCountMeta,
+        SoldUnitCount.isAcceptableOrUnknown(
+          data['sold_unit_count']!,
+          _SoldUnitCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('total_sales_in_cents')) {
+      context.handle(
+        _TotalSalesInCentsMeta,
+        TotalSalesInCents.isAcceptableOrUnknown(
+          data['total_sales_in_cents']!,
+          _TotalSalesInCentsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _CreatedAtMeta,
+        CreatedAt.isAcceptableOrUnknown(data['created_at']!, _CreatedAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _UpdatedAtMeta,
+        UpdatedAt.isAcceptableOrUnknown(data['updated_at']!, _UpdatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {ID};
+  @override
+  EodSummary map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return EodSummary(
+      ID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      BusinessDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}business_date'],
+      )!,
+      TransactionCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}transaction_count'],
+      )!,
+      SoldUnitCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sold_unit_count'],
+      )!,
+      TotalSalesInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_sales_in_cents'],
+      )!,
+      CreatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      UpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $EodSummariesTable createAlias(String alias) {
+    return $EodSummariesTable(attachedDatabase, alias);
+  }
+}
+
+class EodSummary extends DataClass implements Insertable<EodSummary> {
+  final int ID;
+
+  /// One stable key per local business date, formatted as YYYY-MM-DD.
+  final String BusinessDate;
+  final int TransactionCount;
+  final int SoldUnitCount;
+  final int TotalSalesInCents;
+  final DateTime CreatedAt;
+  final DateTime UpdatedAt;
+  const EodSummary({
+    required this.ID,
+    required this.BusinessDate,
+    required this.TransactionCount,
+    required this.SoldUnitCount,
+    required this.TotalSalesInCents,
+    required this.CreatedAt,
+    required this.UpdatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(ID);
+    map['business_date'] = Variable<String>(BusinessDate);
+    map['transaction_count'] = Variable<int>(TransactionCount);
+    map['sold_unit_count'] = Variable<int>(SoldUnitCount);
+    map['total_sales_in_cents'] = Variable<int>(TotalSalesInCents);
+    map['created_at'] = Variable<DateTime>(CreatedAt);
+    map['updated_at'] = Variable<DateTime>(UpdatedAt);
+    return map;
+  }
+
+  EodSummariesCompanion toCompanion(bool nullToAbsent) {
+    return EodSummariesCompanion(
+      ID: Value(ID),
+      BusinessDate: Value(BusinessDate),
+      TransactionCount: Value(TransactionCount),
+      SoldUnitCount: Value(SoldUnitCount),
+      TotalSalesInCents: Value(TotalSalesInCents),
+      CreatedAt: Value(CreatedAt),
+      UpdatedAt: Value(UpdatedAt),
+    );
+  }
+
+  factory EodSummary.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return EodSummary(
+      ID: serializer.fromJson<int>(json['ID']),
+      BusinessDate: serializer.fromJson<String>(json['BusinessDate']),
+      TransactionCount: serializer.fromJson<int>(json['TransactionCount']),
+      SoldUnitCount: serializer.fromJson<int>(json['SoldUnitCount']),
+      TotalSalesInCents: serializer.fromJson<int>(json['TotalSalesInCents']),
+      CreatedAt: serializer.fromJson<DateTime>(json['CreatedAt']),
+      UpdatedAt: serializer.fromJson<DateTime>(json['UpdatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'ID': serializer.toJson<int>(ID),
+      'BusinessDate': serializer.toJson<String>(BusinessDate),
+      'TransactionCount': serializer.toJson<int>(TransactionCount),
+      'SoldUnitCount': serializer.toJson<int>(SoldUnitCount),
+      'TotalSalesInCents': serializer.toJson<int>(TotalSalesInCents),
+      'CreatedAt': serializer.toJson<DateTime>(CreatedAt),
+      'UpdatedAt': serializer.toJson<DateTime>(UpdatedAt),
+    };
+  }
+
+  EodSummary copyWith({
+    int? ID,
+    String? BusinessDate,
+    int? TransactionCount,
+    int? SoldUnitCount,
+    int? TotalSalesInCents,
+    DateTime? CreatedAt,
+    DateTime? UpdatedAt,
+  }) => EodSummary(
+    ID: ID ?? this.ID,
+    BusinessDate: BusinessDate ?? this.BusinessDate,
+    TransactionCount: TransactionCount ?? this.TransactionCount,
+    SoldUnitCount: SoldUnitCount ?? this.SoldUnitCount,
+    TotalSalesInCents: TotalSalesInCents ?? this.TotalSalesInCents,
+    CreatedAt: CreatedAt ?? this.CreatedAt,
+    UpdatedAt: UpdatedAt ?? this.UpdatedAt,
+  );
+  EodSummary copyWithCompanion(EodSummariesCompanion data) {
+    return EodSummary(
+      ID: data.ID.present ? data.ID.value : this.ID,
+      BusinessDate: data.BusinessDate.present
+          ? data.BusinessDate.value
+          : this.BusinessDate,
+      TransactionCount: data.TransactionCount.present
+          ? data.TransactionCount.value
+          : this.TransactionCount,
+      SoldUnitCount: data.SoldUnitCount.present
+          ? data.SoldUnitCount.value
+          : this.SoldUnitCount,
+      TotalSalesInCents: data.TotalSalesInCents.present
+          ? data.TotalSalesInCents.value
+          : this.TotalSalesInCents,
+      CreatedAt: data.CreatedAt.present ? data.CreatedAt.value : this.CreatedAt,
+      UpdatedAt: data.UpdatedAt.present ? data.UpdatedAt.value : this.UpdatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EodSummary(')
+          ..write('ID: $ID, ')
+          ..write('BusinessDate: $BusinessDate, ')
+          ..write('TransactionCount: $TransactionCount, ')
+          ..write('SoldUnitCount: $SoldUnitCount, ')
+          ..write('TotalSalesInCents: $TotalSalesInCents, ')
+          ..write('CreatedAt: $CreatedAt, ')
+          ..write('UpdatedAt: $UpdatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    ID,
+    BusinessDate,
+    TransactionCount,
+    SoldUnitCount,
+    TotalSalesInCents,
+    CreatedAt,
+    UpdatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EodSummary &&
+          other.ID == this.ID &&
+          other.BusinessDate == this.BusinessDate &&
+          other.TransactionCount == this.TransactionCount &&
+          other.SoldUnitCount == this.SoldUnitCount &&
+          other.TotalSalesInCents == this.TotalSalesInCents &&
+          other.CreatedAt == this.CreatedAt &&
+          other.UpdatedAt == this.UpdatedAt);
+}
+
+class EodSummariesCompanion extends UpdateCompanion<EodSummary> {
+  final Value<int> ID;
+  final Value<String> BusinessDate;
+  final Value<int> TransactionCount;
+  final Value<int> SoldUnitCount;
+  final Value<int> TotalSalesInCents;
+  final Value<DateTime> CreatedAt;
+  final Value<DateTime> UpdatedAt;
+  const EodSummariesCompanion({
+    this.ID = const Value.absent(),
+    this.BusinessDate = const Value.absent(),
+    this.TransactionCount = const Value.absent(),
+    this.SoldUnitCount = const Value.absent(),
+    this.TotalSalesInCents = const Value.absent(),
+    this.CreatedAt = const Value.absent(),
+    this.UpdatedAt = const Value.absent(),
+  });
+  EodSummariesCompanion.insert({
+    this.ID = const Value.absent(),
+    required String BusinessDate,
+    this.TransactionCount = const Value.absent(),
+    this.SoldUnitCount = const Value.absent(),
+    this.TotalSalesInCents = const Value.absent(),
+    this.CreatedAt = const Value.absent(),
+    this.UpdatedAt = const Value.absent(),
+  }) : BusinessDate = Value(BusinessDate);
+  static Insertable<EodSummary> custom({
+    Expression<int>? ID,
+    Expression<String>? BusinessDate,
+    Expression<int>? TransactionCount,
+    Expression<int>? SoldUnitCount,
+    Expression<int>? TotalSalesInCents,
+    Expression<DateTime>? CreatedAt,
+    Expression<DateTime>? UpdatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (ID != null) 'id': ID,
+      if (BusinessDate != null) 'business_date': BusinessDate,
+      if (TransactionCount != null) 'transaction_count': TransactionCount,
+      if (SoldUnitCount != null) 'sold_unit_count': SoldUnitCount,
+      if (TotalSalesInCents != null) 'total_sales_in_cents': TotalSalesInCents,
+      if (CreatedAt != null) 'created_at': CreatedAt,
+      if (UpdatedAt != null) 'updated_at': UpdatedAt,
+    });
+  }
+
+  EodSummariesCompanion copyWith({
+    Value<int>? ID,
+    Value<String>? BusinessDate,
+    Value<int>? TransactionCount,
+    Value<int>? SoldUnitCount,
+    Value<int>? TotalSalesInCents,
+    Value<DateTime>? CreatedAt,
+    Value<DateTime>? UpdatedAt,
+  }) {
+    return EodSummariesCompanion(
+      ID: ID ?? this.ID,
+      BusinessDate: BusinessDate ?? this.BusinessDate,
+      TransactionCount: TransactionCount ?? this.TransactionCount,
+      SoldUnitCount: SoldUnitCount ?? this.SoldUnitCount,
+      TotalSalesInCents: TotalSalesInCents ?? this.TotalSalesInCents,
+      CreatedAt: CreatedAt ?? this.CreatedAt,
+      UpdatedAt: UpdatedAt ?? this.UpdatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (ID.present) {
+      map['id'] = Variable<int>(ID.value);
+    }
+    if (BusinessDate.present) {
+      map['business_date'] = Variable<String>(BusinessDate.value);
+    }
+    if (TransactionCount.present) {
+      map['transaction_count'] = Variable<int>(TransactionCount.value);
+    }
+    if (SoldUnitCount.present) {
+      map['sold_unit_count'] = Variable<int>(SoldUnitCount.value);
+    }
+    if (TotalSalesInCents.present) {
+      map['total_sales_in_cents'] = Variable<int>(TotalSalesInCents.value);
+    }
+    if (CreatedAt.present) {
+      map['created_at'] = Variable<DateTime>(CreatedAt.value);
+    }
+    if (UpdatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(UpdatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EodSummariesCompanion(')
+          ..write('ID: $ID, ')
+          ..write('BusinessDate: $BusinessDate, ')
+          ..write('TransactionCount: $TransactionCount, ')
+          ..write('SoldUnitCount: $SoldUnitCount, ')
+          ..write('TotalSalesInCents: $TotalSalesInCents, ')
+          ..write('CreatedAt: $CreatedAt, ')
+          ..write('UpdatedAt: $UpdatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $EodSummaryItemsTable extends EodSummaryItems
+    with TableInfo<$EodSummaryItemsTable, EodSummaryItem> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $EodSummaryItemsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _IDMeta = const VerificationMeta('ID');
+  @override
+  late final GeneratedColumn<int> ID = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _EodSummaryIDMeta = const VerificationMeta(
+    'EodSummaryID',
+  );
+  @override
+  late final GeneratedColumn<int> EodSummaryID = GeneratedColumn<int>(
+    'eod_summary_i_d',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES eod_summaries (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _ProductVariantIDMeta = const VerificationMeta(
+    'ProductVariantID',
+  );
+  @override
+  late final GeneratedColumn<int> ProductVariantID = GeneratedColumn<int>(
+    'product_variant_i_d',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES product_variants (id)',
+    ),
+  );
+  static const VerificationMeta _ProductNameSnapshotMeta =
+      const VerificationMeta('ProductNameSnapshot');
+  @override
+  late final GeneratedColumn<String> ProductNameSnapshot =
+      GeneratedColumn<String>(
+        'product_name_snapshot',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _UnitSnapshotMeta = const VerificationMeta(
+    'UnitSnapshot',
+  );
+  @override
+  late final GeneratedColumn<String> UnitSnapshot = GeneratedColumn<String>(
+    'unit_snapshot',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _UnitPriceInCentsMeta = const VerificationMeta(
+    'UnitPriceInCents',
+  );
+  @override
+  late final GeneratedColumn<int> UnitPriceInCents = GeneratedColumn<int>(
+    'unit_price_in_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _SoldUnitsMeta = const VerificationMeta(
+    'SoldUnits',
+  );
+  @override
+  late final GeneratedColumn<int> SoldUnits = GeneratedColumn<int>(
+    'sold_units',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _SoldTotalInCentsMeta = const VerificationMeta(
+    'SoldTotalInCents',
+  );
+  @override
+  late final GeneratedColumn<int> SoldTotalInCents = GeneratedColumn<int>(
+    'sold_total_in_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    ID,
+    EodSummaryID,
+    ProductVariantID,
+    ProductNameSnapshot,
+    UnitSnapshot,
+    UnitPriceInCents,
+    SoldUnits,
+    SoldTotalInCents,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'eod_summary_items';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<EodSummaryItem> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_IDMeta, ID.isAcceptableOrUnknown(data['id']!, _IDMeta));
+    }
+    if (data.containsKey('eod_summary_i_d')) {
+      context.handle(
+        _EodSummaryIDMeta,
+        EodSummaryID.isAcceptableOrUnknown(
+          data['eod_summary_i_d']!,
+          _EodSummaryIDMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_EodSummaryIDMeta);
+    }
+    if (data.containsKey('product_variant_i_d')) {
+      context.handle(
+        _ProductVariantIDMeta,
+        ProductVariantID.isAcceptableOrUnknown(
+          data['product_variant_i_d']!,
+          _ProductVariantIDMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_ProductVariantIDMeta);
+    }
+    if (data.containsKey('product_name_snapshot')) {
+      context.handle(
+        _ProductNameSnapshotMeta,
+        ProductNameSnapshot.isAcceptableOrUnknown(
+          data['product_name_snapshot']!,
+          _ProductNameSnapshotMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_ProductNameSnapshotMeta);
+    }
+    if (data.containsKey('unit_snapshot')) {
+      context.handle(
+        _UnitSnapshotMeta,
+        UnitSnapshot.isAcceptableOrUnknown(
+          data['unit_snapshot']!,
+          _UnitSnapshotMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_UnitSnapshotMeta);
+    }
+    if (data.containsKey('unit_price_in_cents')) {
+      context.handle(
+        _UnitPriceInCentsMeta,
+        UnitPriceInCents.isAcceptableOrUnknown(
+          data['unit_price_in_cents']!,
+          _UnitPriceInCentsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_UnitPriceInCentsMeta);
+    }
+    if (data.containsKey('sold_units')) {
+      context.handle(
+        _SoldUnitsMeta,
+        SoldUnits.isAcceptableOrUnknown(data['sold_units']!, _SoldUnitsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_SoldUnitsMeta);
+    }
+    if (data.containsKey('sold_total_in_cents')) {
+      context.handle(
+        _SoldTotalInCentsMeta,
+        SoldTotalInCents.isAcceptableOrUnknown(
+          data['sold_total_in_cents']!,
+          _SoldTotalInCentsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_SoldTotalInCentsMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {ID};
+  @override
+  EodSummaryItem map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return EodSummaryItem(
+      ID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      EodSummaryID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}eod_summary_i_d'],
+      )!,
+      ProductVariantID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}product_variant_i_d'],
+      )!,
+      ProductNameSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_name_snapshot'],
+      )!,
+      UnitSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit_snapshot'],
+      )!,
+      UnitPriceInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unit_price_in_cents'],
+      )!,
+      SoldUnits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sold_units'],
+      )!,
+      SoldTotalInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sold_total_in_cents'],
+      )!,
+    );
+  }
+
+  @override
+  $EodSummaryItemsTable createAlias(String alias) {
+    return $EodSummaryItemsTable(attachedDatabase, alias);
+  }
+}
+
+class EodSummaryItem extends DataClass implements Insertable<EodSummaryItem> {
+  final int ID;
+  final int EodSummaryID;
+  final int ProductVariantID;
+  final String ProductNameSnapshot;
+  final String UnitSnapshot;
+  final int UnitPriceInCents;
+  final int SoldUnits;
+  final int SoldTotalInCents;
+  const EodSummaryItem({
+    required this.ID,
+    required this.EodSummaryID,
+    required this.ProductVariantID,
+    required this.ProductNameSnapshot,
+    required this.UnitSnapshot,
+    required this.UnitPriceInCents,
+    required this.SoldUnits,
+    required this.SoldTotalInCents,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(ID);
+    map['eod_summary_i_d'] = Variable<int>(EodSummaryID);
+    map['product_variant_i_d'] = Variable<int>(ProductVariantID);
+    map['product_name_snapshot'] = Variable<String>(ProductNameSnapshot);
+    map['unit_snapshot'] = Variable<String>(UnitSnapshot);
+    map['unit_price_in_cents'] = Variable<int>(UnitPriceInCents);
+    map['sold_units'] = Variable<int>(SoldUnits);
+    map['sold_total_in_cents'] = Variable<int>(SoldTotalInCents);
+    return map;
+  }
+
+  EodSummaryItemsCompanion toCompanion(bool nullToAbsent) {
+    return EodSummaryItemsCompanion(
+      ID: Value(ID),
+      EodSummaryID: Value(EodSummaryID),
+      ProductVariantID: Value(ProductVariantID),
+      ProductNameSnapshot: Value(ProductNameSnapshot),
+      UnitSnapshot: Value(UnitSnapshot),
+      UnitPriceInCents: Value(UnitPriceInCents),
+      SoldUnits: Value(SoldUnits),
+      SoldTotalInCents: Value(SoldTotalInCents),
+    );
+  }
+
+  factory EodSummaryItem.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return EodSummaryItem(
+      ID: serializer.fromJson<int>(json['ID']),
+      EodSummaryID: serializer.fromJson<int>(json['EodSummaryID']),
+      ProductVariantID: serializer.fromJson<int>(json['ProductVariantID']),
+      ProductNameSnapshot: serializer.fromJson<String>(
+        json['ProductNameSnapshot'],
+      ),
+      UnitSnapshot: serializer.fromJson<String>(json['UnitSnapshot']),
+      UnitPriceInCents: serializer.fromJson<int>(json['UnitPriceInCents']),
+      SoldUnits: serializer.fromJson<int>(json['SoldUnits']),
+      SoldTotalInCents: serializer.fromJson<int>(json['SoldTotalInCents']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'ID': serializer.toJson<int>(ID),
+      'EodSummaryID': serializer.toJson<int>(EodSummaryID),
+      'ProductVariantID': serializer.toJson<int>(ProductVariantID),
+      'ProductNameSnapshot': serializer.toJson<String>(ProductNameSnapshot),
+      'UnitSnapshot': serializer.toJson<String>(UnitSnapshot),
+      'UnitPriceInCents': serializer.toJson<int>(UnitPriceInCents),
+      'SoldUnits': serializer.toJson<int>(SoldUnits),
+      'SoldTotalInCents': serializer.toJson<int>(SoldTotalInCents),
+    };
+  }
+
+  EodSummaryItem copyWith({
+    int? ID,
+    int? EodSummaryID,
+    int? ProductVariantID,
+    String? ProductNameSnapshot,
+    String? UnitSnapshot,
+    int? UnitPriceInCents,
+    int? SoldUnits,
+    int? SoldTotalInCents,
+  }) => EodSummaryItem(
+    ID: ID ?? this.ID,
+    EodSummaryID: EodSummaryID ?? this.EodSummaryID,
+    ProductVariantID: ProductVariantID ?? this.ProductVariantID,
+    ProductNameSnapshot: ProductNameSnapshot ?? this.ProductNameSnapshot,
+    UnitSnapshot: UnitSnapshot ?? this.UnitSnapshot,
+    UnitPriceInCents: UnitPriceInCents ?? this.UnitPriceInCents,
+    SoldUnits: SoldUnits ?? this.SoldUnits,
+    SoldTotalInCents: SoldTotalInCents ?? this.SoldTotalInCents,
+  );
+  EodSummaryItem copyWithCompanion(EodSummaryItemsCompanion data) {
+    return EodSummaryItem(
+      ID: data.ID.present ? data.ID.value : this.ID,
+      EodSummaryID: data.EodSummaryID.present
+          ? data.EodSummaryID.value
+          : this.EodSummaryID,
+      ProductVariantID: data.ProductVariantID.present
+          ? data.ProductVariantID.value
+          : this.ProductVariantID,
+      ProductNameSnapshot: data.ProductNameSnapshot.present
+          ? data.ProductNameSnapshot.value
+          : this.ProductNameSnapshot,
+      UnitSnapshot: data.UnitSnapshot.present
+          ? data.UnitSnapshot.value
+          : this.UnitSnapshot,
+      UnitPriceInCents: data.UnitPriceInCents.present
+          ? data.UnitPriceInCents.value
+          : this.UnitPriceInCents,
+      SoldUnits: data.SoldUnits.present ? data.SoldUnits.value : this.SoldUnits,
+      SoldTotalInCents: data.SoldTotalInCents.present
+          ? data.SoldTotalInCents.value
+          : this.SoldTotalInCents,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EodSummaryItem(')
+          ..write('ID: $ID, ')
+          ..write('EodSummaryID: $EodSummaryID, ')
+          ..write('ProductVariantID: $ProductVariantID, ')
+          ..write('ProductNameSnapshot: $ProductNameSnapshot, ')
+          ..write('UnitSnapshot: $UnitSnapshot, ')
+          ..write('UnitPriceInCents: $UnitPriceInCents, ')
+          ..write('SoldUnits: $SoldUnits, ')
+          ..write('SoldTotalInCents: $SoldTotalInCents')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    ID,
+    EodSummaryID,
+    ProductVariantID,
+    ProductNameSnapshot,
+    UnitSnapshot,
+    UnitPriceInCents,
+    SoldUnits,
+    SoldTotalInCents,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EodSummaryItem &&
+          other.ID == this.ID &&
+          other.EodSummaryID == this.EodSummaryID &&
+          other.ProductVariantID == this.ProductVariantID &&
+          other.ProductNameSnapshot == this.ProductNameSnapshot &&
+          other.UnitSnapshot == this.UnitSnapshot &&
+          other.UnitPriceInCents == this.UnitPriceInCents &&
+          other.SoldUnits == this.SoldUnits &&
+          other.SoldTotalInCents == this.SoldTotalInCents);
+}
+
+class EodSummaryItemsCompanion extends UpdateCompanion<EodSummaryItem> {
+  final Value<int> ID;
+  final Value<int> EodSummaryID;
+  final Value<int> ProductVariantID;
+  final Value<String> ProductNameSnapshot;
+  final Value<String> UnitSnapshot;
+  final Value<int> UnitPriceInCents;
+  final Value<int> SoldUnits;
+  final Value<int> SoldTotalInCents;
+  const EodSummaryItemsCompanion({
+    this.ID = const Value.absent(),
+    this.EodSummaryID = const Value.absent(),
+    this.ProductVariantID = const Value.absent(),
+    this.ProductNameSnapshot = const Value.absent(),
+    this.UnitSnapshot = const Value.absent(),
+    this.UnitPriceInCents = const Value.absent(),
+    this.SoldUnits = const Value.absent(),
+    this.SoldTotalInCents = const Value.absent(),
+  });
+  EodSummaryItemsCompanion.insert({
+    this.ID = const Value.absent(),
+    required int EodSummaryID,
+    required int ProductVariantID,
+    required String ProductNameSnapshot,
+    required String UnitSnapshot,
+    required int UnitPriceInCents,
+    required int SoldUnits,
+    required int SoldTotalInCents,
+  }) : EodSummaryID = Value(EodSummaryID),
+       ProductVariantID = Value(ProductVariantID),
+       ProductNameSnapshot = Value(ProductNameSnapshot),
+       UnitSnapshot = Value(UnitSnapshot),
+       UnitPriceInCents = Value(UnitPriceInCents),
+       SoldUnits = Value(SoldUnits),
+       SoldTotalInCents = Value(SoldTotalInCents);
+  static Insertable<EodSummaryItem> custom({
+    Expression<int>? ID,
+    Expression<int>? EodSummaryID,
+    Expression<int>? ProductVariantID,
+    Expression<String>? ProductNameSnapshot,
+    Expression<String>? UnitSnapshot,
+    Expression<int>? UnitPriceInCents,
+    Expression<int>? SoldUnits,
+    Expression<int>? SoldTotalInCents,
+  }) {
+    return RawValuesInsertable({
+      if (ID != null) 'id': ID,
+      if (EodSummaryID != null) 'eod_summary_i_d': EodSummaryID,
+      if (ProductVariantID != null) 'product_variant_i_d': ProductVariantID,
+      if (ProductNameSnapshot != null)
+        'product_name_snapshot': ProductNameSnapshot,
+      if (UnitSnapshot != null) 'unit_snapshot': UnitSnapshot,
+      if (UnitPriceInCents != null) 'unit_price_in_cents': UnitPriceInCents,
+      if (SoldUnits != null) 'sold_units': SoldUnits,
+      if (SoldTotalInCents != null) 'sold_total_in_cents': SoldTotalInCents,
+    });
+  }
+
+  EodSummaryItemsCompanion copyWith({
+    Value<int>? ID,
+    Value<int>? EodSummaryID,
+    Value<int>? ProductVariantID,
+    Value<String>? ProductNameSnapshot,
+    Value<String>? UnitSnapshot,
+    Value<int>? UnitPriceInCents,
+    Value<int>? SoldUnits,
+    Value<int>? SoldTotalInCents,
+  }) {
+    return EodSummaryItemsCompanion(
+      ID: ID ?? this.ID,
+      EodSummaryID: EodSummaryID ?? this.EodSummaryID,
+      ProductVariantID: ProductVariantID ?? this.ProductVariantID,
+      ProductNameSnapshot: ProductNameSnapshot ?? this.ProductNameSnapshot,
+      UnitSnapshot: UnitSnapshot ?? this.UnitSnapshot,
+      UnitPriceInCents: UnitPriceInCents ?? this.UnitPriceInCents,
+      SoldUnits: SoldUnits ?? this.SoldUnits,
+      SoldTotalInCents: SoldTotalInCents ?? this.SoldTotalInCents,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (ID.present) {
+      map['id'] = Variable<int>(ID.value);
+    }
+    if (EodSummaryID.present) {
+      map['eod_summary_i_d'] = Variable<int>(EodSummaryID.value);
+    }
+    if (ProductVariantID.present) {
+      map['product_variant_i_d'] = Variable<int>(ProductVariantID.value);
+    }
+    if (ProductNameSnapshot.present) {
+      map['product_name_snapshot'] = Variable<String>(
+        ProductNameSnapshot.value,
+      );
+    }
+    if (UnitSnapshot.present) {
+      map['unit_snapshot'] = Variable<String>(UnitSnapshot.value);
+    }
+    if (UnitPriceInCents.present) {
+      map['unit_price_in_cents'] = Variable<int>(UnitPriceInCents.value);
+    }
+    if (SoldUnits.present) {
+      map['sold_units'] = Variable<int>(SoldUnits.value);
+    }
+    if (SoldTotalInCents.present) {
+      map['sold_total_in_cents'] = Variable<int>(SoldTotalInCents.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EodSummaryItemsCompanion(')
+          ..write('ID: $ID, ')
+          ..write('EodSummaryID: $EodSummaryID, ')
+          ..write('ProductVariantID: $ProductVariantID, ')
+          ..write('ProductNameSnapshot: $ProductNameSnapshot, ')
+          ..write('UnitSnapshot: $UnitSnapshot, ')
+          ..write('UnitPriceInCents: $UnitPriceInCents, ')
+          ..write('SoldUnits: $SoldUnits, ')
+          ..write('SoldTotalInCents: $SoldTotalInCents')
           ..write(')'))
         .toString();
   }
@@ -4049,6 +5513,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $TransactionPrintJobsTable(this);
   late final $TransactionSyncBatchesTable transactionSyncBatches =
       $TransactionSyncBatchesTable(this);
+  late final $EodSummariesTable eodSummaries = $EodSummariesTable(this);
+  late final $EodSummaryItemsTable eodSummaryItems = $EodSummaryItemsTable(
+    this,
+  );
   late final $StoreSettingsTable storeSettings = $StoreSettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -4061,6 +5529,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     transactionItems,
     transactionPrintJobs,
     transactionSyncBatches,
+    eodSummaries,
+    eodSummaryItems,
     storeSettings,
   ];
   @override
@@ -4071,6 +5541,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('transaction_print_jobs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'eod_summaries',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('eod_summary_items', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -4441,6 +5918,26 @@ final class $$ProductVariantsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$EodSummaryItemsTable, List<EodSummaryItem>>
+  _eodSummaryItemsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.eodSummaryItems,
+    aliasName: 'product_variants__id__eod_summary_items__product_variant_i_d',
+  );
+
+  $$EodSummaryItemsTableProcessedTableManager get eodSummaryItemsRefs {
+    final manager = $$EodSummaryItemsTableTableManager(
+      $_db,
+      $_db.eodSummaryItems,
+    ).filter((f) => f.ProductVariantID.ID.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _eodSummaryItemsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ProductVariantsTableFilterComposer
@@ -4521,6 +6018,31 @@ class $$ProductVariantsTableFilterComposer
           }) => $$TransactionItemsTableFilterComposer(
             $db: $db,
             $table: $db.transactionItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> eodSummaryItemsRefs(
+    Expression<bool> Function($$EodSummaryItemsTableFilterComposer f) f,
+  ) {
+    final $$EodSummaryItemsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ID,
+      referencedTable: $db.eodSummaryItems,
+      getReferencedColumn: (t) => t.ProductVariantID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EodSummaryItemsTableFilterComposer(
+            $db: $db,
+            $table: $db.eodSummaryItems,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4670,6 +6192,31 @@ class $$ProductVariantsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> eodSummaryItemsRefs<T extends Object>(
+    Expression<T> Function($$EodSummaryItemsTableAnnotationComposer a) f,
+  ) {
+    final $$EodSummaryItemsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ID,
+      referencedTable: $db.eodSummaryItems,
+      getReferencedColumn: (t) => t.ProductVariantID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EodSummaryItemsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eodSummaryItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ProductVariantsTableTableManager
@@ -4685,7 +6232,11 @@ class $$ProductVariantsTableTableManager
           $$ProductVariantsTableUpdateCompanionBuilder,
           (ProductVariant, $$ProductVariantsTableReferences),
           ProductVariant,
-          PrefetchHooks Function({bool ProductID, bool transactionItemsRefs})
+          PrefetchHooks Function({
+            bool ProductID,
+            bool transactionItemsRefs,
+            bool eodSummaryItemsRefs,
+          })
         > {
   $$ProductVariantsTableTableManager(
     _$AppDatabase db,
@@ -4744,74 +6295,101 @@ class $$ProductVariantsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({ProductID = false, transactionItemsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (transactionItemsRefs) db.transactionItems,
-              ],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (ProductID) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.ProductID,
-                                referencedTable:
-                                    $$ProductVariantsTableReferences._ProductIDTable(
-                                      db,
-                                    ),
-                                referencedColumn:
-                                    $$ProductVariantsTableReferences._ProductIDTable(
-                                      db,
-                                    ).ID,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                ProductID = false,
+                transactionItemsRefs = false,
+                eodSummaryItemsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (transactionItemsRefs) db.transactionItems,
+                    if (eodSummaryItemsRefs) db.eodSummaryItems,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (ProductID) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.ProductID,
+                                    referencedTable:
+                                        $$ProductVariantsTableReferences._ProductIDTable(
+                                          db,
+                                        ),
+                                    referencedColumn:
+                                        $$ProductVariantsTableReferences._ProductIDTable(
+                                          db,
+                                        ).ID,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (transactionItemsRefs)
+                        await $_getPrefetchedData<
+                          ProductVariant,
+                          $ProductVariantsTable,
+                          TransactionItem
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProductVariantsTableReferences
+                              ._transactionItemsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProductVariantsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).transactionItemsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.ProductVariantID == item.ID,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (eodSummaryItemsRefs)
+                        await $_getPrefetchedData<
+                          ProductVariant,
+                          $ProductVariantsTable,
+                          EodSummaryItem
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProductVariantsTableReferences
+                              ._eodSummaryItemsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProductVariantsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).eodSummaryItemsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.ProductVariantID == item.ID,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (transactionItemsRefs)
-                    await $_getPrefetchedData<
-                      ProductVariant,
-                      $ProductVariantsTable,
-                      TransactionItem
-                    >(
-                      currentTable: table,
-                      referencedTable: $$ProductVariantsTableReferences
-                          ._transactionItemsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$ProductVariantsTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).transactionItemsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where(
-                            (e) => e.ProductVariantID == item.ID,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -4828,7 +6406,11 @@ typedef $$ProductVariantsTableProcessedTableManager =
       $$ProductVariantsTableUpdateCompanionBuilder,
       (ProductVariant, $$ProductVariantsTableReferences),
       ProductVariant,
-      PrefetchHooks Function({bool ProductID, bool transactionItemsRefs})
+      PrefetchHooks Function({
+        bool ProductID,
+        bool transactionItemsRefs,
+        bool eodSummaryItemsRefs,
+      })
     >;
 typedef $$TransactionsTableCreateCompanionBuilder =
     TransactionsCompanion Function({
@@ -6292,6 +7874,14 @@ typedef $$TransactionSyncBatchesTableCreateCompanionBuilder =
       Value<String?> RemoteTextFileID,
       Value<String?> Checksum,
       Value<String?> TextChecksum,
+      Value<String?> EodFileName,
+      Value<String?> EodTextFileName,
+      Value<String?> EodLocalFilePath,
+      Value<String?> EodTextLocalFilePath,
+      Value<String?> EodRemoteFileID,
+      Value<String?> EodRemoteTextFileID,
+      Value<String?> EodChecksum,
+      Value<String?> EodTextChecksum,
       Value<int> RecordCount,
       Value<String> Status,
       Value<int> AttemptCount,
@@ -6312,6 +7902,14 @@ typedef $$TransactionSyncBatchesTableUpdateCompanionBuilder =
       Value<String?> RemoteTextFileID,
       Value<String?> Checksum,
       Value<String?> TextChecksum,
+      Value<String?> EodFileName,
+      Value<String?> EodTextFileName,
+      Value<String?> EodLocalFilePath,
+      Value<String?> EodTextLocalFilePath,
+      Value<String?> EodRemoteFileID,
+      Value<String?> EodRemoteTextFileID,
+      Value<String?> EodChecksum,
+      Value<String?> EodTextChecksum,
       Value<int> RecordCount,
       Value<String> Status,
       Value<int> AttemptCount,
@@ -6377,6 +7975,46 @@ class $$TransactionSyncBatchesTableFilterComposer
 
   ColumnFilters<String> get TextChecksum => $composableBuilder(
     column: $table.TextChecksum,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodFileName => $composableBuilder(
+    column: $table.EodFileName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodTextFileName => $composableBuilder(
+    column: $table.EodTextFileName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodLocalFilePath => $composableBuilder(
+    column: $table.EodLocalFilePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodTextLocalFilePath => $composableBuilder(
+    column: $table.EodTextLocalFilePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodRemoteFileID => $composableBuilder(
+    column: $table.EodRemoteFileID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodRemoteTextFileID => $composableBuilder(
+    column: $table.EodRemoteTextFileID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodChecksum => $composableBuilder(
+    column: $table.EodChecksum,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodTextChecksum => $composableBuilder(
+    column: $table.EodTextChecksum,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6475,6 +8113,46 @@ class $$TransactionSyncBatchesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get EodFileName => $composableBuilder(
+    column: $table.EodFileName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodTextFileName => $composableBuilder(
+    column: $table.EodTextFileName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodLocalFilePath => $composableBuilder(
+    column: $table.EodLocalFilePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodTextLocalFilePath => $composableBuilder(
+    column: $table.EodTextLocalFilePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodRemoteFileID => $composableBuilder(
+    column: $table.EodRemoteFileID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodRemoteTextFileID => $composableBuilder(
+    column: $table.EodRemoteTextFileID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodChecksum => $composableBuilder(
+    column: $table.EodChecksum,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodTextChecksum => $composableBuilder(
+    column: $table.EodTextChecksum,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get RecordCount => $composableBuilder(
     column: $table.RecordCount,
     builder: (column) => ColumnOrderings(column),
@@ -6564,6 +8242,46 @@ class $$TransactionSyncBatchesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get EodFileName => $composableBuilder(
+    column: $table.EodFileName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodTextFileName => $composableBuilder(
+    column: $table.EodTextFileName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodLocalFilePath => $composableBuilder(
+    column: $table.EodLocalFilePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodTextLocalFilePath => $composableBuilder(
+    column: $table.EodTextLocalFilePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodRemoteFileID => $composableBuilder(
+    column: $table.EodRemoteFileID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodRemoteTextFileID => $composableBuilder(
+    column: $table.EodRemoteTextFileID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodChecksum => $composableBuilder(
+    column: $table.EodChecksum,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodTextChecksum => $composableBuilder(
+    column: $table.EodTextChecksum,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get RecordCount => $composableBuilder(
     column: $table.RecordCount,
     builder: (column) => column,
@@ -6650,6 +8368,14 @@ class $$TransactionSyncBatchesTableTableManager
                 Value<String?> RemoteTextFileID = const Value.absent(),
                 Value<String?> Checksum = const Value.absent(),
                 Value<String?> TextChecksum = const Value.absent(),
+                Value<String?> EodFileName = const Value.absent(),
+                Value<String?> EodTextFileName = const Value.absent(),
+                Value<String?> EodLocalFilePath = const Value.absent(),
+                Value<String?> EodTextLocalFilePath = const Value.absent(),
+                Value<String?> EodRemoteFileID = const Value.absent(),
+                Value<String?> EodRemoteTextFileID = const Value.absent(),
+                Value<String?> EodChecksum = const Value.absent(),
+                Value<String?> EodTextChecksum = const Value.absent(),
                 Value<int> RecordCount = const Value.absent(),
                 Value<String> Status = const Value.absent(),
                 Value<int> AttemptCount = const Value.absent(),
@@ -6668,6 +8394,14 @@ class $$TransactionSyncBatchesTableTableManager
                 RemoteTextFileID: RemoteTextFileID,
                 Checksum: Checksum,
                 TextChecksum: TextChecksum,
+                EodFileName: EodFileName,
+                EodTextFileName: EodTextFileName,
+                EodLocalFilePath: EodLocalFilePath,
+                EodTextLocalFilePath: EodTextLocalFilePath,
+                EodRemoteFileID: EodRemoteFileID,
+                EodRemoteTextFileID: EodRemoteTextFileID,
+                EodChecksum: EodChecksum,
+                EodTextChecksum: EodTextChecksum,
                 RecordCount: RecordCount,
                 Status: Status,
                 AttemptCount: AttemptCount,
@@ -6688,6 +8422,14 @@ class $$TransactionSyncBatchesTableTableManager
                 Value<String?> RemoteTextFileID = const Value.absent(),
                 Value<String?> Checksum = const Value.absent(),
                 Value<String?> TextChecksum = const Value.absent(),
+                Value<String?> EodFileName = const Value.absent(),
+                Value<String?> EodTextFileName = const Value.absent(),
+                Value<String?> EodLocalFilePath = const Value.absent(),
+                Value<String?> EodTextLocalFilePath = const Value.absent(),
+                Value<String?> EodRemoteFileID = const Value.absent(),
+                Value<String?> EodRemoteTextFileID = const Value.absent(),
+                Value<String?> EodChecksum = const Value.absent(),
+                Value<String?> EodTextChecksum = const Value.absent(),
                 Value<int> RecordCount = const Value.absent(),
                 Value<String> Status = const Value.absent(),
                 Value<int> AttemptCount = const Value.absent(),
@@ -6706,6 +8448,14 @@ class $$TransactionSyncBatchesTableTableManager
                 RemoteTextFileID: RemoteTextFileID,
                 Checksum: Checksum,
                 TextChecksum: TextChecksum,
+                EodFileName: EodFileName,
+                EodTextFileName: EodTextFileName,
+                EodLocalFilePath: EodLocalFilePath,
+                EodTextLocalFilePath: EodTextLocalFilePath,
+                EodRemoteFileID: EodRemoteFileID,
+                EodRemoteTextFileID: EodRemoteTextFileID,
+                EodChecksum: EodChecksum,
+                EodTextChecksum: EodTextChecksum,
                 RecordCount: RecordCount,
                 Status: Status,
                 AttemptCount: AttemptCount,
@@ -6742,6 +8492,831 @@ typedef $$TransactionSyncBatchesTableProcessedTableManager =
       ),
       TransactionSyncBatche,
       PrefetchHooks Function()
+    >;
+typedef $$EodSummariesTableCreateCompanionBuilder =
+    EodSummariesCompanion Function({
+      Value<int> ID,
+      required String BusinessDate,
+      Value<int> TransactionCount,
+      Value<int> SoldUnitCount,
+      Value<int> TotalSalesInCents,
+      Value<DateTime> CreatedAt,
+      Value<DateTime> UpdatedAt,
+    });
+typedef $$EodSummariesTableUpdateCompanionBuilder =
+    EodSummariesCompanion Function({
+      Value<int> ID,
+      Value<String> BusinessDate,
+      Value<int> TransactionCount,
+      Value<int> SoldUnitCount,
+      Value<int> TotalSalesInCents,
+      Value<DateTime> CreatedAt,
+      Value<DateTime> UpdatedAt,
+    });
+
+final class $$EodSummariesTableReferences
+    extends BaseReferences<_$AppDatabase, $EodSummariesTable, EodSummary> {
+  $$EodSummariesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$EodSummaryItemsTable, List<EodSummaryItem>>
+  _eodSummaryItemsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.eodSummaryItems,
+    aliasName: 'eod_summaries__id__eod_summary_items__eod_summary_i_d',
+  );
+
+  $$EodSummaryItemsTableProcessedTableManager get eodSummaryItemsRefs {
+    final manager = $$EodSummaryItemsTableTableManager(
+      $_db,
+      $_db.eodSummaryItems,
+    ).filter((f) => f.EodSummaryID.ID.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _eodSummaryItemsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$EodSummariesTableFilterComposer
+    extends Composer<_$AppDatabase, $EodSummariesTable> {
+  $$EodSummariesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get BusinessDate => $composableBuilder(
+    column: $table.BusinessDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get TransactionCount => $composableBuilder(
+    column: $table.TransactionCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get SoldUnitCount => $composableBuilder(
+    column: $table.SoldUnitCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get TotalSalesInCents => $composableBuilder(
+    column: $table.TotalSalesInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get CreatedAt => $composableBuilder(
+    column: $table.CreatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get UpdatedAt => $composableBuilder(
+    column: $table.UpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> eodSummaryItemsRefs(
+    Expression<bool> Function($$EodSummaryItemsTableFilterComposer f) f,
+  ) {
+    final $$EodSummaryItemsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ID,
+      referencedTable: $db.eodSummaryItems,
+      getReferencedColumn: (t) => t.EodSummaryID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EodSummaryItemsTableFilterComposer(
+            $db: $db,
+            $table: $db.eodSummaryItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$EodSummariesTableOrderingComposer
+    extends Composer<_$AppDatabase, $EodSummariesTable> {
+  $$EodSummariesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get BusinessDate => $composableBuilder(
+    column: $table.BusinessDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get TransactionCount => $composableBuilder(
+    column: $table.TransactionCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get SoldUnitCount => $composableBuilder(
+    column: $table.SoldUnitCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get TotalSalesInCents => $composableBuilder(
+    column: $table.TotalSalesInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get CreatedAt => $composableBuilder(
+    column: $table.CreatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get UpdatedAt => $composableBuilder(
+    column: $table.UpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$EodSummariesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $EodSummariesTable> {
+  $$EodSummariesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get ID =>
+      $composableBuilder(column: $table.ID, builder: (column) => column);
+
+  GeneratedColumn<String> get BusinessDate => $composableBuilder(
+    column: $table.BusinessDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get TransactionCount => $composableBuilder(
+    column: $table.TransactionCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get SoldUnitCount => $composableBuilder(
+    column: $table.SoldUnitCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get TotalSalesInCents => $composableBuilder(
+    column: $table.TotalSalesInCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get CreatedAt =>
+      $composableBuilder(column: $table.CreatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get UpdatedAt =>
+      $composableBuilder(column: $table.UpdatedAt, builder: (column) => column);
+
+  Expression<T> eodSummaryItemsRefs<T extends Object>(
+    Expression<T> Function($$EodSummaryItemsTableAnnotationComposer a) f,
+  ) {
+    final $$EodSummaryItemsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ID,
+      referencedTable: $db.eodSummaryItems,
+      getReferencedColumn: (t) => t.EodSummaryID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EodSummaryItemsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eodSummaryItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$EodSummariesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $EodSummariesTable,
+          EodSummary,
+          $$EodSummariesTableFilterComposer,
+          $$EodSummariesTableOrderingComposer,
+          $$EodSummariesTableAnnotationComposer,
+          $$EodSummariesTableCreateCompanionBuilder,
+          $$EodSummariesTableUpdateCompanionBuilder,
+          (EodSummary, $$EodSummariesTableReferences),
+          EodSummary,
+          PrefetchHooks Function({bool eodSummaryItemsRefs})
+        > {
+  $$EodSummariesTableTableManager(_$AppDatabase db, $EodSummariesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EodSummariesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$EodSummariesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$EodSummariesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                Value<String> BusinessDate = const Value.absent(),
+                Value<int> TransactionCount = const Value.absent(),
+                Value<int> SoldUnitCount = const Value.absent(),
+                Value<int> TotalSalesInCents = const Value.absent(),
+                Value<DateTime> CreatedAt = const Value.absent(),
+                Value<DateTime> UpdatedAt = const Value.absent(),
+              }) => EodSummariesCompanion(
+                ID: ID,
+                BusinessDate: BusinessDate,
+                TransactionCount: TransactionCount,
+                SoldUnitCount: SoldUnitCount,
+                TotalSalesInCents: TotalSalesInCents,
+                CreatedAt: CreatedAt,
+                UpdatedAt: UpdatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                required String BusinessDate,
+                Value<int> TransactionCount = const Value.absent(),
+                Value<int> SoldUnitCount = const Value.absent(),
+                Value<int> TotalSalesInCents = const Value.absent(),
+                Value<DateTime> CreatedAt = const Value.absent(),
+                Value<DateTime> UpdatedAt = const Value.absent(),
+              }) => EodSummariesCompanion.insert(
+                ID: ID,
+                BusinessDate: BusinessDate,
+                TransactionCount: TransactionCount,
+                SoldUnitCount: SoldUnitCount,
+                TotalSalesInCents: TotalSalesInCents,
+                CreatedAt: CreatedAt,
+                UpdatedAt: UpdatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$EodSummariesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({eodSummaryItemsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (eodSummaryItemsRefs) db.eodSummaryItems,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (eodSummaryItemsRefs)
+                    await $_getPrefetchedData<
+                      EodSummary,
+                      $EodSummariesTable,
+                      EodSummaryItem
+                    >(
+                      currentTable: table,
+                      referencedTable: $$EodSummariesTableReferences
+                          ._eodSummaryItemsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$EodSummariesTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).eodSummaryItemsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.EodSummaryID == item.ID,
+                          ),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$EodSummariesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $EodSummariesTable,
+      EodSummary,
+      $$EodSummariesTableFilterComposer,
+      $$EodSummariesTableOrderingComposer,
+      $$EodSummariesTableAnnotationComposer,
+      $$EodSummariesTableCreateCompanionBuilder,
+      $$EodSummariesTableUpdateCompanionBuilder,
+      (EodSummary, $$EodSummariesTableReferences),
+      EodSummary,
+      PrefetchHooks Function({bool eodSummaryItemsRefs})
+    >;
+typedef $$EodSummaryItemsTableCreateCompanionBuilder =
+    EodSummaryItemsCompanion Function({
+      Value<int> ID,
+      required int EodSummaryID,
+      required int ProductVariantID,
+      required String ProductNameSnapshot,
+      required String UnitSnapshot,
+      required int UnitPriceInCents,
+      required int SoldUnits,
+      required int SoldTotalInCents,
+    });
+typedef $$EodSummaryItemsTableUpdateCompanionBuilder =
+    EodSummaryItemsCompanion Function({
+      Value<int> ID,
+      Value<int> EodSummaryID,
+      Value<int> ProductVariantID,
+      Value<String> ProductNameSnapshot,
+      Value<String> UnitSnapshot,
+      Value<int> UnitPriceInCents,
+      Value<int> SoldUnits,
+      Value<int> SoldTotalInCents,
+    });
+
+final class $$EodSummaryItemsTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $EodSummaryItemsTable, EodSummaryItem> {
+  $$EodSummaryItemsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $EodSummariesTable _EodSummaryIDTable(_$AppDatabase db) => db
+      .eodSummaries
+      .createAlias('eod_summary_items__eod_summary_i_d__eod_summaries__id');
+
+  $$EodSummariesTableProcessedTableManager get EodSummaryID {
+    final $_column = $_itemColumn<int>('eod_summary_i_d')!;
+
+    final manager = $$EodSummariesTableTableManager(
+      $_db,
+      $_db.eodSummaries,
+    ).filter((f) => f.ID.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_EodSummaryIDTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProductVariantsTable _ProductVariantIDTable(_$AppDatabase db) =>
+      db.productVariants.createAlias(
+        'eod_summary_items__product_variant_i_d__product_variants__id',
+      );
+
+  $$ProductVariantsTableProcessedTableManager get ProductVariantID {
+    final $_column = $_itemColumn<int>('product_variant_i_d')!;
+
+    final manager = $$ProductVariantsTableTableManager(
+      $_db,
+      $_db.productVariants,
+    ).filter((f) => f.ID.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_ProductVariantIDTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$EodSummaryItemsTableFilterComposer
+    extends Composer<_$AppDatabase, $EodSummaryItemsTable> {
+  $$EodSummaryItemsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ProductNameSnapshot => $composableBuilder(
+    column: $table.ProductNameSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get UnitSnapshot => $composableBuilder(
+    column: $table.UnitSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get UnitPriceInCents => $composableBuilder(
+    column: $table.UnitPriceInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get SoldUnits => $composableBuilder(
+    column: $table.SoldUnits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get SoldTotalInCents => $composableBuilder(
+    column: $table.SoldTotalInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$EodSummariesTableFilterComposer get EodSummaryID {
+    final $$EodSummariesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.EodSummaryID,
+      referencedTable: $db.eodSummaries,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EodSummariesTableFilterComposer(
+            $db: $db,
+            $table: $db.eodSummaries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductVariantsTableFilterComposer get ProductVariantID {
+    final $$ProductVariantsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ProductVariantID,
+      referencedTable: $db.productVariants,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductVariantsTableFilterComposer(
+            $db: $db,
+            $table: $db.productVariants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EodSummaryItemsTableOrderingComposer
+    extends Composer<_$AppDatabase, $EodSummaryItemsTable> {
+  $$EodSummaryItemsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ProductNameSnapshot => $composableBuilder(
+    column: $table.ProductNameSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get UnitSnapshot => $composableBuilder(
+    column: $table.UnitSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get UnitPriceInCents => $composableBuilder(
+    column: $table.UnitPriceInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get SoldUnits => $composableBuilder(
+    column: $table.SoldUnits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get SoldTotalInCents => $composableBuilder(
+    column: $table.SoldTotalInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$EodSummariesTableOrderingComposer get EodSummaryID {
+    final $$EodSummariesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.EodSummaryID,
+      referencedTable: $db.eodSummaries,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EodSummariesTableOrderingComposer(
+            $db: $db,
+            $table: $db.eodSummaries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductVariantsTableOrderingComposer get ProductVariantID {
+    final $$ProductVariantsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ProductVariantID,
+      referencedTable: $db.productVariants,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductVariantsTableOrderingComposer(
+            $db: $db,
+            $table: $db.productVariants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EodSummaryItemsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $EodSummaryItemsTable> {
+  $$EodSummaryItemsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get ID =>
+      $composableBuilder(column: $table.ID, builder: (column) => column);
+
+  GeneratedColumn<String> get ProductNameSnapshot => $composableBuilder(
+    column: $table.ProductNameSnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get UnitSnapshot => $composableBuilder(
+    column: $table.UnitSnapshot,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get UnitPriceInCents => $composableBuilder(
+    column: $table.UnitPriceInCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get SoldUnits =>
+      $composableBuilder(column: $table.SoldUnits, builder: (column) => column);
+
+  GeneratedColumn<int> get SoldTotalInCents => $composableBuilder(
+    column: $table.SoldTotalInCents,
+    builder: (column) => column,
+  );
+
+  $$EodSummariesTableAnnotationComposer get EodSummaryID {
+    final $$EodSummariesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.EodSummaryID,
+      referencedTable: $db.eodSummaries,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$EodSummariesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.eodSummaries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductVariantsTableAnnotationComposer get ProductVariantID {
+    final $$ProductVariantsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.ProductVariantID,
+      referencedTable: $db.productVariants,
+      getReferencedColumn: (t) => t.ID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductVariantsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.productVariants,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$EodSummaryItemsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $EodSummaryItemsTable,
+          EodSummaryItem,
+          $$EodSummaryItemsTableFilterComposer,
+          $$EodSummaryItemsTableOrderingComposer,
+          $$EodSummaryItemsTableAnnotationComposer,
+          $$EodSummaryItemsTableCreateCompanionBuilder,
+          $$EodSummaryItemsTableUpdateCompanionBuilder,
+          (EodSummaryItem, $$EodSummaryItemsTableReferences),
+          EodSummaryItem,
+          PrefetchHooks Function({bool EodSummaryID, bool ProductVariantID})
+        > {
+  $$EodSummaryItemsTableTableManager(
+    _$AppDatabase db,
+    $EodSummaryItemsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EodSummaryItemsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$EodSummaryItemsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$EodSummaryItemsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                Value<int> EodSummaryID = const Value.absent(),
+                Value<int> ProductVariantID = const Value.absent(),
+                Value<String> ProductNameSnapshot = const Value.absent(),
+                Value<String> UnitSnapshot = const Value.absent(),
+                Value<int> UnitPriceInCents = const Value.absent(),
+                Value<int> SoldUnits = const Value.absent(),
+                Value<int> SoldTotalInCents = const Value.absent(),
+              }) => EodSummaryItemsCompanion(
+                ID: ID,
+                EodSummaryID: EodSummaryID,
+                ProductVariantID: ProductVariantID,
+                ProductNameSnapshot: ProductNameSnapshot,
+                UnitSnapshot: UnitSnapshot,
+                UnitPriceInCents: UnitPriceInCents,
+                SoldUnits: SoldUnits,
+                SoldTotalInCents: SoldTotalInCents,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                required int EodSummaryID,
+                required int ProductVariantID,
+                required String ProductNameSnapshot,
+                required String UnitSnapshot,
+                required int UnitPriceInCents,
+                required int SoldUnits,
+                required int SoldTotalInCents,
+              }) => EodSummaryItemsCompanion.insert(
+                ID: ID,
+                EodSummaryID: EodSummaryID,
+                ProductVariantID: ProductVariantID,
+                ProductNameSnapshot: ProductNameSnapshot,
+                UnitSnapshot: UnitSnapshot,
+                UnitPriceInCents: UnitPriceInCents,
+                SoldUnits: SoldUnits,
+                SoldTotalInCents: SoldTotalInCents,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$EodSummaryItemsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({EodSummaryID = false, ProductVariantID = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (EodSummaryID) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.EodSummaryID,
+                                referencedTable:
+                                    $$EodSummaryItemsTableReferences._EodSummaryIDTable(
+                                      db,
+                                    ),
+                                referencedColumn:
+                                    $$EodSummaryItemsTableReferences._EodSummaryIDTable(
+                                      db,
+                                    ).ID,
+                              )
+                              as T;
+                    }
+                    if (ProductVariantID) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.ProductVariantID,
+                                referencedTable:
+                                    $$EodSummaryItemsTableReferences._ProductVariantIDTable(
+                                      db,
+                                    ),
+                                referencedColumn:
+                                    $$EodSummaryItemsTableReferences._ProductVariantIDTable(
+                                      db,
+                                    ).ID,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$EodSummaryItemsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $EodSummaryItemsTable,
+      EodSummaryItem,
+      $$EodSummaryItemsTableFilterComposer,
+      $$EodSummaryItemsTableOrderingComposer,
+      $$EodSummaryItemsTableAnnotationComposer,
+      $$EodSummaryItemsTableCreateCompanionBuilder,
+      $$EodSummaryItemsTableUpdateCompanionBuilder,
+      (EodSummaryItem, $$EodSummaryItemsTableReferences),
+      EodSummaryItem,
+      PrefetchHooks Function({bool EodSummaryID, bool ProductVariantID})
     >;
 typedef $$StoreSettingsTableCreateCompanionBuilder =
     StoreSettingsCompanion Function({
@@ -6960,6 +9535,10 @@ class $AppDatabaseManager {
         _db,
         _db.transactionSyncBatches,
       );
+  $$EodSummariesTableTableManager get eodSummaries =>
+      $$EodSummariesTableTableManager(_db, _db.eodSummaries);
+  $$EodSummaryItemsTableTableManager get eodSummaryItems =>
+      $$EodSummaryItemsTableTableManager(_db, _db.eodSummaryItems);
   $$StoreSettingsTableTableManager get storeSettings =>
       $$StoreSettingsTableTableManager(_db, _db.storeSettings);
 }

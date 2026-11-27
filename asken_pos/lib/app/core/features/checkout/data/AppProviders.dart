@@ -9,6 +9,8 @@ import 'package:asken_pos/app/core/features/checkout/data/session/CashierSession
 import 'package:asken_pos/app/core/features/owner/data/ProductManagementService.dart';
 import 'package:asken_pos/app/core/features/owner/data/OwnerPinService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionRecordsService.dart';
+import 'package:asken_pos/app/core/features/owner/data/EodSummaryService.dart';
+import 'package:asken_pos/app/core/features/owner/data/EodSummaryExportService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionRetentionService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncBatchService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncOrchestrator.dart';
@@ -52,8 +54,19 @@ final ActiveCashierProvider = FutureProvider<String?>((ref) async {
 });
 
 final TransactionServiceProvider = Provider<TransactionService>((ref) {
-  return TransactionService(Database: ref.watch(AppDatabaseProvider));
+  return TransactionService(
+    Database: ref.watch(AppDatabaseProvider),
+    EodService: ref.watch(EodSummaryServiceProvider),
+  );
 });
+
+final EodSummaryServiceProvider = Provider<EodSummaryService>((ref) {
+  return EodSummaryService(Database: ref.watch(AppDatabaseProvider));
+});
+
+final EodSummaryExportServiceProvider = Provider<EodSummaryExportService>(
+  (ref) => const EodSummaryExportService(),
+);
 
 final TransactionRecordsServiceProvider = Provider<TransactionRecordsService>((
   ref,
@@ -81,6 +94,8 @@ final TransactionSyncOrchestratorProvider =
         BatchService: ref.watch(TransactionSyncBatchServiceProvider),
         RecordsService: ref.watch(TransactionRecordsServiceProvider),
         ExportService: ref.watch(TransactionExportServiceProvider),
+        EodService: ref.watch(EodSummaryServiceProvider),
+        EodExportService: ref.watch(EodSummaryExportServiceProvider),
       );
     });
 
@@ -234,6 +249,7 @@ class OwnerModeNotifier extends Notifier<bool> {
 final AppInitializationProvider = FutureProvider<void>((ref) async {
   await ref.read(AppDatabaseProvider).SeedProducts();
   await ref.read(StoreSettingsServiceProvider).EnsureSettings();
+  await ref.read(EodSummaryServiceProvider).EnsureSummariesFromTransactions();
   await ref
       .read(TransactionSyncBatchServiceProvider)
       .RecoverInterruptedBatches();

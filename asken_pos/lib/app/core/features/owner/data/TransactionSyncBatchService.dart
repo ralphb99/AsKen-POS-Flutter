@@ -13,6 +13,8 @@ class TransactionSyncBatchService {
     final EndOfDay = StartOfDay.add(const Duration(days: 1));
     final BusinessDateKey = _BusinessDateKey(StartOfDay);
     final FileName = 'Transactions_$BusinessDateKey.csv';
+    final EodFileName = 'Eod_$BusinessDateKey.csv';
+    final EodTextFileName = 'Eod_$BusinessDateKey.txt';
 
     return Database.transaction(() async {
       var Batch =
@@ -28,6 +30,8 @@ class TransactionSyncBatchService {
                 BusinessDate: BusinessDateKey,
                 FileName: FileName,
                 TextFileName: Value('Transactions_$BusinessDateKey.txt'),
+                EodFileName: Value(EodFileName),
+                EodTextFileName: Value(EodTextFileName),
               ),
             );
 
@@ -49,6 +53,15 @@ class TransactionSyncBatchService {
                   LastSyncError: const Value(null),
                 ),
               );
+
+      await (Database.update(
+        Database.transactionSyncBatches,
+      )..where((Candidate) => Candidate.ID.equals(Batch!.ID))).write(
+        TransactionSyncBatchesCompanion(
+          EodFileName: Value(EodFileName),
+          EodTextFileName: Value(EodTextFileName),
+        ),
+      );
 
       if (AssignedTransactions > 0 && Batch.Status == 'synced') {
         await (Database.update(
@@ -80,6 +93,12 @@ class TransactionSyncBatchService {
     required String TextLocalFilePath,
     required String Checksum,
     required String TextChecksum,
+    required String EodFileName,
+    required String EodLocalFilePath,
+    required String EodTextFileName,
+    required String EodTextLocalFilePath,
+    required String EodChecksum,
+    required String EodTextChecksum,
     required int RecordCount,
   }) async {
     await (Database.update(
@@ -91,6 +110,12 @@ class TransactionSyncBatchService {
         TextLocalFilePath: Value(TextLocalFilePath),
         Checksum: Value(Checksum),
         TextChecksum: Value(TextChecksum),
+        EodFileName: Value(EodFileName),
+        EodTextFileName: Value(EodTextFileName),
+        EodLocalFilePath: Value(EodLocalFilePath),
+        EodTextLocalFilePath: Value(EodTextLocalFilePath),
+        EodChecksum: Value(EodChecksum),
+        EodTextChecksum: Value(EodTextChecksum),
         RecordCount: Value(RecordCount),
       ),
     );
@@ -211,6 +236,10 @@ class TransactionSyncBatchService {
     String? TextChecksum,
     String? RemoteFileID,
     String? RemoteTextFileID,
+    required String EodChecksum,
+    required String EodTextChecksum,
+    String? EodRemoteFileID,
+    String? EodRemoteTextFileID,
     DateTime? UploadedAt,
   }) async {
     final UploadTime = UploadedAt ?? DateTime.now();
@@ -225,12 +254,20 @@ class TransactionSyncBatchService {
           TextChecksum: TextChecksum == null
               ? const Value.absent()
               : Value(TextChecksum),
+          EodChecksum: Value(EodChecksum),
+          EodTextChecksum: Value(EodTextChecksum),
           RemoteFileID: RemoteFileID == null
               ? const Value.absent()
               : Value(RemoteFileID),
           RemoteTextFileID: RemoteTextFileID == null
               ? const Value.absent()
               : Value(RemoteTextFileID),
+          EodRemoteFileID: EodRemoteFileID == null
+              ? const Value.absent()
+              : Value(EodRemoteFileID),
+          EodRemoteTextFileID: EodRemoteTextFileID == null
+              ? const Value.absent()
+              : Value(EodRemoteTextFileID),
           UploadedAt: Value(UploadTime),
           LastError: const Value(null),
         ),
@@ -254,6 +291,8 @@ class TransactionSyncBatchService {
     required int BatchID,
     String? RemoteFileID,
     String? RemoteTextFileID,
+    String? EodRemoteFileID,
+    String? EodRemoteTextFileID,
   }) async {
     await (Database.update(
       Database.transactionSyncBatches,
@@ -265,6 +304,12 @@ class TransactionSyncBatchService {
         RemoteTextFileID: RemoteTextFileID == null
             ? const Value.absent()
             : Value(RemoteTextFileID),
+        EodRemoteFileID: EodRemoteFileID == null
+            ? const Value.absent()
+            : Value(EodRemoteFileID),
+        EodRemoteTextFileID: EodRemoteTextFileID == null
+            ? const Value.absent()
+            : Value(EodRemoteTextFileID),
       ),
     );
   }

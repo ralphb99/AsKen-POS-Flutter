@@ -79,12 +79,11 @@ class TransactionItems extends Table {
 class TransactionPrintJobs extends Table {
   IntColumn get ID => integer().autoIncrement()();
 
-  IntColumn get TransactionID =>
-      integer().unique().references(
-        Transactions,
-        #ID,
-        onDelete: KeyAction.cascade,
-      )();
+  IntColumn get TransactionID => integer().unique().references(
+    Transactions,
+    #ID,
+    onDelete: KeyAction.cascade,
+  )();
 
   /// pending, printing, printed, or failed.
   TextColumn get Status => text().withDefault(const Constant('pending'))();
@@ -122,6 +121,22 @@ class TransactionSyncBatches extends Table {
 
   TextColumn get TextChecksum => text().nullable()();
 
+  TextColumn get EodFileName => text().nullable()();
+
+  TextColumn get EodTextFileName => text().nullable()();
+
+  TextColumn get EodLocalFilePath => text().nullable()();
+
+  TextColumn get EodTextLocalFilePath => text().nullable()();
+
+  TextColumn get EodRemoteFileID => text().nullable()();
+
+  TextColumn get EodRemoteTextFileID => text().nullable()();
+
+  TextColumn get EodChecksum => text().nullable()();
+
+  TextColumn get EodTextChecksum => text().nullable()();
+
   IntColumn get RecordCount => integer().withDefault(const Constant(0))();
 
   /// pending, uploading, synced, or failed.
@@ -136,6 +151,43 @@ class TransactionSyncBatches extends Table {
   DateTimeColumn get UploadedAt => dateTime().nullable()();
 
   DateTimeColumn get CreatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class EodSummaries extends Table {
+  IntColumn get ID => integer().autoIncrement()();
+
+  /// One stable key per local business date, formatted as YYYY-MM-DD.
+  TextColumn get BusinessDate => text().unique()();
+
+  IntColumn get TransactionCount => integer().withDefault(const Constant(0))();
+
+  IntColumn get SoldUnitCount => integer().withDefault(const Constant(0))();
+
+  IntColumn get TotalSalesInCents => integer().withDefault(const Constant(0))();
+
+  DateTimeColumn get CreatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get UpdatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class EodSummaryItems extends Table {
+  IntColumn get ID => integer().autoIncrement()();
+
+  IntColumn get EodSummaryID =>
+      integer().references(EodSummaries, #ID, onDelete: KeyAction.cascade)();
+
+  IntColumn get ProductVariantID =>
+      integer().references(ProductVariants, #ID)();
+
+  TextColumn get ProductNameSnapshot => text()();
+
+  TextColumn get UnitSnapshot => text()();
+
+  IntColumn get UnitPriceInCents => integer()();
+
+  IntColumn get SoldUnits => integer()();
+
+  IntColumn get SoldTotalInCents => integer()();
 }
 
 class StoreSettings extends Table {
