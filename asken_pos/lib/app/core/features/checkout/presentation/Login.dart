@@ -81,7 +81,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     const SizedBox(height: 8),
                     Text(
                       IsOwnerAccessVisible
-                          ? 'Owner access'
+                          ? 'Owner Dashboard'
                           : 'Educational Supply Store',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyLarge,
@@ -112,16 +112,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         height: 60,
                         child: FilledButton(
                           onPressed: IsBusy ? null : StartCashier,
-                          child: Text(IsBusy ? 'Checking...' : 'Enter Checkout Screen'),
+                          child: Text(IsBusy ? 'Checking...' : 'Enter Checkout'),
                         ),
                       ),
                       const SizedBox(height: 30),
                       SizedBox(
                         height: 60,
                         child: OutlinedButton.icon(
+                          iconAlignment: IconAlignment.end,
                           onPressed: IsBusy ? null : ShowOwnerAccess,
                           icon: const Icon(Icons.admin_panel_settings_outlined),
-                          label: const Text('Owner access'),
+                          label: const Text('Owner Dashboard'),
                         ),
                       ),
                     ] else ...[

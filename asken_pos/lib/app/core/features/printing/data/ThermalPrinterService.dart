@@ -20,7 +20,7 @@ class PlaceholderThermalPrinterService implements ThermalPrinterService {
   @override
   Future<void> PrintReceipt({required ReceiptData Receipt}) async {
     throw const ThermalPrinterUnavailableException(
-      'No thermal printer is configured for this device.',
+      'No Thermal Printer is configured for this device.',
     );
   }
 }
