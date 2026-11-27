@@ -115,6 +115,95 @@ class UpdateAppProtocolImportService {
         );
       }
 
+      for (final EodSummaryRow in Document.EodSummaries) {
+        final EodSummaryID = _ReadID(EodSummaryRow, 'EodSummaries');
+        if (!Plan.InsertEodSummaryIDs.contains(EodSummaryID)) {
+          continue;
+        }
+
+        await Database.into(Database.eodSummaries).insert(
+          EodSummariesCompanion.insert(
+            ID: Value(EodSummaryID),
+            BusinessDate: _ReadString(
+              EodSummaryRow,
+              'BusinessDate',
+              'EodSummaries',
+            ),
+            TransactionCount: Value(
+              _ReadInt(EodSummaryRow, 'TransactionCount', 'EodSummaries'),
+            ),
+            SoldUnitCount: Value(
+              _ReadInt(EodSummaryRow, 'SoldUnitCount', 'EodSummaries'),
+            ),
+            TotalSalesInCents: Value(
+              _ReadInt(EodSummaryRow, 'TotalSalesInCents', 'EodSummaries'),
+            ),
+            CreatedAt: Value(
+              _ReadDateTime(EodSummaryRow, 'CreatedAt', 'EodSummaries'),
+            ),
+            UpdatedAt: Value(
+              _ReadDateTime(EodSummaryRow, 'UpdatedAt', 'EodSummaries'),
+            ),
+          ),
+        );
+      }
+
+      for (final EodSummaryItemRow in Document.EodSummaryItems) {
+        final EodSummaryItemID = _ReadID(EodSummaryItemRow, 'EodSummaryItems');
+        if (!Plan.InsertEodSummaryItemIDs.contains(EodSummaryItemID)) {
+          continue;
+        }
+
+        final SourceEodSummaryID = _ReadInt(
+          EodSummaryItemRow,
+          'EodSummaryID',
+          'EodSummaryItems',
+        );
+        final TargetEodSummaryID = Plan.EodSummaryTargetIDs[SourceEodSummaryID];
+        if (TargetEodSummaryID == null) {
+          throw StateError(
+            'The target EOD summary for $SourceEodSummaryID is missing.',
+          );
+        }
+
+        await Database.into(Database.eodSummaryItems).insert(
+          EodSummaryItemsCompanion.insert(
+            ID: Value(EodSummaryItemID),
+            EodSummaryID: TargetEodSummaryID,
+            ProductVariantID: _ReadInt(
+              EodSummaryItemRow,
+              'ProductVariantID',
+              'EodSummaryItems',
+            ),
+            ProductNameSnapshot: _ReadString(
+              EodSummaryItemRow,
+              'ProductNameSnapshot',
+              'EodSummaryItems',
+            ),
+            UnitSnapshot: _ReadString(
+              EodSummaryItemRow,
+              'UnitSnapshot',
+              'EodSummaryItems',
+            ),
+            UnitPriceInCents: _ReadInt(
+              EodSummaryItemRow,
+              'UnitPriceInCents',
+              'EodSummaryItems',
+            ),
+            SoldUnits: _ReadInt(
+              EodSummaryItemRow,
+              'SoldUnits',
+              'EodSummaryItems',
+            ),
+            SoldTotalInCents: _ReadInt(
+              EodSummaryItemRow,
+              'SoldTotalInCents',
+              'EodSummaryItems',
+            ),
+          ),
+        );
+      }
+
       for (final TransactionSyncBatchRow in Document.TransactionSyncBatches) {
         final TransactionSyncBatchID = _ReadID(
           TransactionSyncBatchRow,
@@ -171,6 +260,48 @@ class UpdateAppProtocolImportService {
               _ReadNullableString(
                 TransactionSyncBatchRow,
                 'TextChecksum',
+                'TransactionSyncBatches',
+              ),
+            ),
+            EodFileName: Value(
+              _ReadNullableString(
+                TransactionSyncBatchRow,
+                'EodFileName',
+                'TransactionSyncBatches',
+              ),
+            ),
+            EodTextFileName: Value(
+              _ReadNullableString(
+                TransactionSyncBatchRow,
+                'EodTextFileName',
+                'TransactionSyncBatches',
+              ),
+            ),
+            EodRemoteFileID: Value(
+              _ReadNullableString(
+                TransactionSyncBatchRow,
+                'EodRemoteFileID',
+                'TransactionSyncBatches',
+              ),
+            ),
+            EodRemoteTextFileID: Value(
+              _ReadNullableString(
+                TransactionSyncBatchRow,
+                'EodRemoteTextFileID',
+                'TransactionSyncBatches',
+              ),
+            ),
+            EodChecksum: Value(
+              _ReadNullableString(
+                TransactionSyncBatchRow,
+                'EodChecksum',
+                'TransactionSyncBatches',
+              ),
+            ),
+            EodTextChecksum: Value(
+              _ReadNullableString(
+                TransactionSyncBatchRow,
+                'EodTextChecksum',
                 'TransactionSyncBatches',
               ),
             ),
@@ -533,6 +664,8 @@ class UpdateAppProtocolImportService {
       TransactionItems: _ReadRecords(Data, 'TransactionItems'),
       TransactionPrintJobs: _ReadOptionalRecords(Data, 'TransactionPrintJobs'),
       TransactionSyncBatches: _ReadRecords(Data, 'TransactionSyncBatches'),
+      EodSummaries: _ReadOptionalRecords(Data, 'EodSummaries'),
+      EodSummaryItems: _ReadOptionalRecords(Data, 'EodSummaryItems'),
       StoreSettings: _ReadRecords(Data, 'StoreSettings'),
     );
 
@@ -558,6 +691,12 @@ class UpdateAppProtocolImportService {
     ).get();
     final ExistingTransactionSyncBatches = await Database.select(
       Database.transactionSyncBatches,
+    ).get();
+    final ExistingEodSummaries = await Database.select(
+      Database.eodSummaries,
+    ).get();
+    final ExistingEodSummaryItems = await Database.select(
+      Database.eodSummaryItems,
     ).get();
     final ExistingStoreSettings = await Database.select(
       Database.storeSettings,
@@ -588,6 +727,15 @@ class UpdateAppProtocolImportService {
       for (final Row in ExistingTransactionSyncBatches)
         Row.BusinessDate: Row.ID,
     };
+    final ExistingEodSummaryIDs = ExistingEodSummaries.map(
+      (Row) => Row.ID,
+    ).toSet();
+    final ExistingEodBusinessDates = <String, int>{
+      for (final Row in ExistingEodSummaries) Row.BusinessDate: Row.ID,
+    };
+    final ExistingEodSummaryItemIDs = ExistingEodSummaryItems.map(
+      (Row) => Row.ID,
+    ).toSet();
     final ExistingStoreSettingIDs = ExistingStoreSettings.map(
       (Row) => Row.ID,
     ).toSet();
@@ -605,6 +753,35 @@ class UpdateAppProtocolImportService {
       final ID = _ReadID(Row, 'ProductVariants');
       if (!ExistingProductVariantIDs.contains(ID)) {
         InsertProductVariantIDs.add(ID);
+      }
+    }
+
+    final EodSummaryTargetIDs = <int, int>{};
+    final InsertEodSummaryIDs = <int>{};
+    for (final Row in Document.EodSummaries) {
+      final SourceID = _ReadID(Row, 'EodSummaries');
+      final BusinessDate = _ReadString(Row, 'BusinessDate', 'EodSummaries');
+      if (ExistingEodSummaryIDs.contains(SourceID)) {
+        EodSummaryTargetIDs[SourceID] = SourceID;
+      } else if (ExistingEodBusinessDates.containsKey(BusinessDate)) {
+        EodSummaryTargetIDs[SourceID] = ExistingEodBusinessDates[BusinessDate]!;
+      } else {
+        EodSummaryTargetIDs[SourceID] = SourceID;
+        InsertEodSummaryIDs.add(SourceID);
+      }
+    }
+
+    final InsertEodSummaryItemIDs = <int>{};
+    for (final Row in Document.EodSummaryItems) {
+      final ID = _ReadID(Row, 'EodSummaryItems');
+      final SourceEodSummaryID = _ReadInt(
+        Row,
+        'EodSummaryID',
+        'EodSummaryItems',
+      );
+      if (!ExistingEodSummaryItemIDs.contains(ID) &&
+          InsertEodSummaryIDs.contains(SourceEodSummaryID)) {
+        InsertEodSummaryItemIDs.add(ID);
       }
     }
 
@@ -673,6 +850,9 @@ class UpdateAppProtocolImportService {
     return _ImportRestorePlan(
       InsertProductIDs: InsertProductIDs,
       InsertProductVariantIDs: InsertProductVariantIDs,
+      EodSummaryTargetIDs: EodSummaryTargetIDs,
+      InsertEodSummaryIDs: InsertEodSummaryIDs,
+      InsertEodSummaryItemIDs: InsertEodSummaryItemIDs,
       BatchTargetIDs: BatchTargetIDs,
       InsertTransactionSyncBatchIDs: InsertTransactionSyncBatchIDs,
       InsertTransactionIDs: InsertTransactionIDs,
@@ -692,6 +872,8 @@ class UpdateAppProtocolImportService {
       'TransactionItems': Document.TransactionItems.length,
       'TransactionPrintJobs': Document.TransactionPrintJobs.length,
       'TransactionSyncBatches': Document.TransactionSyncBatches.length,
+      'EodSummaries': Document.EodSummaries.length,
+      'EodSummaryItems': Document.EodSummaryItems.length,
       'StoreSettings': Document.StoreSettings.length,
     };
   }
@@ -752,6 +934,12 @@ class UpdateAppProtocolImportService {
         CountsMap.containsKey('TransactionPrintJobs')
         ? _ReadInt(CountsMap, 'TransactionPrintJobs', 'Counts')
         : 0;
+    Result['EodSummaries'] = CountsMap.containsKey('EodSummaries')
+        ? _ReadInt(CountsMap, 'EodSummaries', 'Counts')
+        : 0;
+    Result['EodSummaryItems'] = CountsMap.containsKey('EodSummaryItems')
+        ? _ReadInt(CountsMap, 'EodSummaryItems', 'Counts')
+        : 0;
 
     return Result;
   }
@@ -784,6 +972,76 @@ class UpdateAppProtocolImportService {
       _ReadBool(Row, 'IsActive', 'ProductVariants');
     }
 
+    final EodSummaryIDs = <int>{};
+    final EodBusinessDates = <String>{};
+    for (final Row in Document.EodSummaries) {
+      final ID = _ReadID(Row, 'EodSummaries');
+      _EnsureUnique(EodSummaryIDs, ID, 'EodSummaries');
+      final BusinessDate = _ReadString(Row, 'BusinessDate', 'EodSummaries');
+      _EnsureUnique(EodBusinessDates, BusinessDate, 'EodSummaries');
+      if (DateTime.tryParse(BusinessDate) == null) {
+        throw FormatException(
+          'Invalid business date "$BusinessDate" in EodSummaries.',
+        );
+      }
+      final TransactionCount = _ReadInt(
+        Row,
+        'TransactionCount',
+        'EodSummaries',
+      );
+      final SoldUnitCount = _ReadInt(Row, 'SoldUnitCount', 'EodSummaries');
+      final TotalSalesInCents = _ReadInt(
+        Row,
+        'TotalSalesInCents',
+        'EodSummaries',
+      );
+      if (TransactionCount < 0 || SoldUnitCount < 0 || TotalSalesInCents < 0) {
+        throw FormatException('Negative totals are not valid in EodSummaries.');
+      }
+      _ReadDateTime(Row, 'CreatedAt', 'EodSummaries');
+      _ReadDateTime(Row, 'UpdatedAt', 'EodSummaries');
+    }
+
+    final EodSummaryItemIDs = <int>{};
+    for (final Row in Document.EodSummaryItems) {
+      final ID = _ReadID(Row, 'EodSummaryItems');
+      _EnsureUnique(EodSummaryItemIDs, ID, 'EodSummaryItems');
+      final EodSummaryID = _ReadInt(Row, 'EodSummaryID', 'EodSummaryItems');
+      if (!EodSummaryIDs.contains(EodSummaryID)) {
+        throw FormatException(
+          'EOD item $ID references missing EOD summary $EodSummaryID.',
+        );
+      }
+      final ProductVariantID = _ReadInt(
+        Row,
+        'ProductVariantID',
+        'EodSummaryItems',
+      );
+      if (!ProductVariantIDs.contains(ProductVariantID)) {
+        throw FormatException(
+          'EOD item $ID references missing product variant $ProductVariantID.',
+        );
+      }
+      _ReadString(Row, 'ProductNameSnapshot', 'EodSummaryItems');
+      _ReadString(Row, 'UnitSnapshot', 'EodSummaryItems');
+      final UnitPriceInCents = _ReadInt(
+        Row,
+        'UnitPriceInCents',
+        'EodSummaryItems',
+      );
+      final SoldUnits = _ReadInt(Row, 'SoldUnits', 'EodSummaryItems');
+      final SoldTotalInCents = _ReadInt(
+        Row,
+        'SoldTotalInCents',
+        'EodSummaryItems',
+      );
+      if (UnitPriceInCents < 0 || SoldUnits < 0 || SoldTotalInCents < 0) {
+        throw FormatException(
+          'Negative values are not valid in EodSummaryItems.',
+        );
+      }
+    }
+
     final TransactionSyncBatchIDs = <int>{};
     final BusinessDates = <String>{};
     for (final Row in Document.TransactionSyncBatches) {
@@ -801,6 +1059,12 @@ class UpdateAppProtocolImportService {
       _ReadNullableString(Row, 'RemoteTextFileID', 'TransactionSyncBatches');
       _ReadNullableString(Row, 'Checksum', 'TransactionSyncBatches');
       _ReadNullableString(Row, 'TextChecksum', 'TransactionSyncBatches');
+      _ReadNullableString(Row, 'EodFileName', 'TransactionSyncBatches');
+      _ReadNullableString(Row, 'EodTextFileName', 'TransactionSyncBatches');
+      _ReadNullableString(Row, 'EodRemoteFileID', 'TransactionSyncBatches');
+      _ReadNullableString(Row, 'EodRemoteTextFileID', 'TransactionSyncBatches');
+      _ReadNullableString(Row, 'EodChecksum', 'TransactionSyncBatches');
+      _ReadNullableString(Row, 'EodTextChecksum', 'TransactionSyncBatches');
       _ReadInt(Row, 'RecordCount', 'TransactionSyncBatches');
       _ValidateSyncStatus(
         _ReadString(Row, 'Status', 'TransactionSyncBatches'),
@@ -1053,6 +1317,9 @@ class UpdateAppProtocolImportService {
 class _ImportRestorePlan {
   final Set<int> InsertProductIDs;
   final Set<int> InsertProductVariantIDs;
+  final Map<int, int> EodSummaryTargetIDs;
+  final Set<int> InsertEodSummaryIDs;
+  final Set<int> InsertEodSummaryItemIDs;
   final Map<int, int> BatchTargetIDs;
   final Set<int> InsertTransactionSyncBatchIDs;
   final Set<int> InsertTransactionIDs;
@@ -1063,6 +1330,9 @@ class _ImportRestorePlan {
   const _ImportRestorePlan({
     required this.InsertProductIDs,
     required this.InsertProductVariantIDs,
+    required this.EodSummaryTargetIDs,
+    required this.InsertEodSummaryIDs,
+    required this.InsertEodSummaryItemIDs,
     required this.BatchTargetIDs,
     required this.InsertTransactionSyncBatchIDs,
     required this.InsertTransactionIDs,
@@ -1075,6 +1345,8 @@ class _ImportRestorePlan {
     return <String, int>{
       'Products': InsertProductIDs.length,
       'ProductVariants': InsertProductVariantIDs.length,
+      'EodSummaries': InsertEodSummaryIDs.length,
+      'EodSummaryItems': InsertEodSummaryItemIDs.length,
       'Transactions': InsertTransactionIDs.length,
       'TransactionItems': InsertTransactionItemIDs.length,
       'TransactionPrintJobs': InsertTransactionPrintJobIDs.length,
@@ -1088,6 +1360,9 @@ class _ImportRestorePlan {
       'Products': Document.Products.length - InsertProductIDs.length,
       'ProductVariants':
           Document.ProductVariants.length - InsertProductVariantIDs.length,
+      'EodSummaries': Document.EodSummaries.length - InsertEodSummaryIDs.length,
+      'EodSummaryItems':
+          Document.EodSummaryItems.length - InsertEodSummaryItemIDs.length,
       'Transactions':
           Document.Transactions.length - InsertTransactionIDs.length,
       'TransactionItems':

@@ -18,6 +18,8 @@ class ProductDataRow {
     TransactionItems,
     TransactionPrintJobs,
     TransactionSyncBatches,
+    EodSummaries,
+    EodSummaryItems,
     StoreSettings,
   ],
 )
@@ -33,8 +35,10 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
 
+  AppDatabase.forTesting(QueryExecutor Executor) : super(Executor);
+
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -129,6 +133,67 @@ class AppDatabase extends _$AppDatabase {
         if (!HasTransactionPrintJobsTable) {
           await Migrator.createTable(transactionPrintJobs);
         }
+      }
+      if (From < 6) {
+        final HasEodSummariesTable = await _HasTable('eod_summaries');
+        if (!HasEodSummariesTable) {
+          await Migrator.createTable(eodSummaries);
+        }
+
+        final HasEodSummaryItemsTable = await _HasTable('eod_summary_items');
+        if (!HasEodSummaryItemsTable) {
+          await Migrator.createTable(eodSummaryItems);
+        }
+      }
+      if (From < 7) {
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodFileName,
+          'eod_file_name',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodTextFileName,
+          'eod_text_file_name',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodLocalFilePath,
+          'eod_local_file_path',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodTextLocalFilePath,
+          'eod_text_local_file_path',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodRemoteFileID,
+          'eod_remote_file_i_d',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodRemoteTextFileID,
+          'eod_remote_text_file_i_d',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodChecksum,
+          'eod_checksum',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodTextChecksum,
+          'eod_text_checksum',
+        );
       }
     },
   );

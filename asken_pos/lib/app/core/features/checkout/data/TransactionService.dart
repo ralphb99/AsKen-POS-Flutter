@@ -2,11 +2,14 @@ import 'package:intl/intl.dart';
 import 'package:drift/drift.dart';
 import 'package:asken_pos/app/core/database/AppDatabase.dart';
 import 'package:asken_pos/app/core/features/checkout/domain/Cart.dart';
+import 'package:asken_pos/app/core/features/owner/data/EodSummaryService.dart';
+import 'package:asken_pos/app/core/features/owner/domain/EodSummary.dart';
 
 class TransactionService {
   final AppDatabase Database;
+  final EodSummaryService EodService;
 
-  const TransactionService({required this.Database});
+  const TransactionService({required this.Database, required this.EodService});
 
   Future<SavedTransaction> SaveTransaction({
     required String CashierName,
@@ -53,6 +56,21 @@ class TransactionService {
           await (Database.select(Database.transactions)
                 ..where((Transaction) => Transaction.ID.equals(TransactionID)))
               .getSingle();
+
+      await EodService.RecordSale(
+        SoldAt: SavedTransactionData.CreatedAt,
+        Lines: CartItems.map(
+          (Item) => EodSaleLine(
+            ProductVariantID: Item.CartProduct.ProductVariantID,
+            ProductName: Item.CartProduct.ProductDisplayName,
+            Unit: Item.CartProduct.Unit,
+            UnitPriceInCents: Item.CartProduct.PriceInCents,
+            Quantity: Item.quantity,
+            LineTotalInCents: Item.LineTotalInCents,
+          ),
+        ).toList(growable: false),
+        SaleTotalInCents: CartTotalInCents,
+      );
 
       return SavedTransaction(
         TransactionID: SavedTransactionData.ID,

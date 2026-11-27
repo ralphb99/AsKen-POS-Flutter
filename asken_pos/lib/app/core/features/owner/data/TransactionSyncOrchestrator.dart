@@ -3,22 +3,32 @@ import 'package:crypto/crypto.dart';
 import 'package:asken_pos/app/core/database/AppDatabase.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionRecordsService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncBatchService.dart';
+import 'package:asken_pos/app/core/features/owner/data/EodSummaryExportService.dart';
+import 'package:asken_pos/app/core/features/owner/data/EodSummaryService.dart';
 
 class PreparedTransactionBatch {
   final TransactionSyncBatche Batch;
   final List<TransactionRecord> Records;
   final File CsvFile;
   final File TextFile;
+  final File EodCsvFile;
+  final File EodTextFile;
   final String CsvChecksum;
   final String TextChecksum;
+  final String EodChecksum;
+  final String EodTextChecksum;
 
   const PreparedTransactionBatch({
     required this.Batch,
     required this.Records,
     required this.CsvFile,
     required this.TextFile,
+    required this.EodCsvFile,
+    required this.EodTextFile,
     required this.CsvChecksum,
     required this.TextChecksum,
+    required this.EodChecksum,
+    required this.EodTextChecksum,
   });
 }
 
@@ -26,11 +36,15 @@ class TransactionSyncOrchestrator {
   final TransactionSyncBatchService BatchService;
   final TransactionRecordsService RecordsService;
   final TransactionExportService ExportService;
+  final EodSummaryService EodService;
+  final EodSummaryExportService EodExportService;
 
   const TransactionSyncOrchestrator({
     required this.BatchService,
     required this.RecordsService,
     required this.ExportService,
+    required this.EodService,
+    required this.EodExportService,
   });
 
   Future<List<PreparedTransactionBatch>> PreparePendingBatches() async {
@@ -72,6 +86,15 @@ class TransactionSyncOrchestrator {
       Batch = await BatchService.GetOrCreateDailyBatch(
         BusinessDate: StartOfDay,
       );
+      final EodDetails = await EodService.GetDetails(
+        BusinessDate: Batch.BusinessDate,
+      );
+      if (EodDetails == null) {
+        throw StateError(
+          'The EOD summary for ${Batch.BusinessDate} could not be loaded.',
+        );
+      }
+
       final CsvFile = await ExportService.SaveCsv(
         Records: Records,
         FileName: Batch.FileName,
@@ -81,8 +104,21 @@ class TransactionSyncOrchestrator {
         Records: Records,
         FileName: TextFileName,
       );
+      final EodFileName = Batch.EodFileName ?? 'Eod_${Batch.BusinessDate}.csv';
+      final EodTextFileName =
+          Batch.EodTextFileName ?? 'Eod_${Batch.BusinessDate}.txt';
+      final EodCsvFile = await EodExportService.SaveCsv(
+        Details: EodDetails,
+        FileName: EodFileName,
+      );
+      final EodTextFile = await EodExportService.SaveText(
+        Details: EodDetails,
+        FileName: EodTextFileName,
+      );
       final CsvChecksum = await _Checksum(CsvFile);
       final TextChecksum = await _Checksum(TextFile);
+      final EodChecksum = await _Checksum(EodCsvFile);
+      final EodTextChecksum = await _Checksum(EodTextFile);
 
       await BatchService.MarkBatchPrepared(
         BatchID: Batch.ID,
@@ -91,6 +127,12 @@ class TransactionSyncOrchestrator {
         TextLocalFilePath: TextFile.path,
         Checksum: CsvChecksum,
         TextChecksum: TextChecksum,
+        EodFileName: EodFileName,
+        EodLocalFilePath: EodCsvFile.path,
+        EodTextFileName: EodTextFileName,
+        EodTextLocalFilePath: EodTextFile.path,
+        EodChecksum: EodChecksum,
+        EodTextChecksum: EodTextChecksum,
         RecordCount: Records.length,
       );
 
@@ -106,8 +148,12 @@ class TransactionSyncOrchestrator {
         Records: Records,
         CsvFile: CsvFile,
         TextFile: TextFile,
+        EodCsvFile: EodCsvFile,
+        EodTextFile: EodTextFile,
         CsvChecksum: CsvChecksum,
         TextChecksum: TextChecksum,
+        EodChecksum: EodChecksum,
+        EodTextChecksum: EodTextChecksum,
       );
     } catch (CaughtError, StackTrace) {
       if (Batch != null) {

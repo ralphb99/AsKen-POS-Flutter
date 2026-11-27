@@ -5,6 +5,8 @@ class UpdateAppProtocolSnapshot {
   final List<Map<String, dynamic>> TransactionItems;
   final List<Map<String, dynamic>> TransactionPrintJobs;
   final List<Map<String, dynamic>> TransactionSyncBatches;
+  final List<Map<String, dynamic>> EodSummaries;
+  final List<Map<String, dynamic>> EodSummaryItems;
   final List<Map<String, dynamic>> StoreSettings;
 
   const UpdateAppProtocolSnapshot({
@@ -14,6 +16,8 @@ class UpdateAppProtocolSnapshot {
     required this.TransactionItems,
     required this.TransactionPrintJobs,
     required this.TransactionSyncBatches,
+    required this.EodSummaries,
+    required this.EodSummaryItems,
     required this.StoreSettings,
   });
 
@@ -25,6 +29,8 @@ class UpdateAppProtocolSnapshot {
       'TransactionItems': TransactionItems,
       'TransactionPrintJobs': TransactionPrintJobs,
       'TransactionSyncBatches': TransactionSyncBatches,
+      'EodSummaries': EodSummaries,
+      'EodSummaryItems': EodSummaryItems,
       'StoreSettings': StoreSettings,
     };
   }
@@ -37,6 +43,8 @@ class UpdateAppProtocolSnapshot {
       'TransactionItems': TransactionItems.length,
       'TransactionPrintJobs': TransactionPrintJobs.length,
       'TransactionSyncBatches': TransactionSyncBatches.length,
+      'EodSummaries': EodSummaries.length,
+      'EodSummaryItems': EodSummaryItems.length,
       'StoreSettings': StoreSettings.length,
     };
   }

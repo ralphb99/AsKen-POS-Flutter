@@ -108,12 +108,49 @@ class TransactionSyncService {
         RemoteTextFileID: TextFileID,
       );
 
+      final EodFileName = PreparedBatch.Batch.EodFileName;
+      final EodTextFileName = PreparedBatch.Batch.EodTextFileName;
+      if (EodFileName == null || EodFileName.isEmpty) {
+        throw StateError('The selected sync batch has no EOD CSV file name.');
+      }
+      if (EodTextFileName == null || EodTextFileName.isEmpty) {
+        throw StateError('The selected sync batch has no EOD TXT file name.');
+      }
+
+      final UploadedEod = await UploadService.UploadOrUpdate(
+        LocalFile: PreparedBatch.EodCsvFile,
+        FileName: EodFileName,
+        ContentType: 'text/csv',
+        RemoteFileID: PreparedBatch.Batch.EodRemoteFileID,
+      );
+      final EodFileID = _RequireFileID(UploadedEod);
+      await BatchService.SaveRemoteFileID(
+        BatchID: PreparedBatch.Batch.ID,
+        EodRemoteFileID: EodFileID,
+      );
+
+      final UploadedEodText = await UploadService.UploadOrUpdate(
+        LocalFile: PreparedBatch.EodTextFile,
+        FileName: EodTextFileName,
+        ContentType: 'text/plain',
+        RemoteFileID: PreparedBatch.Batch.EodRemoteTextFileID,
+      );
+      final EodTextFileID = _RequireFileID(UploadedEodText);
+      await BatchService.SaveRemoteFileID(
+        BatchID: PreparedBatch.Batch.ID,
+        EodRemoteTextFileID: EodTextFileID,
+      );
+
       await BatchService.MarkBatchUploaded(
         BatchID: PreparedBatch.Batch.ID,
         Checksum: PreparedBatch.CsvChecksum,
         TextChecksum: PreparedBatch.TextChecksum,
+        EodChecksum: PreparedBatch.EodChecksum,
+        EodTextChecksum: PreparedBatch.EodTextChecksum,
         RemoteFileID: CsvFileID,
         RemoteTextFileID: TextFileID,
+        EodRemoteFileID: EodFileID,
+        EodRemoteTextFileID: EodTextFileID,
       );
 
       return const TransactionSyncResult(

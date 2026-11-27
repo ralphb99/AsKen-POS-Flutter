@@ -24,6 +24,10 @@ class UpdateAppProtocolSnapshotService {
       final TransactionSyncBatchRows = await Database.select(
         Database.transactionSyncBatches,
       ).get();
+      final EodSummaryRows = await Database.select(Database.eodSummaries).get();
+      final EodSummaryItemRows = await Database.select(
+        Database.eodSummaryItems,
+      ).get();
       final StoreSettingRows = await Database.select(
         Database.storeSettings,
       ).get();
@@ -44,6 +48,12 @@ class UpdateAppProtocolSnapshotService {
         ).toList(growable: false),
         TransactionSyncBatches: TransactionSyncBatchRows.map(
           _MapTransactionSyncBatch,
+        ).toList(growable: false),
+        EodSummaries: EodSummaryRows.map(
+          _MapEodSummary,
+        ).toList(growable: false),
+        EodSummaryItems: EodSummaryItemRows.map(
+          _MapEodSummaryItem,
         ).toList(growable: false),
         StoreSettings: StoreSettingRows.map(
           _MapStoreSetting,
@@ -132,6 +142,12 @@ class UpdateAppProtocolSnapshotService {
       'RemoteTextFileID': TransactionSyncBatchRow.RemoteTextFileID,
       'Checksum': TransactionSyncBatchRow.Checksum,
       'TextChecksum': TransactionSyncBatchRow.TextChecksum,
+      'EodFileName': TransactionSyncBatchRow.EodFileName,
+      'EodTextFileName': TransactionSyncBatchRow.EodTextFileName,
+      'EodRemoteFileID': TransactionSyncBatchRow.EodRemoteFileID,
+      'EodRemoteTextFileID': TransactionSyncBatchRow.EodRemoteTextFileID,
+      'EodChecksum': TransactionSyncBatchRow.EodChecksum,
+      'EodTextChecksum': TransactionSyncBatchRow.EodTextChecksum,
       'RecordCount': TransactionSyncBatchRow.RecordCount,
       'Status': TransactionSyncBatchRow.Status,
       'AttemptCount': TransactionSyncBatchRow.AttemptCount,
@@ -139,6 +155,31 @@ class UpdateAppProtocolSnapshotService {
       'LastError': TransactionSyncBatchRow.LastError,
       'UploadedAt': _FormatDateTime(TransactionSyncBatchRow.UploadedAt),
       'CreatedAt': _FormatDateTime(TransactionSyncBatchRow.CreatedAt),
+    };
+  }
+
+  Map<String, dynamic> _MapEodSummary(EodSummary EodSummaryRow) {
+    return <String, dynamic>{
+      'ID': EodSummaryRow.ID,
+      'BusinessDate': EodSummaryRow.BusinessDate,
+      'TransactionCount': EodSummaryRow.TransactionCount,
+      'SoldUnitCount': EodSummaryRow.SoldUnitCount,
+      'TotalSalesInCents': EodSummaryRow.TotalSalesInCents,
+      'CreatedAt': _FormatDateTime(EodSummaryRow.CreatedAt),
+      'UpdatedAt': _FormatDateTime(EodSummaryRow.UpdatedAt),
+    };
+  }
+
+  Map<String, dynamic> _MapEodSummaryItem(EodSummaryItem EodSummaryItemRow) {
+    return <String, dynamic>{
+      'ID': EodSummaryItemRow.ID,
+      'EodSummaryID': EodSummaryItemRow.EodSummaryID,
+      'ProductVariantID': EodSummaryItemRow.ProductVariantID,
+      'ProductNameSnapshot': EodSummaryItemRow.ProductNameSnapshot,
+      'UnitSnapshot': EodSummaryItemRow.UnitSnapshot,
+      'UnitPriceInCents': EodSummaryItemRow.UnitPriceInCents,
+      'SoldUnits': EodSummaryItemRow.SoldUnits,
+      'SoldTotalInCents': EodSummaryItemRow.SoldTotalInCents,
     };
   }
 
