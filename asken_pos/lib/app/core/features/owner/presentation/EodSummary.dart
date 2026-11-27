@@ -212,7 +212,7 @@ class EodSummaryDetailsPage extends ConsumerWidget {
             IconButton(
               tooltip: 'Export spreadsheet CSV',
               onPressed: () => _ExportCsv(context, ref, DetailsState.value!),
-              icon: const Icon(Icons.table_view_outlined),
+              icon: const Icon(Icons.save),
             ),
         ],
       ),

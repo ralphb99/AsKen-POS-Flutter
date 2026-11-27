@@ -2866,6 +2866,28 @@ class $TransactionSyncBatchesTable extends TransactionSyncBatches
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _TransactionLogsFolderIDMeta =
+      const VerificationMeta('TransactionLogsFolderID');
+  @override
+  late final GeneratedColumn<String> TransactionLogsFolderID =
+      GeneratedColumn<String>(
+        'transaction_logs_folder_i_d',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _EodLogsFolderIDMeta = const VerificationMeta(
+    'EodLogsFolderID',
+  );
+  @override
+  late final GeneratedColumn<String> EodLogsFolderID = GeneratedColumn<String>(
+    'eod_logs_folder_i_d',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _RecordCountMeta = const VerificationMeta(
     'RecordCount',
   );
@@ -2966,6 +2988,8 @@ class $TransactionSyncBatchesTable extends TransactionSyncBatches
     EodRemoteTextFileID,
     EodChecksum,
     EodTextChecksum,
+    TransactionLogsFolderID,
+    EodLogsFolderID,
     RecordCount,
     Status,
     AttemptCount,
@@ -3140,6 +3164,24 @@ class $TransactionSyncBatchesTable extends TransactionSyncBatches
         ),
       );
     }
+    if (data.containsKey('transaction_logs_folder_i_d')) {
+      context.handle(
+        _TransactionLogsFolderIDMeta,
+        TransactionLogsFolderID.isAcceptableOrUnknown(
+          data['transaction_logs_folder_i_d']!,
+          _TransactionLogsFolderIDMeta,
+        ),
+      );
+    }
+    if (data.containsKey('eod_logs_folder_i_d')) {
+      context.handle(
+        _EodLogsFolderIDMeta,
+        EodLogsFolderID.isAcceptableOrUnknown(
+          data['eod_logs_folder_i_d']!,
+          _EodLogsFolderIDMeta,
+        ),
+      );
+    }
     if (data.containsKey('record_count')) {
       context.handle(
         _RecordCountMeta,
@@ -3272,6 +3314,14 @@ class $TransactionSyncBatchesTable extends TransactionSyncBatches
         DriftSqlType.string,
         data['${effectivePrefix}eod_text_checksum'],
       ),
+      TransactionLogsFolderID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}transaction_logs_folder_i_d'],
+      ),
+      EodLogsFolderID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_logs_folder_i_d'],
+      ),
       RecordCount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}record_count'],
@@ -3331,6 +3381,8 @@ class TransactionSyncBatche extends DataClass
   final String? EodRemoteTextFileID;
   final String? EodChecksum;
   final String? EodTextChecksum;
+  final String? TransactionLogsFolderID;
+  final String? EodLogsFolderID;
   final int RecordCount;
 
   /// pending, uploading, synced, or failed.
@@ -3359,6 +3411,8 @@ class TransactionSyncBatche extends DataClass
     this.EodRemoteTextFileID,
     this.EodChecksum,
     this.EodTextChecksum,
+    this.TransactionLogsFolderID,
+    this.EodLogsFolderID,
     required this.RecordCount,
     required this.Status,
     required this.AttemptCount,
@@ -3417,6 +3471,14 @@ class TransactionSyncBatche extends DataClass
     }
     if (!nullToAbsent || EodTextChecksum != null) {
       map['eod_text_checksum'] = Variable<String>(EodTextChecksum);
+    }
+    if (!nullToAbsent || TransactionLogsFolderID != null) {
+      map['transaction_logs_folder_i_d'] = Variable<String>(
+        TransactionLogsFolderID,
+      );
+    }
+    if (!nullToAbsent || EodLogsFolderID != null) {
+      map['eod_logs_folder_i_d'] = Variable<String>(EodLogsFolderID);
     }
     map['record_count'] = Variable<int>(RecordCount);
     map['status'] = Variable<String>(Status);
@@ -3484,6 +3546,12 @@ class TransactionSyncBatche extends DataClass
       EodTextChecksum: EodTextChecksum == null && nullToAbsent
           ? const Value.absent()
           : Value(EodTextChecksum),
+      TransactionLogsFolderID: TransactionLogsFolderID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(TransactionLogsFolderID),
+      EodLogsFolderID: EodLogsFolderID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(EodLogsFolderID),
       RecordCount: Value(RecordCount),
       Status: Value(Status),
       AttemptCount: Value(AttemptCount),
@@ -3530,6 +3598,10 @@ class TransactionSyncBatche extends DataClass
       ),
       EodChecksum: serializer.fromJson<String?>(json['EodChecksum']),
       EodTextChecksum: serializer.fromJson<String?>(json['EodTextChecksum']),
+      TransactionLogsFolderID: serializer.fromJson<String?>(
+        json['TransactionLogsFolderID'],
+      ),
+      EodLogsFolderID: serializer.fromJson<String?>(json['EodLogsFolderID']),
       RecordCount: serializer.fromJson<int>(json['RecordCount']),
       Status: serializer.fromJson<String>(json['Status']),
       AttemptCount: serializer.fromJson<int>(json['AttemptCount']),
@@ -3561,6 +3633,10 @@ class TransactionSyncBatche extends DataClass
       'EodRemoteTextFileID': serializer.toJson<String?>(EodRemoteTextFileID),
       'EodChecksum': serializer.toJson<String?>(EodChecksum),
       'EodTextChecksum': serializer.toJson<String?>(EodTextChecksum),
+      'TransactionLogsFolderID': serializer.toJson<String?>(
+        TransactionLogsFolderID,
+      ),
+      'EodLogsFolderID': serializer.toJson<String?>(EodLogsFolderID),
       'RecordCount': serializer.toJson<int>(RecordCount),
       'Status': serializer.toJson<String>(Status),
       'AttemptCount': serializer.toJson<int>(AttemptCount),
@@ -3590,6 +3666,8 @@ class TransactionSyncBatche extends DataClass
     Value<String?> EodRemoteTextFileID = const Value.absent(),
     Value<String?> EodChecksum = const Value.absent(),
     Value<String?> EodTextChecksum = const Value.absent(),
+    Value<String?> TransactionLogsFolderID = const Value.absent(),
+    Value<String?> EodLogsFolderID = const Value.absent(),
     int? RecordCount,
     String? Status,
     int? AttemptCount,
@@ -3634,6 +3712,12 @@ class TransactionSyncBatche extends DataClass
     EodTextChecksum: EodTextChecksum.present
         ? EodTextChecksum.value
         : this.EodTextChecksum,
+    TransactionLogsFolderID: TransactionLogsFolderID.present
+        ? TransactionLogsFolderID.value
+        : this.TransactionLogsFolderID,
+    EodLogsFolderID: EodLogsFolderID.present
+        ? EodLogsFolderID.value
+        : this.EodLogsFolderID,
     RecordCount: RecordCount ?? this.RecordCount,
     Status: Status ?? this.Status,
     AttemptCount: AttemptCount ?? this.AttemptCount,
@@ -3696,6 +3780,12 @@ class TransactionSyncBatche extends DataClass
       EodTextChecksum: data.EodTextChecksum.present
           ? data.EodTextChecksum.value
           : this.EodTextChecksum,
+      TransactionLogsFolderID: data.TransactionLogsFolderID.present
+          ? data.TransactionLogsFolderID.value
+          : this.TransactionLogsFolderID,
+      EodLogsFolderID: data.EodLogsFolderID.present
+          ? data.EodLogsFolderID.value
+          : this.EodLogsFolderID,
       RecordCount: data.RecordCount.present
           ? data.RecordCount.value
           : this.RecordCount,
@@ -3735,6 +3825,8 @@ class TransactionSyncBatche extends DataClass
           ..write('EodRemoteTextFileID: $EodRemoteTextFileID, ')
           ..write('EodChecksum: $EodChecksum, ')
           ..write('EodTextChecksum: $EodTextChecksum, ')
+          ..write('TransactionLogsFolderID: $TransactionLogsFolderID, ')
+          ..write('EodLogsFolderID: $EodLogsFolderID, ')
           ..write('RecordCount: $RecordCount, ')
           ..write('Status: $Status, ')
           ..write('AttemptCount: $AttemptCount, ')
@@ -3766,6 +3858,8 @@ class TransactionSyncBatche extends DataClass
     EodRemoteTextFileID,
     EodChecksum,
     EodTextChecksum,
+    TransactionLogsFolderID,
+    EodLogsFolderID,
     RecordCount,
     Status,
     AttemptCount,
@@ -3796,6 +3890,8 @@ class TransactionSyncBatche extends DataClass
           other.EodRemoteTextFileID == this.EodRemoteTextFileID &&
           other.EodChecksum == this.EodChecksum &&
           other.EodTextChecksum == this.EodTextChecksum &&
+          other.TransactionLogsFolderID == this.TransactionLogsFolderID &&
+          other.EodLogsFolderID == this.EodLogsFolderID &&
           other.RecordCount == this.RecordCount &&
           other.Status == this.Status &&
           other.AttemptCount == this.AttemptCount &&
@@ -3825,6 +3921,8 @@ class TransactionSyncBatchesCompanion
   final Value<String?> EodRemoteTextFileID;
   final Value<String?> EodChecksum;
   final Value<String?> EodTextChecksum;
+  final Value<String?> TransactionLogsFolderID;
+  final Value<String?> EodLogsFolderID;
   final Value<int> RecordCount;
   final Value<String> Status;
   final Value<int> AttemptCount;
@@ -3851,6 +3949,8 @@ class TransactionSyncBatchesCompanion
     this.EodRemoteTextFileID = const Value.absent(),
     this.EodChecksum = const Value.absent(),
     this.EodTextChecksum = const Value.absent(),
+    this.TransactionLogsFolderID = const Value.absent(),
+    this.EodLogsFolderID = const Value.absent(),
     this.RecordCount = const Value.absent(),
     this.Status = const Value.absent(),
     this.AttemptCount = const Value.absent(),
@@ -3878,6 +3978,8 @@ class TransactionSyncBatchesCompanion
     this.EodRemoteTextFileID = const Value.absent(),
     this.EodChecksum = const Value.absent(),
     this.EodTextChecksum = const Value.absent(),
+    this.TransactionLogsFolderID = const Value.absent(),
+    this.EodLogsFolderID = const Value.absent(),
     this.RecordCount = const Value.absent(),
     this.Status = const Value.absent(),
     this.AttemptCount = const Value.absent(),
@@ -3906,6 +4008,8 @@ class TransactionSyncBatchesCompanion
     Expression<String>? EodRemoteTextFileID,
     Expression<String>? EodChecksum,
     Expression<String>? EodTextChecksum,
+    Expression<String>? TransactionLogsFolderID,
+    Expression<String>? EodLogsFolderID,
     Expression<int>? RecordCount,
     Expression<String>? Status,
     Expression<int>? AttemptCount,
@@ -3935,6 +4039,9 @@ class TransactionSyncBatchesCompanion
         'eod_remote_text_file_i_d': EodRemoteTextFileID,
       if (EodChecksum != null) 'eod_checksum': EodChecksum,
       if (EodTextChecksum != null) 'eod_text_checksum': EodTextChecksum,
+      if (TransactionLogsFolderID != null)
+        'transaction_logs_folder_i_d': TransactionLogsFolderID,
+      if (EodLogsFolderID != null) 'eod_logs_folder_i_d': EodLogsFolderID,
       if (RecordCount != null) 'record_count': RecordCount,
       if (Status != null) 'status': Status,
       if (AttemptCount != null) 'attempt_count': AttemptCount,
@@ -3964,6 +4071,8 @@ class TransactionSyncBatchesCompanion
     Value<String?>? EodRemoteTextFileID,
     Value<String?>? EodChecksum,
     Value<String?>? EodTextChecksum,
+    Value<String?>? TransactionLogsFolderID,
+    Value<String?>? EodLogsFolderID,
     Value<int>? RecordCount,
     Value<String>? Status,
     Value<int>? AttemptCount,
@@ -3991,6 +4100,9 @@ class TransactionSyncBatchesCompanion
       EodRemoteTextFileID: EodRemoteTextFileID ?? this.EodRemoteTextFileID,
       EodChecksum: EodChecksum ?? this.EodChecksum,
       EodTextChecksum: EodTextChecksum ?? this.EodTextChecksum,
+      TransactionLogsFolderID:
+          TransactionLogsFolderID ?? this.TransactionLogsFolderID,
+      EodLogsFolderID: EodLogsFolderID ?? this.EodLogsFolderID,
       RecordCount: RecordCount ?? this.RecordCount,
       Status: Status ?? this.Status,
       AttemptCount: AttemptCount ?? this.AttemptCount,
@@ -4062,6 +4174,14 @@ class TransactionSyncBatchesCompanion
     if (EodTextChecksum.present) {
       map['eod_text_checksum'] = Variable<String>(EodTextChecksum.value);
     }
+    if (TransactionLogsFolderID.present) {
+      map['transaction_logs_folder_i_d'] = Variable<String>(
+        TransactionLogsFolderID.value,
+      );
+    }
+    if (EodLogsFolderID.present) {
+      map['eod_logs_folder_i_d'] = Variable<String>(EodLogsFolderID.value);
+    }
     if (RecordCount.present) {
       map['record_count'] = Variable<int>(RecordCount.value);
     }
@@ -4107,6 +4227,8 @@ class TransactionSyncBatchesCompanion
           ..write('EodRemoteTextFileID: $EodRemoteTextFileID, ')
           ..write('EodChecksum: $EodChecksum, ')
           ..write('EodTextChecksum: $EodTextChecksum, ')
+          ..write('TransactionLogsFolderID: $TransactionLogsFolderID, ')
+          ..write('EodLogsFolderID: $EodLogsFolderID, ')
           ..write('RecordCount: $RecordCount, ')
           ..write('Status: $Status, ')
           ..write('AttemptCount: $AttemptCount, ')
@@ -5498,6 +5620,661 @@ class StoreSettingsCompanion extends UpdateCompanion<StoreSetting> {
   }
 }
 
+class $CloudSyncSettingsTable extends CloudSyncSettings
+    with TableInfo<$CloudSyncSettingsTable, CloudSyncSetting> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CloudSyncSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _IDMeta = const VerificationMeta('ID');
+  @override
+  late final GeneratedColumn<int> ID = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _RootFolderIDMeta = const VerificationMeta(
+    'RootFolderID',
+  );
+  @override
+  late final GeneratedColumn<String> RootFolderID = GeneratedColumn<String>(
+    'root_folder_i_d',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _TransactionLogsFolderIDMeta =
+      const VerificationMeta('TransactionLogsFolderID');
+  @override
+  late final GeneratedColumn<String> TransactionLogsFolderID =
+      GeneratedColumn<String>(
+        'transaction_logs_folder_i_d',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _EodLogsFolderIDMeta = const VerificationMeta(
+    'EodLogsFolderID',
+  );
+  @override
+  late final GeneratedColumn<String> EodLogsFolderID = GeneratedColumn<String>(
+    'eod_logs_folder_i_d',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _InstallationIDMeta = const VerificationMeta(
+    'InstallationID',
+  );
+  @override
+  late final GeneratedColumn<String> InstallationID = GeneratedColumn<String>(
+    'installation_i_d',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _FolderOwnerEmailMeta = const VerificationMeta(
+    'FolderOwnerEmail',
+  );
+  @override
+  late final GeneratedColumn<String> FolderOwnerEmail = GeneratedColumn<String>(
+    'folder_owner_email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ProvisioningStatusMeta =
+      const VerificationMeta('ProvisioningStatus');
+  @override
+  late final GeneratedColumn<String> ProvisioningStatus =
+      GeneratedColumn<String>(
+        'provisioning_status',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('unprovisioned'),
+      );
+  static const VerificationMeta _IsAppOwnedMeta = const VerificationMeta(
+    'IsAppOwned',
+  );
+  @override
+  late final GeneratedColumn<bool> IsAppOwned = GeneratedColumn<bool>(
+    'is_app_owned',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_app_owned" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _LastValidatedAtMeta = const VerificationMeta(
+    'LastValidatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> LastValidatedAt =
+      GeneratedColumn<DateTime>(
+        'last_validated_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _UpdatedAtMeta = const VerificationMeta(
+    'UpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> UpdatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    ID,
+    RootFolderID,
+    TransactionLogsFolderID,
+    EodLogsFolderID,
+    InstallationID,
+    FolderOwnerEmail,
+    ProvisioningStatus,
+    IsAppOwned,
+    LastValidatedAt,
+    UpdatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cloud_sync_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CloudSyncSetting> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_IDMeta, ID.isAcceptableOrUnknown(data['id']!, _IDMeta));
+    }
+    if (data.containsKey('root_folder_i_d')) {
+      context.handle(
+        _RootFolderIDMeta,
+        RootFolderID.isAcceptableOrUnknown(
+          data['root_folder_i_d']!,
+          _RootFolderIDMeta,
+        ),
+      );
+    }
+    if (data.containsKey('transaction_logs_folder_i_d')) {
+      context.handle(
+        _TransactionLogsFolderIDMeta,
+        TransactionLogsFolderID.isAcceptableOrUnknown(
+          data['transaction_logs_folder_i_d']!,
+          _TransactionLogsFolderIDMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_TransactionLogsFolderIDMeta);
+    }
+    if (data.containsKey('eod_logs_folder_i_d')) {
+      context.handle(
+        _EodLogsFolderIDMeta,
+        EodLogsFolderID.isAcceptableOrUnknown(
+          data['eod_logs_folder_i_d']!,
+          _EodLogsFolderIDMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_EodLogsFolderIDMeta);
+    }
+    if (data.containsKey('installation_i_d')) {
+      context.handle(
+        _InstallationIDMeta,
+        InstallationID.isAcceptableOrUnknown(
+          data['installation_i_d']!,
+          _InstallationIDMeta,
+        ),
+      );
+    }
+    if (data.containsKey('folder_owner_email')) {
+      context.handle(
+        _FolderOwnerEmailMeta,
+        FolderOwnerEmail.isAcceptableOrUnknown(
+          data['folder_owner_email']!,
+          _FolderOwnerEmailMeta,
+        ),
+      );
+    }
+    if (data.containsKey('provisioning_status')) {
+      context.handle(
+        _ProvisioningStatusMeta,
+        ProvisioningStatus.isAcceptableOrUnknown(
+          data['provisioning_status']!,
+          _ProvisioningStatusMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_app_owned')) {
+      context.handle(
+        _IsAppOwnedMeta,
+        IsAppOwned.isAcceptableOrUnknown(
+          data['is_app_owned']!,
+          _IsAppOwnedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_validated_at')) {
+      context.handle(
+        _LastValidatedAtMeta,
+        LastValidatedAt.isAcceptableOrUnknown(
+          data['last_validated_at']!,
+          _LastValidatedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _UpdatedAtMeta,
+        UpdatedAt.isAcceptableOrUnknown(data['updated_at']!, _UpdatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {ID};
+  @override
+  CloudSyncSetting map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CloudSyncSetting(
+      ID: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      RootFolderID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}root_folder_i_d'],
+      ),
+      TransactionLogsFolderID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}transaction_logs_folder_i_d'],
+      )!,
+      EodLogsFolderID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eod_logs_folder_i_d'],
+      )!,
+      InstallationID: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}installation_i_d'],
+      )!,
+      FolderOwnerEmail: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}folder_owner_email'],
+      ),
+      ProvisioningStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provisioning_status'],
+      )!,
+      IsAppOwned: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_app_owned'],
+      )!,
+      LastValidatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_validated_at'],
+      ),
+      UpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $CloudSyncSettingsTable createAlias(String alias) {
+    return $CloudSyncSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class CloudSyncSetting extends DataClass
+    implements Insertable<CloudSyncSetting> {
+  final int ID;
+  final String? RootFolderID;
+  final String TransactionLogsFolderID;
+  final String EodLogsFolderID;
+  final String InstallationID;
+  final String? FolderOwnerEmail;
+  final String ProvisioningStatus;
+  final bool IsAppOwned;
+  final DateTime? LastValidatedAt;
+  final DateTime UpdatedAt;
+  const CloudSyncSetting({
+    required this.ID,
+    this.RootFolderID,
+    required this.TransactionLogsFolderID,
+    required this.EodLogsFolderID,
+    required this.InstallationID,
+    this.FolderOwnerEmail,
+    required this.ProvisioningStatus,
+    required this.IsAppOwned,
+    this.LastValidatedAt,
+    required this.UpdatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(ID);
+    if (!nullToAbsent || RootFolderID != null) {
+      map['root_folder_i_d'] = Variable<String>(RootFolderID);
+    }
+    map['transaction_logs_folder_i_d'] = Variable<String>(
+      TransactionLogsFolderID,
+    );
+    map['eod_logs_folder_i_d'] = Variable<String>(EodLogsFolderID);
+    map['installation_i_d'] = Variable<String>(InstallationID);
+    if (!nullToAbsent || FolderOwnerEmail != null) {
+      map['folder_owner_email'] = Variable<String>(FolderOwnerEmail);
+    }
+    map['provisioning_status'] = Variable<String>(ProvisioningStatus);
+    map['is_app_owned'] = Variable<bool>(IsAppOwned);
+    if (!nullToAbsent || LastValidatedAt != null) {
+      map['last_validated_at'] = Variable<DateTime>(LastValidatedAt);
+    }
+    map['updated_at'] = Variable<DateTime>(UpdatedAt);
+    return map;
+  }
+
+  CloudSyncSettingsCompanion toCompanion(bool nullToAbsent) {
+    return CloudSyncSettingsCompanion(
+      ID: Value(ID),
+      RootFolderID: RootFolderID == null && nullToAbsent
+          ? const Value.absent()
+          : Value(RootFolderID),
+      TransactionLogsFolderID: Value(TransactionLogsFolderID),
+      EodLogsFolderID: Value(EodLogsFolderID),
+      InstallationID: Value(InstallationID),
+      FolderOwnerEmail: FolderOwnerEmail == null && nullToAbsent
+          ? const Value.absent()
+          : Value(FolderOwnerEmail),
+      ProvisioningStatus: Value(ProvisioningStatus),
+      IsAppOwned: Value(IsAppOwned),
+      LastValidatedAt: LastValidatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(LastValidatedAt),
+      UpdatedAt: Value(UpdatedAt),
+    );
+  }
+
+  factory CloudSyncSetting.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CloudSyncSetting(
+      ID: serializer.fromJson<int>(json['ID']),
+      RootFolderID: serializer.fromJson<String?>(json['RootFolderID']),
+      TransactionLogsFolderID: serializer.fromJson<String>(
+        json['TransactionLogsFolderID'],
+      ),
+      EodLogsFolderID: serializer.fromJson<String>(json['EodLogsFolderID']),
+      InstallationID: serializer.fromJson<String>(json['InstallationID']),
+      FolderOwnerEmail: serializer.fromJson<String?>(json['FolderOwnerEmail']),
+      ProvisioningStatus: serializer.fromJson<String>(
+        json['ProvisioningStatus'],
+      ),
+      IsAppOwned: serializer.fromJson<bool>(json['IsAppOwned']),
+      LastValidatedAt: serializer.fromJson<DateTime?>(json['LastValidatedAt']),
+      UpdatedAt: serializer.fromJson<DateTime>(json['UpdatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'ID': serializer.toJson<int>(ID),
+      'RootFolderID': serializer.toJson<String?>(RootFolderID),
+      'TransactionLogsFolderID': serializer.toJson<String>(
+        TransactionLogsFolderID,
+      ),
+      'EodLogsFolderID': serializer.toJson<String>(EodLogsFolderID),
+      'InstallationID': serializer.toJson<String>(InstallationID),
+      'FolderOwnerEmail': serializer.toJson<String?>(FolderOwnerEmail),
+      'ProvisioningStatus': serializer.toJson<String>(ProvisioningStatus),
+      'IsAppOwned': serializer.toJson<bool>(IsAppOwned),
+      'LastValidatedAt': serializer.toJson<DateTime?>(LastValidatedAt),
+      'UpdatedAt': serializer.toJson<DateTime>(UpdatedAt),
+    };
+  }
+
+  CloudSyncSetting copyWith({
+    int? ID,
+    Value<String?> RootFolderID = const Value.absent(),
+    String? TransactionLogsFolderID,
+    String? EodLogsFolderID,
+    String? InstallationID,
+    Value<String?> FolderOwnerEmail = const Value.absent(),
+    String? ProvisioningStatus,
+    bool? IsAppOwned,
+    Value<DateTime?> LastValidatedAt = const Value.absent(),
+    DateTime? UpdatedAt,
+  }) => CloudSyncSetting(
+    ID: ID ?? this.ID,
+    RootFolderID: RootFolderID.present ? RootFolderID.value : this.RootFolderID,
+    TransactionLogsFolderID:
+        TransactionLogsFolderID ?? this.TransactionLogsFolderID,
+    EodLogsFolderID: EodLogsFolderID ?? this.EodLogsFolderID,
+    InstallationID: InstallationID ?? this.InstallationID,
+    FolderOwnerEmail: FolderOwnerEmail.present
+        ? FolderOwnerEmail.value
+        : this.FolderOwnerEmail,
+    ProvisioningStatus: ProvisioningStatus ?? this.ProvisioningStatus,
+    IsAppOwned: IsAppOwned ?? this.IsAppOwned,
+    LastValidatedAt: LastValidatedAt.present
+        ? LastValidatedAt.value
+        : this.LastValidatedAt,
+    UpdatedAt: UpdatedAt ?? this.UpdatedAt,
+  );
+  CloudSyncSetting copyWithCompanion(CloudSyncSettingsCompanion data) {
+    return CloudSyncSetting(
+      ID: data.ID.present ? data.ID.value : this.ID,
+      RootFolderID: data.RootFolderID.present
+          ? data.RootFolderID.value
+          : this.RootFolderID,
+      TransactionLogsFolderID: data.TransactionLogsFolderID.present
+          ? data.TransactionLogsFolderID.value
+          : this.TransactionLogsFolderID,
+      EodLogsFolderID: data.EodLogsFolderID.present
+          ? data.EodLogsFolderID.value
+          : this.EodLogsFolderID,
+      InstallationID: data.InstallationID.present
+          ? data.InstallationID.value
+          : this.InstallationID,
+      FolderOwnerEmail: data.FolderOwnerEmail.present
+          ? data.FolderOwnerEmail.value
+          : this.FolderOwnerEmail,
+      ProvisioningStatus: data.ProvisioningStatus.present
+          ? data.ProvisioningStatus.value
+          : this.ProvisioningStatus,
+      IsAppOwned: data.IsAppOwned.present
+          ? data.IsAppOwned.value
+          : this.IsAppOwned,
+      LastValidatedAt: data.LastValidatedAt.present
+          ? data.LastValidatedAt.value
+          : this.LastValidatedAt,
+      UpdatedAt: data.UpdatedAt.present ? data.UpdatedAt.value : this.UpdatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CloudSyncSetting(')
+          ..write('ID: $ID, ')
+          ..write('RootFolderID: $RootFolderID, ')
+          ..write('TransactionLogsFolderID: $TransactionLogsFolderID, ')
+          ..write('EodLogsFolderID: $EodLogsFolderID, ')
+          ..write('InstallationID: $InstallationID, ')
+          ..write('FolderOwnerEmail: $FolderOwnerEmail, ')
+          ..write('ProvisioningStatus: $ProvisioningStatus, ')
+          ..write('IsAppOwned: $IsAppOwned, ')
+          ..write('LastValidatedAt: $LastValidatedAt, ')
+          ..write('UpdatedAt: $UpdatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    ID,
+    RootFolderID,
+    TransactionLogsFolderID,
+    EodLogsFolderID,
+    InstallationID,
+    FolderOwnerEmail,
+    ProvisioningStatus,
+    IsAppOwned,
+    LastValidatedAt,
+    UpdatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CloudSyncSetting &&
+          other.ID == this.ID &&
+          other.RootFolderID == this.RootFolderID &&
+          other.TransactionLogsFolderID == this.TransactionLogsFolderID &&
+          other.EodLogsFolderID == this.EodLogsFolderID &&
+          other.InstallationID == this.InstallationID &&
+          other.FolderOwnerEmail == this.FolderOwnerEmail &&
+          other.ProvisioningStatus == this.ProvisioningStatus &&
+          other.IsAppOwned == this.IsAppOwned &&
+          other.LastValidatedAt == this.LastValidatedAt &&
+          other.UpdatedAt == this.UpdatedAt);
+}
+
+class CloudSyncSettingsCompanion extends UpdateCompanion<CloudSyncSetting> {
+  final Value<int> ID;
+  final Value<String?> RootFolderID;
+  final Value<String> TransactionLogsFolderID;
+  final Value<String> EodLogsFolderID;
+  final Value<String> InstallationID;
+  final Value<String?> FolderOwnerEmail;
+  final Value<String> ProvisioningStatus;
+  final Value<bool> IsAppOwned;
+  final Value<DateTime?> LastValidatedAt;
+  final Value<DateTime> UpdatedAt;
+  const CloudSyncSettingsCompanion({
+    this.ID = const Value.absent(),
+    this.RootFolderID = const Value.absent(),
+    this.TransactionLogsFolderID = const Value.absent(),
+    this.EodLogsFolderID = const Value.absent(),
+    this.InstallationID = const Value.absent(),
+    this.FolderOwnerEmail = const Value.absent(),
+    this.ProvisioningStatus = const Value.absent(),
+    this.IsAppOwned = const Value.absent(),
+    this.LastValidatedAt = const Value.absent(),
+    this.UpdatedAt = const Value.absent(),
+  });
+  CloudSyncSettingsCompanion.insert({
+    this.ID = const Value.absent(),
+    this.RootFolderID = const Value.absent(),
+    required String TransactionLogsFolderID,
+    required String EodLogsFolderID,
+    this.InstallationID = const Value.absent(),
+    this.FolderOwnerEmail = const Value.absent(),
+    this.ProvisioningStatus = const Value.absent(),
+    this.IsAppOwned = const Value.absent(),
+    this.LastValidatedAt = const Value.absent(),
+    this.UpdatedAt = const Value.absent(),
+  }) : TransactionLogsFolderID = Value(TransactionLogsFolderID),
+       EodLogsFolderID = Value(EodLogsFolderID);
+  static Insertable<CloudSyncSetting> custom({
+    Expression<int>? ID,
+    Expression<String>? RootFolderID,
+    Expression<String>? TransactionLogsFolderID,
+    Expression<String>? EodLogsFolderID,
+    Expression<String>? InstallationID,
+    Expression<String>? FolderOwnerEmail,
+    Expression<String>? ProvisioningStatus,
+    Expression<bool>? IsAppOwned,
+    Expression<DateTime>? LastValidatedAt,
+    Expression<DateTime>? UpdatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (ID != null) 'id': ID,
+      if (RootFolderID != null) 'root_folder_i_d': RootFolderID,
+      if (TransactionLogsFolderID != null)
+        'transaction_logs_folder_i_d': TransactionLogsFolderID,
+      if (EodLogsFolderID != null) 'eod_logs_folder_i_d': EodLogsFolderID,
+      if (InstallationID != null) 'installation_i_d': InstallationID,
+      if (FolderOwnerEmail != null) 'folder_owner_email': FolderOwnerEmail,
+      if (ProvisioningStatus != null) 'provisioning_status': ProvisioningStatus,
+      if (IsAppOwned != null) 'is_app_owned': IsAppOwned,
+      if (LastValidatedAt != null) 'last_validated_at': LastValidatedAt,
+      if (UpdatedAt != null) 'updated_at': UpdatedAt,
+    });
+  }
+
+  CloudSyncSettingsCompanion copyWith({
+    Value<int>? ID,
+    Value<String?>? RootFolderID,
+    Value<String>? TransactionLogsFolderID,
+    Value<String>? EodLogsFolderID,
+    Value<String>? InstallationID,
+    Value<String?>? FolderOwnerEmail,
+    Value<String>? ProvisioningStatus,
+    Value<bool>? IsAppOwned,
+    Value<DateTime?>? LastValidatedAt,
+    Value<DateTime>? UpdatedAt,
+  }) {
+    return CloudSyncSettingsCompanion(
+      ID: ID ?? this.ID,
+      RootFolderID: RootFolderID ?? this.RootFolderID,
+      TransactionLogsFolderID:
+          TransactionLogsFolderID ?? this.TransactionLogsFolderID,
+      EodLogsFolderID: EodLogsFolderID ?? this.EodLogsFolderID,
+      InstallationID: InstallationID ?? this.InstallationID,
+      FolderOwnerEmail: FolderOwnerEmail ?? this.FolderOwnerEmail,
+      ProvisioningStatus: ProvisioningStatus ?? this.ProvisioningStatus,
+      IsAppOwned: IsAppOwned ?? this.IsAppOwned,
+      LastValidatedAt: LastValidatedAt ?? this.LastValidatedAt,
+      UpdatedAt: UpdatedAt ?? this.UpdatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (ID.present) {
+      map['id'] = Variable<int>(ID.value);
+    }
+    if (RootFolderID.present) {
+      map['root_folder_i_d'] = Variable<String>(RootFolderID.value);
+    }
+    if (TransactionLogsFolderID.present) {
+      map['transaction_logs_folder_i_d'] = Variable<String>(
+        TransactionLogsFolderID.value,
+      );
+    }
+    if (EodLogsFolderID.present) {
+      map['eod_logs_folder_i_d'] = Variable<String>(EodLogsFolderID.value);
+    }
+    if (InstallationID.present) {
+      map['installation_i_d'] = Variable<String>(InstallationID.value);
+    }
+    if (FolderOwnerEmail.present) {
+      map['folder_owner_email'] = Variable<String>(FolderOwnerEmail.value);
+    }
+    if (ProvisioningStatus.present) {
+      map['provisioning_status'] = Variable<String>(ProvisioningStatus.value);
+    }
+    if (IsAppOwned.present) {
+      map['is_app_owned'] = Variable<bool>(IsAppOwned.value);
+    }
+    if (LastValidatedAt.present) {
+      map['last_validated_at'] = Variable<DateTime>(LastValidatedAt.value);
+    }
+    if (UpdatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(UpdatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CloudSyncSettingsCompanion(')
+          ..write('ID: $ID, ')
+          ..write('RootFolderID: $RootFolderID, ')
+          ..write('TransactionLogsFolderID: $TransactionLogsFolderID, ')
+          ..write('EodLogsFolderID: $EodLogsFolderID, ')
+          ..write('InstallationID: $InstallationID, ')
+          ..write('FolderOwnerEmail: $FolderOwnerEmail, ')
+          ..write('ProvisioningStatus: $ProvisioningStatus, ')
+          ..write('IsAppOwned: $IsAppOwned, ')
+          ..write('LastValidatedAt: $LastValidatedAt, ')
+          ..write('UpdatedAt: $UpdatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5518,6 +6295,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $StoreSettingsTable storeSettings = $StoreSettingsTable(this);
+  late final $CloudSyncSettingsTable cloudSyncSettings =
+      $CloudSyncSettingsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5532,6 +6311,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     eodSummaries,
     eodSummaryItems,
     storeSettings,
+    cloudSyncSettings,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -7882,6 +8662,8 @@ typedef $$TransactionSyncBatchesTableCreateCompanionBuilder =
       Value<String?> EodRemoteTextFileID,
       Value<String?> EodChecksum,
       Value<String?> EodTextChecksum,
+      Value<String?> TransactionLogsFolderID,
+      Value<String?> EodLogsFolderID,
       Value<int> RecordCount,
       Value<String> Status,
       Value<int> AttemptCount,
@@ -7910,6 +8692,8 @@ typedef $$TransactionSyncBatchesTableUpdateCompanionBuilder =
       Value<String?> EodRemoteTextFileID,
       Value<String?> EodChecksum,
       Value<String?> EodTextChecksum,
+      Value<String?> TransactionLogsFolderID,
+      Value<String?> EodLogsFolderID,
       Value<int> RecordCount,
       Value<String> Status,
       Value<int> AttemptCount,
@@ -8015,6 +8799,16 @@ class $$TransactionSyncBatchesTableFilterComposer
 
   ColumnFilters<String> get EodTextChecksum => $composableBuilder(
     column: $table.EodTextChecksum,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get TransactionLogsFolderID => $composableBuilder(
+    column: $table.TransactionLogsFolderID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodLogsFolderID => $composableBuilder(
+    column: $table.EodLogsFolderID,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8153,6 +8947,16 @@ class $$TransactionSyncBatchesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get TransactionLogsFolderID => $composableBuilder(
+    column: $table.TransactionLogsFolderID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodLogsFolderID => $composableBuilder(
+    column: $table.EodLogsFolderID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get RecordCount => $composableBuilder(
     column: $table.RecordCount,
     builder: (column) => ColumnOrderings(column),
@@ -8282,6 +9086,16 @@ class $$TransactionSyncBatchesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get TransactionLogsFolderID => $composableBuilder(
+    column: $table.TransactionLogsFolderID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodLogsFolderID => $composableBuilder(
+    column: $table.EodLogsFolderID,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get RecordCount => $composableBuilder(
     column: $table.RecordCount,
     builder: (column) => column,
@@ -8376,6 +9190,8 @@ class $$TransactionSyncBatchesTableTableManager
                 Value<String?> EodRemoteTextFileID = const Value.absent(),
                 Value<String?> EodChecksum = const Value.absent(),
                 Value<String?> EodTextChecksum = const Value.absent(),
+                Value<String?> TransactionLogsFolderID = const Value.absent(),
+                Value<String?> EodLogsFolderID = const Value.absent(),
                 Value<int> RecordCount = const Value.absent(),
                 Value<String> Status = const Value.absent(),
                 Value<int> AttemptCount = const Value.absent(),
@@ -8402,6 +9218,8 @@ class $$TransactionSyncBatchesTableTableManager
                 EodRemoteTextFileID: EodRemoteTextFileID,
                 EodChecksum: EodChecksum,
                 EodTextChecksum: EodTextChecksum,
+                TransactionLogsFolderID: TransactionLogsFolderID,
+                EodLogsFolderID: EodLogsFolderID,
                 RecordCount: RecordCount,
                 Status: Status,
                 AttemptCount: AttemptCount,
@@ -8430,6 +9248,8 @@ class $$TransactionSyncBatchesTableTableManager
                 Value<String?> EodRemoteTextFileID = const Value.absent(),
                 Value<String?> EodChecksum = const Value.absent(),
                 Value<String?> EodTextChecksum = const Value.absent(),
+                Value<String?> TransactionLogsFolderID = const Value.absent(),
+                Value<String?> EodLogsFolderID = const Value.absent(),
                 Value<int> RecordCount = const Value.absent(),
                 Value<String> Status = const Value.absent(),
                 Value<int> AttemptCount = const Value.absent(),
@@ -8456,6 +9276,8 @@ class $$TransactionSyncBatchesTableTableManager
                 EodRemoteTextFileID: EodRemoteTextFileID,
                 EodChecksum: EodChecksum,
                 EodTextChecksum: EodTextChecksum,
+                TransactionLogsFolderID: TransactionLogsFolderID,
+                EodLogsFolderID: EodLogsFolderID,
                 RecordCount: RecordCount,
                 Status: Status,
                 AttemptCount: AttemptCount,
@@ -9516,6 +10338,324 @@ typedef $$StoreSettingsTableProcessedTableManager =
       StoreSetting,
       PrefetchHooks Function()
     >;
+typedef $$CloudSyncSettingsTableCreateCompanionBuilder =
+    CloudSyncSettingsCompanion Function({
+      Value<int> ID,
+      Value<String?> RootFolderID,
+      required String TransactionLogsFolderID,
+      required String EodLogsFolderID,
+      Value<String> InstallationID,
+      Value<String?> FolderOwnerEmail,
+      Value<String> ProvisioningStatus,
+      Value<bool> IsAppOwned,
+      Value<DateTime?> LastValidatedAt,
+      Value<DateTime> UpdatedAt,
+    });
+typedef $$CloudSyncSettingsTableUpdateCompanionBuilder =
+    CloudSyncSettingsCompanion Function({
+      Value<int> ID,
+      Value<String?> RootFolderID,
+      Value<String> TransactionLogsFolderID,
+      Value<String> EodLogsFolderID,
+      Value<String> InstallationID,
+      Value<String?> FolderOwnerEmail,
+      Value<String> ProvisioningStatus,
+      Value<bool> IsAppOwned,
+      Value<DateTime?> LastValidatedAt,
+      Value<DateTime> UpdatedAt,
+    });
+
+class $$CloudSyncSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $CloudSyncSettingsTable> {
+  $$CloudSyncSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get RootFolderID => $composableBuilder(
+    column: $table.RootFolderID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get TransactionLogsFolderID => $composableBuilder(
+    column: $table.TransactionLogsFolderID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get EodLogsFolderID => $composableBuilder(
+    column: $table.EodLogsFolderID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get InstallationID => $composableBuilder(
+    column: $table.InstallationID,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get FolderOwnerEmail => $composableBuilder(
+    column: $table.FolderOwnerEmail,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ProvisioningStatus => $composableBuilder(
+    column: $table.ProvisioningStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get IsAppOwned => $composableBuilder(
+    column: $table.IsAppOwned,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get LastValidatedAt => $composableBuilder(
+    column: $table.LastValidatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get UpdatedAt => $composableBuilder(
+    column: $table.UpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CloudSyncSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $CloudSyncSettingsTable> {
+  $$CloudSyncSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get ID => $composableBuilder(
+    column: $table.ID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get RootFolderID => $composableBuilder(
+    column: $table.RootFolderID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get TransactionLogsFolderID => $composableBuilder(
+    column: $table.TransactionLogsFolderID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get EodLogsFolderID => $composableBuilder(
+    column: $table.EodLogsFolderID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get InstallationID => $composableBuilder(
+    column: $table.InstallationID,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get FolderOwnerEmail => $composableBuilder(
+    column: $table.FolderOwnerEmail,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ProvisioningStatus => $composableBuilder(
+    column: $table.ProvisioningStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get IsAppOwned => $composableBuilder(
+    column: $table.IsAppOwned,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get LastValidatedAt => $composableBuilder(
+    column: $table.LastValidatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get UpdatedAt => $composableBuilder(
+    column: $table.UpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CloudSyncSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CloudSyncSettingsTable> {
+  $$CloudSyncSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get ID =>
+      $composableBuilder(column: $table.ID, builder: (column) => column);
+
+  GeneratedColumn<String> get RootFolderID => $composableBuilder(
+    column: $table.RootFolderID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get TransactionLogsFolderID => $composableBuilder(
+    column: $table.TransactionLogsFolderID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get EodLogsFolderID => $composableBuilder(
+    column: $table.EodLogsFolderID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get InstallationID => $composableBuilder(
+    column: $table.InstallationID,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get FolderOwnerEmail => $composableBuilder(
+    column: $table.FolderOwnerEmail,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get ProvisioningStatus => $composableBuilder(
+    column: $table.ProvisioningStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get IsAppOwned => $composableBuilder(
+    column: $table.IsAppOwned,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get LastValidatedAt => $composableBuilder(
+    column: $table.LastValidatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get UpdatedAt =>
+      $composableBuilder(column: $table.UpdatedAt, builder: (column) => column);
+}
+
+class $$CloudSyncSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CloudSyncSettingsTable,
+          CloudSyncSetting,
+          $$CloudSyncSettingsTableFilterComposer,
+          $$CloudSyncSettingsTableOrderingComposer,
+          $$CloudSyncSettingsTableAnnotationComposer,
+          $$CloudSyncSettingsTableCreateCompanionBuilder,
+          $$CloudSyncSettingsTableUpdateCompanionBuilder,
+          (
+            CloudSyncSetting,
+            BaseReferences<
+              _$AppDatabase,
+              $CloudSyncSettingsTable,
+              CloudSyncSetting
+            >,
+          ),
+          CloudSyncSetting,
+          PrefetchHooks Function()
+        > {
+  $$CloudSyncSettingsTableTableManager(
+    _$AppDatabase db,
+    $CloudSyncSettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CloudSyncSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CloudSyncSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CloudSyncSettingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                Value<String?> RootFolderID = const Value.absent(),
+                Value<String> TransactionLogsFolderID = const Value.absent(),
+                Value<String> EodLogsFolderID = const Value.absent(),
+                Value<String> InstallationID = const Value.absent(),
+                Value<String?> FolderOwnerEmail = const Value.absent(),
+                Value<String> ProvisioningStatus = const Value.absent(),
+                Value<bool> IsAppOwned = const Value.absent(),
+                Value<DateTime?> LastValidatedAt = const Value.absent(),
+                Value<DateTime> UpdatedAt = const Value.absent(),
+              }) => CloudSyncSettingsCompanion(
+                ID: ID,
+                RootFolderID: RootFolderID,
+                TransactionLogsFolderID: TransactionLogsFolderID,
+                EodLogsFolderID: EodLogsFolderID,
+                InstallationID: InstallationID,
+                FolderOwnerEmail: FolderOwnerEmail,
+                ProvisioningStatus: ProvisioningStatus,
+                IsAppOwned: IsAppOwned,
+                LastValidatedAt: LastValidatedAt,
+                UpdatedAt: UpdatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> ID = const Value.absent(),
+                Value<String?> RootFolderID = const Value.absent(),
+                required String TransactionLogsFolderID,
+                required String EodLogsFolderID,
+                Value<String> InstallationID = const Value.absent(),
+                Value<String?> FolderOwnerEmail = const Value.absent(),
+                Value<String> ProvisioningStatus = const Value.absent(),
+                Value<bool> IsAppOwned = const Value.absent(),
+                Value<DateTime?> LastValidatedAt = const Value.absent(),
+                Value<DateTime> UpdatedAt = const Value.absent(),
+              }) => CloudSyncSettingsCompanion.insert(
+                ID: ID,
+                RootFolderID: RootFolderID,
+                TransactionLogsFolderID: TransactionLogsFolderID,
+                EodLogsFolderID: EodLogsFolderID,
+                InstallationID: InstallationID,
+                FolderOwnerEmail: FolderOwnerEmail,
+                ProvisioningStatus: ProvisioningStatus,
+                IsAppOwned: IsAppOwned,
+                LastValidatedAt: LastValidatedAt,
+                UpdatedAt: UpdatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CloudSyncSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CloudSyncSettingsTable,
+      CloudSyncSetting,
+      $$CloudSyncSettingsTableFilterComposer,
+      $$CloudSyncSettingsTableOrderingComposer,
+      $$CloudSyncSettingsTableAnnotationComposer,
+      $$CloudSyncSettingsTableCreateCompanionBuilder,
+      $$CloudSyncSettingsTableUpdateCompanionBuilder,
+      (
+        CloudSyncSetting,
+        BaseReferences<
+          _$AppDatabase,
+          $CloudSyncSettingsTable,
+          CloudSyncSetting
+        >,
+      ),
+      CloudSyncSetting,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -9541,4 +10681,6 @@ class $AppDatabaseManager {
       $$EodSummaryItemsTableTableManager(_db, _db.eodSummaryItems);
   $$StoreSettingsTableTableManager get storeSettings =>
       $$StoreSettingsTableTableManager(_db, _db.storeSettings);
+  $$CloudSyncSettingsTableTableManager get cloudSyncSettings =>
+      $$CloudSyncSettingsTableTableManager(_db, _db.cloudSyncSettings);
 }

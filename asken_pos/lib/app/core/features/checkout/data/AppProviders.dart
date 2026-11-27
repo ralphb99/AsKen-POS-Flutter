@@ -16,6 +16,7 @@ import 'package:asken_pos/app/core/features/owner/data/TransactionSyncBatchServi
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncOrchestrator.dart';
 import 'package:asken_pos/app/core/features/owner/data/GoogleDriveService.dart';
 import 'package:asken_pos/app/core/features/owner/data/GoogleDriveFileUploadService.dart';
+import 'package:asken_pos/app/core/features/owner/data/CloudSyncSettingsService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncService.dart';
 import 'package:asken_pos/app/core/features/printing/data/ReceiptDataService.dart';
 import 'package:asken_pos/app/core/features/printing/data/StoreSettingsService.dart';
@@ -96,6 +97,7 @@ final TransactionSyncOrchestratorProvider =
         ExportService: ref.watch(TransactionExportServiceProvider),
         EodService: ref.watch(EodSummaryServiceProvider),
         EodExportService: ref.watch(EodSummaryExportServiceProvider),
+        CloudSettingsService: ref.watch(CloudSyncSettingsServiceProvider),
       );
     });
 
@@ -104,7 +106,10 @@ final TransactionExportServiceProvider = Provider<TransactionExportService>(
 );
 
 final GoogleDriveServiceProvider = Provider<GoogleDriveService>((ref) {
-  final Service = GoogleDriveService();
+  final Service = GoogleDriveService(
+    SettingsService: ref.watch(CloudSyncSettingsServiceProvider),
+    StoreSettings: ref.watch(StoreSettingsServiceProvider),
+  );
 
   ref.onDispose(() {
     Service.Dispose();
@@ -125,8 +130,15 @@ final TransactionSyncServiceProvider = Provider<TransactionSyncService>((ref) {
     BatchService: ref.watch(TransactionSyncBatchServiceProvider),
     Orchestrator: ref.watch(TransactionSyncOrchestratorProvider),
     UploadService: ref.watch(GoogleDriveFileUploadServiceProvider),
+    CloudSettingsService: ref.watch(CloudSyncSettingsServiceProvider),
   );
 });
+
+final CloudSyncSettingsServiceProvider = Provider<CloudSyncSettingsService>(
+  (ref) {
+    return CloudSyncSettingsService(Database: ref.watch(AppDatabaseProvider));
+  },
+);
 
 final StoreSettingsServiceProvider = Provider<StoreSettingsService>((Ref) {
   return StoreSettingsService(Database: Ref.watch(AppDatabaseProvider));
@@ -249,6 +261,7 @@ class OwnerModeNotifier extends Notifier<bool> {
 final AppInitializationProvider = FutureProvider<void>((ref) async {
   await ref.read(AppDatabaseProvider).SeedProducts();
   await ref.read(StoreSettingsServiceProvider).EnsureSettings();
+  await ref.read(CloudSyncSettingsServiceProvider).EnsureSettings();
   await ref.read(EodSummaryServiceProvider).EnsureSummariesFromTransactions();
   await ref
       .read(TransactionSyncBatchServiceProvider)

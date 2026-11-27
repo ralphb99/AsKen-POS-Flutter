@@ -8,6 +8,8 @@ class TransactionSyncBatchService {
 
   Future<TransactionSyncBatche> GetOrCreateDailyBatch({
     required DateTime BusinessDate,
+    required String TransactionLogsFolderID,
+    required String EodLogsFolderID,
   }) async {
     final StartOfDay = _StartOfDay(BusinessDate);
     final EndOfDay = StartOfDay.add(const Duration(days: 1));
@@ -32,6 +34,8 @@ class TransactionSyncBatchService {
                 TextFileName: Value('Transactions_$BusinessDateKey.txt'),
                 EodFileName: Value(EodFileName),
                 EodTextFileName: Value(EodTextFileName),
+                TransactionLogsFolderID: Value(TransactionLogsFolderID),
+                EodLogsFolderID: Value(EodLogsFolderID),
               ),
             );
 
@@ -60,6 +64,12 @@ class TransactionSyncBatchService {
         TransactionSyncBatchesCompanion(
           EodFileName: Value(EodFileName),
           EodTextFileName: Value(EodTextFileName),
+          TransactionLogsFolderID: Batch.TransactionLogsFolderID == null
+              ? Value(TransactionLogsFolderID)
+              : const Value.absent(),
+          EodLogsFolderID: Batch.EodLogsFolderID == null
+              ? Value(EodLogsFolderID)
+              : const Value.absent(),
         ),
       );
 

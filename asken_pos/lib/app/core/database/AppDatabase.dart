@@ -21,6 +21,7 @@ class ProductDataRow {
     EodSummaries,
     EodSummaryItems,
     StoreSettings,
+    CloudSyncSettings,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -38,7 +39,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(QueryExecutor Executor) : super(Executor);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -193,6 +194,65 @@ class AppDatabase extends _$AppDatabase {
           transactionSyncBatches,
           transactionSyncBatches.EodTextChecksum,
           'eod_text_checksum',
+        );
+      }
+      if (From < 8) {
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.TransactionLogsFolderID,
+          'transaction_logs_folder_i_d',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          transactionSyncBatches,
+          transactionSyncBatches.EodLogsFolderID,
+          'eod_logs_folder_i_d',
+        );
+
+        final HasCloudSyncSettingsTable = await _HasTable(
+          'cloud_sync_settings',
+        );
+        if (!HasCloudSyncSettingsTable) {
+          await Migrator.createTable(cloudSyncSettings);
+        }
+      }
+      if (From < 9) {
+        await _AddColumnIfMissing(
+          Migrator,
+          cloudSyncSettings,
+          cloudSyncSettings.RootFolderID,
+          'root_folder_i_d',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          cloudSyncSettings,
+          cloudSyncSettings.InstallationID,
+          'installation_i_d',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          cloudSyncSettings,
+          cloudSyncSettings.FolderOwnerEmail,
+          'folder_owner_email',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          cloudSyncSettings,
+          cloudSyncSettings.ProvisioningStatus,
+          'provisioning_status',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          cloudSyncSettings,
+          cloudSyncSettings.IsAppOwned,
+          'is_app_owned',
+        );
+        await _AddColumnIfMissing(
+          Migrator,
+          cloudSyncSettings,
+          cloudSyncSettings.LastValidatedAt,
+          'last_validated_at',
         );
       }
     },

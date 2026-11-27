@@ -2,6 +2,7 @@ import 'package:googleapis/drive/v3.dart' as Drive;
 import 'package:asken_pos/app/core/features/owner/data/GoogleDriveFileUploadService.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncOrchestrator.dart';
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncBatchService.dart';
+import 'package:asken_pos/app/core/features/owner/data/CloudSyncSettingsService.dart';
 
 class TransactionSyncResult {
   final int SyncedBatchCount;
@@ -23,11 +24,13 @@ class TransactionSyncService {
   final TransactionSyncBatchService BatchService;
   final TransactionSyncOrchestrator Orchestrator;
   final GoogleDriveFileUploadService UploadService;
+  final CloudSyncSettingsService CloudSettingsService;
 
   const TransactionSyncService({
     required this.BatchService,
     required this.Orchestrator,
     required this.UploadService,
+    required this.CloudSettingsService,
   });
 
   Future<TransactionSyncResult> SyncPendingBatches() async {
@@ -79,10 +82,18 @@ class TransactionSyncService {
     }
 
     try {
+      final CloudSettings = await CloudSettingsService.GetSettings();
+      final TransactionLogsFolderID =
+          PreparedBatch.Batch.TransactionLogsFolderID ??
+          CloudSettings.TransactionLogsFolderID;
+      final EodLogsFolderID =
+          PreparedBatch.Batch.EodLogsFolderID ?? CloudSettings.EodLogsFolderID;
+
       final UploadedCsv = await UploadService.UploadOrUpdate(
         LocalFile: PreparedBatch.CsvFile,
         FileName: PreparedBatch.Batch.FileName,
         ContentType: 'text/csv',
+        ParentFolderID: TransactionLogsFolderID,
         RemoteFileID: PreparedBatch.Batch.RemoteFileID,
       );
       final CsvFileID = _RequireFileID(UploadedCsv);
@@ -100,6 +111,7 @@ class TransactionSyncService {
         LocalFile: PreparedBatch.TextFile,
         FileName: TextFileName,
         ContentType: 'text/plain',
+        ParentFolderID: TransactionLogsFolderID,
         RemoteFileID: PreparedBatch.Batch.RemoteTextFileID,
       );
       final TextFileID = _RequireFileID(UploadedText);
@@ -121,6 +133,7 @@ class TransactionSyncService {
         LocalFile: PreparedBatch.EodCsvFile,
         FileName: EodFileName,
         ContentType: 'text/csv',
+        ParentFolderID: EodLogsFolderID,
         RemoteFileID: PreparedBatch.Batch.EodRemoteFileID,
       );
       final EodFileID = _RequireFileID(UploadedEod);
@@ -133,6 +146,7 @@ class TransactionSyncService {
         LocalFile: PreparedBatch.EodTextFile,
         FileName: EodTextFileName,
         ContentType: 'text/plain',
+        ParentFolderID: EodLogsFolderID,
         RemoteFileID: PreparedBatch.Batch.EodRemoteTextFileID,
       );
       final EodTextFileID = _RequireFileID(UploadedEodText);

@@ -5,6 +5,7 @@ import 'package:asken_pos/app/core/features/owner/data/TransactionRecordsService
 import 'package:asken_pos/app/core/features/owner/data/TransactionSyncBatchService.dart';
 import 'package:asken_pos/app/core/features/owner/data/EodSummaryExportService.dart';
 import 'package:asken_pos/app/core/features/owner/data/EodSummaryService.dart';
+import 'package:asken_pos/app/core/features/owner/data/CloudSyncSettingsService.dart';
 
 class PreparedTransactionBatch {
   final TransactionSyncBatche Batch;
@@ -38,6 +39,7 @@ class TransactionSyncOrchestrator {
   final TransactionExportService ExportService;
   final EodSummaryService EodService;
   final EodSummaryExportService EodExportService;
+  final CloudSyncSettingsService CloudSettingsService;
 
   const TransactionSyncOrchestrator({
     required this.BatchService,
@@ -45,6 +47,7 @@ class TransactionSyncOrchestrator {
     required this.ExportService,
     required this.EodService,
     required this.EodExportService,
+    required this.CloudSettingsService,
   });
 
   Future<List<PreparedTransactionBatch>> PreparePendingBatches() async {
@@ -83,8 +86,11 @@ class TransactionSyncOrchestrator {
     TransactionSyncBatche? Batch;
 
     try {
+      final CloudSettings = await CloudSettingsService.GetSettings();
       Batch = await BatchService.GetOrCreateDailyBatch(
         BusinessDate: StartOfDay,
+        TransactionLogsFolderID: CloudSettings.TransactionLogsFolderID,
+        EodLogsFolderID: CloudSettings.EodLogsFolderID,
       );
       final EodDetails = await EodService.GetDetails(
         BusinessDate: Batch.BusinessDate,
